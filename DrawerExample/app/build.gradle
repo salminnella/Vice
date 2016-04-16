@@ -5,8 +5,8 @@ android {
     buildToolsVersion "23.0.3"
 
     defaultConfig {
-        applicationId "martell.com.vice"
-        minSdkVersion 21
+        applicationId "starace.learn.com.drawerexample"
+        minSdkVersion 23
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
