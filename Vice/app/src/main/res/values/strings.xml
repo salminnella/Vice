@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Vice</string>
+    <string name="nav_header_title">Notification Settings</string>
+    <string name="notification_add">Add a Notification Tag</string>
 </resources>
