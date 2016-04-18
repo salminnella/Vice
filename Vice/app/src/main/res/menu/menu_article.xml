@@ -6,4 +6,16 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/share_item_menu"
+        android:title="share Article"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/share"
+        />
+    <item
+        android:id="@+id/bookmark_item_menu"
+        android:title="bookemark Article"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/bookmark"
+        />
 </menu>
