@@ -36,6 +36,7 @@ public class MainActivityStew extends AppCompatActivity {
 
                 // update code below to build list of articles
                 // code below gets tags just to test connection
+                //consider changing response.body() to response.raw()
                 Article article = response.body();
                 if (article == null){
                     return;
