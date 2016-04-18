@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,16 +21,21 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter {
     private static final String TAG_NAV_ADAPTER = "NavigationAdapter";
     private List<NavDrawerEntry> data;
     private LayoutInflater inflater;
+    private ArrayList<Boolean> isCheckedArray = new ArrayList<>();
 
     public NavigationDrawerAdapter(Context context, List<NavDrawerEntry> data) {
         this.data = data;
-        Log.d(TAG_NAV_ADAPTER, "DATA IS : " + data.get(0).toString());
+        for (NavDrawerEntry entry : data){
+            isCheckedArray.add(false);
+        }
+        Log.d(TAG_NAV_ADAPTER, "DATA IS : " + data.size());
         this.inflater = LayoutInflater.from(context);
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemLayoutView;
+
         Log.d(TAG_NAV_ADAPTER,"ON CREATE VIEW HOLDER VIEW TYPE: " + viewType);
         switch (viewType) {
             case 0:
@@ -54,7 +60,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         final NavDrawerEntry item = data.get(position);
         Log.d(TAG_NAV_ADAPTER,"THIS IS THE ON BINDVIEWHOLDER");
 
@@ -70,14 +76,25 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter {
         }
 
         if (item instanceof NavDrawerToggle) {
-            ToggleVH viewHolder = (ToggleVH) holder;
+            final ToggleVH viewHolder = (ToggleVH) holder;
             viewHolder.mTitle.setText(((NavDrawerToggle) item).getTitle());
-            viewHolder.mSwitch.setChecked(((NavDrawerToggle) item).isChecked());
-
+            if (!isCheckedArray.get(position)) {
+                viewHolder.mSwitch.setChecked(false);
+            } else {
+                viewHolder.mSwitch.setChecked(true);
+            }
             viewHolder.mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    
+                    Log.d(TAG_NAV_ADAPTER,position + " has been checked!!");
+                    if (isChecked) {
+                        viewHolder.mSwitch.setChecked(true);
+                        isCheckedArray.set(position,true);
+                    } else {
+                        viewHolder.mSwitch.setChecked(false);
+                        isCheckedArray.set(position,false);
+                    }
+
                 }
             });
         }
@@ -85,6 +102,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
+
         if (data.get(position) instanceof NavDrawerItemWithIcon) {
             Log.d(TAG_NAV_ADAPTER, "GET ITEM VIEW TYPE RETURNS: Item with Icon");
             return 0;
@@ -109,6 +127,10 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
         return data.size();
+    }
+
+    public ArrayList<Boolean> getIsCheckedArray() {
+        return isCheckedArray;
     }
 
     class ItemWithIconVH extends RecyclerView.ViewHolder {

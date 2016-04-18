@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import martell.com.vice.NavDrawerEntry;
@@ -29,11 +30,13 @@ public class NavigationDrawerFragment extends Fragment {
     private ActionBarDrawerToggle navDrawerToggle;
     private RecyclerView navDrawerRecyclerView;
     private DrawerLayout navDrawerLayout;
+    private NavigationDrawerAdapter navigationDrawerAdapter;
+    private ArrayList<Boolean> isCheckedArray;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.d(TAG_NAV_FRAG,"THE ON CREATE VIEW HAS BEEN CALLED");
+        Log.d(TAG_NAV_FRAG, "THE ON CREATE VIEW HAS BEEN CALLED");
         navFragmentView = inflater.inflate(R.layout.fragment_navigation_drawer_main,container,false);
         return navFragmentView;
     }
@@ -52,6 +55,9 @@ public class NavigationDrawerFragment extends Fragment {
 
             @Override
             public void onDrawerClosed(View drawerView) {
+                isCheckedArray = new ArrayList<>();
+                isCheckedArray = navigationDrawerAdapter.getIsCheckedArray();
+                Log.d(TAG_NAV_FRAG,"This is the isChecked array from the adapater: " + isCheckedArray.get(2));
                 super.onDrawerClosed(drawerView);
                 getActivity().invalidateOptionsMenu();
             }
@@ -67,12 +73,11 @@ public class NavigationDrawerFragment extends Fragment {
         });
 
         navDrawerRecyclerView = (RecyclerView) navFragmentView.findViewById(R.id.nav_list);
-        NavigationDrawerAdapter adapter = new NavigationDrawerAdapter(getActivity(), navDrawerEntryList);
-        navDrawerRecyclerView.setAdapter(adapter);
+        navigationDrawerAdapter = new NavigationDrawerAdapter(getActivity(), navDrawerEntryList);
+        navDrawerRecyclerView.setAdapter(navigationDrawerAdapter);
         navDrawerRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         navDrawerRecyclerView.setHasFixedSize(true);
 
     }
-
 
 }

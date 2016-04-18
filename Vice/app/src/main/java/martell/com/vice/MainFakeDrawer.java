@@ -13,7 +13,7 @@ import martell.com.vice.fragment.NavigationDrawerFragment;
 /**
  * Created by mstarace on 4/18/16.
  */
-public class MainFake extends AppCompatActivity {
+public class MainFakeDrawer extends AppCompatActivity {
     private static final String TAG_MAIN = "MainFake";
     private Toolbar toolbar;
 

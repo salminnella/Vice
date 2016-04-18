@@ -11,7 +11,7 @@
         <activity android:name=".MainActivity">
 
         </activity>
-        <activity android:name=".MainFake">
+        <activity android:name=".MainFakeDrawer">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
