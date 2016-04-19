@@ -1,56 +1,59 @@
-
 package martell.com.vice.models;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
- * Created by stewartmcmillan on 4/18/16.
+ * Created by stewartmcmillan on 4/19/16.
  */
 public class Article {
 
-    private String id;
-    private String title;
-    private String body;
-    private String image;
-    private String[] tags;
+    @SerializedName("id")
+    String articleId;
+    @SerializedName("title")
+    String articleTitle;
+    @SerializedName("tags")
+    String [] articleTags;
+    @SerializedName("thumb")
+    String articleThumbURL;
+    @SerializedName("image")
+    String articleImageURL;
+    @SerializedName("preview")
+    String articlePreview;
+    @SerializedName("body")
+    String articleBody;
+    @SerializedName("author")
+    String articleAuthor;
 
-    public String getId() {
-        return id;
+    public String getArticleId() {
+        return articleId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getArticleTitle() {
+        return articleTitle;
     }
 
-    public String getTitle() {
-        return title;
+    public String[] getArticleTags() {
+        return articleTags;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public String getArticleThumbURL() {
+        return articleThumbURL;
     }
 
-    public String getBody() {
-        return body;
+    public String getArticleImageURL() {
+        return articleImageURL;
     }
 
-    public void setBody(String body) {
-        this.body = body;
+    public String getArticlePreview() {
+        return articlePreview;
     }
 
-    public String getImage() {
-        return image;
+    public String getArticleBody() {
+        return articleBody;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public String getArticleAuthor() {
+        return articleAuthor;
     }
 
-    public String[] getTags() {
-        return tags;
-    }
-
-    public void setTags(String[] tags) {
-        this.tags = tags;
-    }
 }
-
-

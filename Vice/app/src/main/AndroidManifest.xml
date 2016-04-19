@@ -11,9 +11,6 @@
         <activity android:name=".MainActivity">
 
         </activity>
-        <activity android:name=".MainActivityStew">
-
-        </activity>
 
         <activity android:name=".MainFakeDrawer">
             <intent-filter>
