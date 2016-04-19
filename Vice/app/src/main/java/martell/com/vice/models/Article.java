@@ -3,10 +3,9 @@ package martell.com.vice.models;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by stewartmcmillan on 4/19/16.
+ * Created by adao1 on 4/19/2016.
  */
 public class Article {
-
     @SerializedName("id")
     String articleId;
     @SerializedName("title")
@@ -23,6 +22,12 @@ public class Article {
     String articleBody;
     @SerializedName("author")
     String articleAuthor;
+    @SerializedName("category")
+    String articleCategory;
+
+    public String getArticleCategory() {
+        return articleCategory;
+    }
 
     public String getArticleId() {
         return articleId;
@@ -55,5 +60,4 @@ public class Article {
     public String getArticleAuthor() {
         return articleAuthor;
     }
-
 }
