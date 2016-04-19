@@ -110,33 +110,4 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
     }
 
-//    private void displayLatestArticles(){
-//        Call<ArticleArray> call = viceService.latestArticles(0);
-//        call.enqueue(new Callback<ArticleArray>() {
-//            @Override
-//            public void onResponse(Call<ArticleArray> call, Response<ArticleArray> response) {
-//                Article[] articleArray = response.body().getData().getItems();
-//                articles = new ArrayList<>(Arrays.asList(articleArray));
-//                makeRV();
-//            }
-//            @Override
-//            public void onFailure(Call<ArticleArray> call, Throwable t) {
-//            }
-//        });
-//    }
-
-//    private void makeRV (){
-//        articleRV = (RecyclerView)findViewById(R.id.articleRV);
-//        articleAdapter = new ArticleAdapter(articles);
-//        alphaAdapter = new AlphaInAnimationAdapter(articleAdapter);
-//        alphaAdapter.setDuration(5000);
-//        alphaAdapter.setInterpolator(new OvershootInterpolator());
-//        articleRV.setAdapter(alphaAdapter);
-//        RV_SpaceDecoration decoration = new RV_SpaceDecoration(16);
-//        articleRV.addItemDecoration(decoration);
-//        GridLayoutManager gridLayoutManager = new GridLayoutManager(this,2);
-//        articleRV.setLayoutManager(gridLayoutManager);
-//        articleRV.setHasFixedSize(true);
-//    }
-
 }
