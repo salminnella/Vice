@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         articleRV = (RecyclerView)findViewById(R.id.articleRV);
-        articles = Article.createArticleList(50);
+        //articles = Article.createArticleList(50);
         ArticleAdapter articleAdapter = new ArticleAdapter(articles);
         articleRV.setAdapter(articleAdapter);
         RV_SpaceDecoration decoration = new RV_SpaceDecoration(16);

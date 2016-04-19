@@ -1,4 +1,5 @@
-package martell.com.vice.Models;
+package martell.com.vice.models;
+
 
 /**
  * Created by stewartmcmillan on 4/18/16.
@@ -50,4 +51,5 @@ public class Article {
     public void setTags(String[] tags) {
         this.tags = tags;
     }
+
 }

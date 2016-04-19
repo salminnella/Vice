@@ -4,7 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
-import martell.com.vice.Models.Article;
+import martell.com.vice.models.Article;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
