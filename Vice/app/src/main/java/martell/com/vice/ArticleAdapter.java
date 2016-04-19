@@ -36,8 +36,8 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         Article article = mArticles.get(position);
         TextView titleTextView = holder.titleTextView;
         TextView bodyTextView = holder.bodyTextView;
-        titleTextView.setText(article.getTitle());
-        bodyTextView.setText(article.getBody());
+        titleTextView.setText(article.getArticleTitle());
+        bodyTextView.setText(article.getArticleBody());
     }
 
     @Override
