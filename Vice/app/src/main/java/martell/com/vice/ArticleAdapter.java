@@ -1,7 +1,6 @@
 package martell.com.vice;
 
 import android.content.Context;
-import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,6 +30,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         ViewHolder viewHolder = new ViewHolder(articleView);
         Log.d(TAG, "onCreateViewHolder: ");
         return viewHolder;
+
     }
 
     @Override
