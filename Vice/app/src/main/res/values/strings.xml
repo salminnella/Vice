@@ -10,4 +10,17 @@
     <string name="action_settings">Settings</string>
     <string name="article_content"><![CDATA[Five days away from the New York primary, independent voters protested the state\'s closed primary process, which they say will exclude nearly 3 million residents from voting on April 19 — a particularly damaging prospect for non-establishment candidates like Donald Trump and Bernie Sanders.<br><br> Dozens of demonstrators, who support Sanders, gathered on the steps of New York\'s City Hall on Thursday, calling on lawmakers to open up New York\'s primary election process, which would allow any registered voter regardless of their political affiliation to vote for the candidate of their choice.<br><br> Organizers of the rally, led by nonpartisan groups IndependentVoting.org, the New York City Independence Clubs, and Open Primaries, blasted the state\'s closed primary as undemocratic, noting that the voters most disenfranchised by this process are young people and minorities. Some 37 percent of New Yorkers under 30 identify as independent, while 15 percent of African American voters and 22 percent of Latino voters statewide are also unaffiliated with any major party, according to an analysis of voter data compiled by collection firm Prime New York.\\]]></string>
 
+    <string-array name="categories">
+        <item>categories</item>
+        <item>divider</item>
+        <item>ViceLand</item>
+        <item>Crime</item>
+        <item>Culture</item>
+        <item>LGBT</item>
+        <item>Election2016</item>
+        <item>CityGuides</item>
+        <item>Opinion</item>
+        <item>Environment</item>
+    </string-array>
+
 </resources>
