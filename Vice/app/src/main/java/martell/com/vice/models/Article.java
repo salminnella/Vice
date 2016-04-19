@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 package martell.com.vice.models;
+=======
+package martell.com.vice.Models;
+
+>>>>>>> e9d5e93a05a788ae01c078e352df4a2b8a24ae8b
 /**
  * Created by stewartmcmillan on 4/18/16.
  */
@@ -49,4 +54,8 @@ public class Article {
     public void setTags(String[] tags) {
         this.tags = tags;
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> e9d5e93a05a788ae01c078e352df4a2b8a24ae8b
