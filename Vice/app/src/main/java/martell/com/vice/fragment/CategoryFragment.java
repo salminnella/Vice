@@ -14,8 +14,6 @@ import martell.com.vice.R;
  */
 public class CategoryFragment  extends Fragment {
 
-    private String title;
-
     public CategoryFragment() {
 
     }

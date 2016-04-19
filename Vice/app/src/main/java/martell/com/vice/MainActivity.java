@@ -2,8 +2,6 @@ package martell.com.vice;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -53,11 +51,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 Log.d(TAG, "onTabSelected: " + tab.getText());
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.container_fragment,adapter.getItem(tab.getPosition()));
-
-                fragmentTransaction.commit();
+//                FragmentManager fragmentManager = getSupportFragmentManager();
+//                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//                Log.d(TAG, "onTabSelected: " + String.valueOf(R.id.container_fragment));
+//                fragmentTransaction.replace(R.id.container_fragment, adapter.getItem(tab.getPosition()));
+//
+//                fragmentTransaction.commit();
+                
+                viewPager.setCurrentItem(tab.getPosition());
             }
 
             @Override
