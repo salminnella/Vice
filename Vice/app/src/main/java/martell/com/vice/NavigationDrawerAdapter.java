@@ -60,7 +60,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         final NavDrawerEntry item = data.get(position);
-        Log.d(TAG_NAV_ADAPTER,"THIS IS THE ON BINDVIEWHOLDER");
+        Log.d(TAG_NAV_ADAPTER,"THIS IS THE ON BINDVIEWHOLDER position" + position );
 
         if (item instanceof NavDrawerItemWithIcon) {
             ItemWithIconVH viewHolder = (ItemWithIconVH) holder;
@@ -73,27 +73,37 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter {
             viewHolder.mTitle.setText(((NavDrawerItem) item).getTitle());
         }
 
-        if (item instanceof NavDrawerToggle) {
+        if (item instanceof NavDrawerToggle)  {
             final ToggleVH viewHolder = (ToggleVH) holder;
             viewHolder.mTitle.setText(((NavDrawerToggle) item).getTitle());
-            if (!isCheckedArray.get(position)) {
-                viewHolder.mSwitch.setChecked(false);
-            } else {
-                viewHolder.mSwitch.setChecked(true);
-            }
+
             viewHolder.mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    Log.d(TAG_NAV_ADAPTER,position + " has been checked!!");
+                    Log.d(TAG_NAV_ADAPTER, position + " has been checked!!");
                     if (isChecked) {
+
                         viewHolder.mSwitch.setChecked(true);
-                        isCheckedArray.set(position,true);
+                        isCheckedArray.set(position, true);
+                        Log.d(TAG_NAV_ADAPTER, "ON CHECKED CHANGEArray value is " + isCheckedArray.get(position));
                     } else {
+
                         viewHolder.mSwitch.setChecked(false);
-                        isCheckedArray.set(position,false);
+                        isCheckedArray.set(position, false);
+                        Log.d(TAG_NAV_ADAPTER, "ON CHECKED CHANGEArray value is FALSE");
+
                     }
                 }
             });
+
+            if (!isCheckedArray.get(position)) {
+                Log.d(TAG_NAV_ADAPTER, "Array value is FALSE " + position);
+                viewHolder.mSwitch.setChecked(false);
+            } else {
+                Log.d(TAG_NAV_ADAPTER, "Array value is TRUE" + position);
+                viewHolder.mSwitch.setChecked(true);
+            }
+
         }
     }
 
@@ -162,4 +172,9 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter {
         }
     }
 
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        Log.d(TAG_NAV_ADAPTER,"Deteched is Called");
+        super.onDetachedFromRecyclerView(recyclerView);
+    }
 }

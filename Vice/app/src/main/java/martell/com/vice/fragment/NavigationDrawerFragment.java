@@ -86,6 +86,8 @@ public class NavigationDrawerFragment extends Fragment {
         navDrawerRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         navDrawerRecyclerView.setHasFixedSize(true);
 
+
+
     }
 
     /**
