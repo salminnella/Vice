@@ -3,6 +3,7 @@ package martell.com.vice;
 import android.content.Context;
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,7 @@ import martell.com.vice.models.Article;
  */
 public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHolder> {
     private List<Article> mArticles;
-
+    private static final String TAG = "ArticleAdapter";
     public ArticleAdapter(List<Article> mArticles) {
         this.mArticles = mArticles;
     }
@@ -28,6 +29,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         LayoutInflater inflater = LayoutInflater.from(context);
         View articleView = inflater.inflate(R.layout.recycler_item, parent, false);
         ViewHolder viewHolder = new ViewHolder(articleView);
+        Log.d(TAG, "onCreateViewHolder: ");
         return viewHolder;
     }
 
@@ -38,6 +40,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         TextView bodyTextView = holder.bodyTextView;
         titleTextView.setText(article.getArticleTitle());
         bodyTextView.setText(article.getArticleBody());
+        Log.d(TAG, "onBindViewHolder: ");
     }
 
     @Override
