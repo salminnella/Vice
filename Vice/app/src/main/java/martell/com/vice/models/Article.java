@@ -1,55 +1,64 @@
 package martell.com.vice.models;
 
+import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by stewartmcmillan on 4/18/16.
+ * Created by adao1 on 4/19/2016.
  */
 public class Article {
+    @SerializedName("id")
+    String articleId;
+    @SerializedName("title")
+    String articleTitle;
+    @SerializedName("tags")
+    String [] articleTags;
+    @SerializedName("thumb")
+    String articleThumbURL;
+    @SerializedName("image")
+    String articleImageURL;
+    @SerializedName("preview")
+    String articlePreview;
+    @SerializedName("body")
+    String articleBody;
+    @SerializedName("author")
+    String articleAuthor;
+    @SerializedName("category")
+    String articleCategory;
 
-    private String id;
-    private String title;
-    private String body;
-    private String image;
-    private String[] tags;
-
-    public String getId() {
-        return id;
+    public String getArticleCategory() {
+        return articleCategory;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getArticleId() {
+        return articleId;
     }
 
-    public String getTitle() {
-        return title;
+    public String getArticleTitle() {
+        return articleTitle;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public String[] getArticleTags() {
+        return articleTags;
     }
 
-    public String getBody() {
-        return body;
+    public String getArticleThumbURL() {
+        return articleThumbURL;
     }
 
-    public void setBody(String body) {
-        this.body = body;
+    public String getArticleImageURL() {
+        return articleImageURL;
     }
 
-    public String getImage() {
-        return image;
+    public String getArticlePreview() {
+        return articlePreview;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public String getArticleBody() {
+        return articleBody;
     }
 
-    public String[] getTags() {
-        return tags;
+    public String getArticleAuthor() {
+        return articleAuthor;
     }
-
-    public void setTags(String[] tags) {
-        this.tags = tags;
-    }
-
 }
+

@@ -1,6 +1,7 @@
 package martell.com.vice;
 
 import martell.com.vice.models.Article;
+import martell.com.vice.models.ArticleArray;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -10,11 +11,8 @@ import retrofit2.http.Path;
  */
 public interface ViceAPIService {
 
-    @GET("getlatest/{pageNum}")
-     Call<Article> getLatestArticles(@Path("pageNum") int resultPage);
-
-//    from RetrofitExample project:
-//    @GET("albums/{id}")
-//    Call<SpotifyAlbum> getAlbumForId(@Path("id") String albumId);
+    @GET("getlatest/{page}")
+    Call<ArticleArray> latestArticles(
+            @Path("page") int latestArticlesPage);
 
 }
