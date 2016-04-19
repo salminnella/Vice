@@ -1,6 +1,6 @@
 package martell.com.vice;
 
-import martell.com.vice.Models.Article;
+import martell.com.vice.models.Article;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;

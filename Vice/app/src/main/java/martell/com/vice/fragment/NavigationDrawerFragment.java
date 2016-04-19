@@ -25,13 +25,12 @@ import martell.com.vice.R;
  * Created by mstarace on 4/18/16.
  */
 public class NavigationDrawerFragment extends Fragment {
-    private static final String TAG_NAV_FRAG = "Navigation_Fragment";
+    private static final String TAG_NAV_FRAG = "NavigationFragment";
     private View navFragmentView;
     private ActionBarDrawerToggle navDrawerToggle;
     private RecyclerView navDrawerRecyclerView;
     private DrawerLayout navDrawerLayout;
     private NavigationDrawerAdapter navigationDrawerAdapter;
-    private ArrayList<Boolean> isCheckedArray;
 
     @Nullable
     @Override
@@ -41,7 +40,16 @@ public class NavigationDrawerFragment extends Fragment {
         return navFragmentView;
     }
 
-    public void initDrawer(DrawerLayout drawerLayout, final Toolbar toolbar, List<NavDrawerEntry> navDrawerEntryList){
+    @Override
+    public void onPause() {
+        ArrayList<Boolean> isCheckedArray = navigationDrawerAdapter.getIsCheckedArray();
+        NotificationPreferences notificationPreferences = (NotificationPreferences)getActivity();
+        notificationPreferences.setNotificationPreferences(createNotificationString(isCheckedArray));
+        super.onPause();
+    }
+
+    public void initDrawer(DrawerLayout drawerLayout, final Toolbar toolbar, List<NavDrawerEntry> navDrawerEntryList,
+                           ArrayList<Boolean> booleanArrayList){
         Log.d(TAG_NAV_FRAG,"initDrawer HAS BEEN CALLED IN THE NAVIGATION FRAGMENT");
         navDrawerLayout = drawerLayout;
         navDrawerToggle = new ActionBarDrawerToggle(getActivity(),drawerLayout,toolbar, R.string.drawer_open,
@@ -50,18 +58,18 @@ public class NavigationDrawerFragment extends Fragment {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                getActivity().invalidateOptionsMenu();
+                //getActivity().invalidateOptionsMenu();
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
-                isCheckedArray = new ArrayList<>();
-                isCheckedArray = navigationDrawerAdapter.getIsCheckedArray();
-                Log.d(TAG_NAV_FRAG,"This is the isChecked array from the adapater: " + isCheckedArray.get(2));
+
                 super.onDrawerClosed(drawerView);
-                getActivity().invalidateOptionsMenu();
+                //getActivity().invalidateOptionsMenu();
             }
         };
+
+
 
         navDrawerLayout.addDrawerListener(navDrawerToggle);
         navDrawerLayout.post(new Runnable() {
@@ -73,11 +81,38 @@ public class NavigationDrawerFragment extends Fragment {
         });
 
         navDrawerRecyclerView = (RecyclerView) navFragmentView.findViewById(R.id.nav_list);
-        navigationDrawerAdapter = new NavigationDrawerAdapter(getActivity(), navDrawerEntryList);
+        navigationDrawerAdapter = new NavigationDrawerAdapter(getActivity(), navDrawerEntryList,booleanArrayList);
         navDrawerRecyclerView.setAdapter(navigationDrawerAdapter);
         navDrawerRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         navDrawerRecyclerView.setHasFixedSize(true);
 
     }
 
+    /**
+     * Takes in an ArrayList of booleans and converts it to an ArrayList of strings
+     * with the names of user specified notification preferences. Puts the ArrayList of
+     * strings into a comma separated string that is returned. string resource array is used
+     * to make the conversion. Comma separated sting is intended to be used in SharedPreferences.
+     * @return
+     */
+    private String createNotificationString(ArrayList<Boolean> isCheckedArray){
+        String strNotificationPref = "";
+        String[] strArrayCategories = getResources().getStringArray(R.array.categories);
+        for (int i = 0; i < isCheckedArray.size(); i++){
+            if (isCheckedArray.get(i)){
+                strNotificationPref = strNotificationPref + strArrayCategories[i] + ",";
+            }
+        }
+        if (!strNotificationPref.equals("")) {
+            strNotificationPref = strNotificationPref.substring(0,strNotificationPref.length()-1);
+        }
+        return strNotificationPref;
+    }
+
+    public interface NotificationPreferences {
+        void setNotificationPreferences(String notificationPreferences);
+    }
+
+    //need absolute position for persistance within the recyler view
+    //need to save and restore shared prefernces when fragment is destroyed
 }

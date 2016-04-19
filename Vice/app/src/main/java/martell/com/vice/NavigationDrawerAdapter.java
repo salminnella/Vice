@@ -23,11 +23,9 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter {
     private LayoutInflater inflater;
     private ArrayList<Boolean> isCheckedArray = new ArrayList<>();
 
-    public NavigationDrawerAdapter(Context context, List<NavDrawerEntry> data) {
+    public NavigationDrawerAdapter(Context context, List<NavDrawerEntry> data, ArrayList<Boolean> isCheckedArray) {
         this.data = data;
-        for (NavDrawerEntry entry : data){
-            isCheckedArray.add(false);
-        }
+        this.isCheckedArray = isCheckedArray;
         Log.d(TAG_NAV_ADAPTER, "DATA IS : " + data.size());
         this.inflater = LayoutInflater.from(context);
     }
@@ -94,7 +92,6 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter {
                         viewHolder.mSwitch.setChecked(false);
                         isCheckedArray.set(position,false);
                     }
-
                 }
             });
         }
@@ -104,22 +101,17 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter {
     public int getItemViewType(int position) {
 
         if (data.get(position) instanceof NavDrawerItemWithIcon) {
-            Log.d(TAG_NAV_ADAPTER, "GET ITEM VIEW TYPE RETURNS: Item with Icon");
             return 0;
         }
         if (data.get(position) instanceof NavDrawerDivider) {
-            Log.d(TAG_NAV_ADAPTER, "GET ITEM VIEW TYPE RETURNS: divider");
             return 1;
         }
         if (data.get(position) instanceof NavDrawerItem) {
-            Log.d(TAG_NAV_ADAPTER, "GET ITEM VIEW TYPE RETURNS: item");
             return 2;
         }
         if (data.get(position) instanceof NavDrawerToggle) {
-            Log.d(TAG_NAV_ADAPTER, "GET ITEM VIEW TYPE RETURNS: toggle");
             return 3;
         }
-        Log.d(TAG_NAV_ADAPTER, "GET ITEM VIEW TYPE RETURNS: -1");
         return -1;
 
     }
