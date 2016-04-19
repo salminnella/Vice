@@ -1,5 +1,4 @@
-
-package martell.com.vice.models;
+package martell.com.vice.Models;
 
 /**
  * Created by stewartmcmillan on 4/18/16.
@@ -52,5 +51,3 @@ public class Article {
         this.tags = tags;
     }
 }
-
-
