@@ -16,10 +16,19 @@ import martell.com.vice.models.Article;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
+
+import martell.com.vice.fragment.LatestNewFragment;
+
 public class MainActivity extends AppCompatActivity {
     private String TAG = "Main";
-    private static final String CATEGORY_TITLE_KEY = "Title";
 
+    private static final String CATEGORY_TITLE_KEY = "Title";
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
+    private ViewPagerAdapter adapter;
     private ArrayList<Article> articles;
     private RecyclerView articleRV;
     public ViceAPIService viceService;
@@ -27,14 +36,11 @@ public class MainActivity extends AppCompatActivity {
     private AlphaInAnimationAdapter alphaAdapter;
     private Retrofit retrofit;
 
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
-    private ViewPagerAdapter adapter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         articles = new ArrayList<>();
         retrofit = new Retrofit.Builder().baseUrl("http://www.vice.com/en_us/api/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
