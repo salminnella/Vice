@@ -1,44 +1,53 @@
-package martell.com.vice.models;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
+package martell.com.vice.Models;
 
 /**
- * Created by adao1 on 4/18/2016.
+ * Created by stewartmcmillan on 4/18/16.
  */
 public class Article {
+
+    private String id;
     private String title;
     private String body;
-    private boolean isOnScreen;
+    private String image;
+    private String[] tags;
 
-    public Article(String title, String body, boolean isOnScreen) {
-        this.title = title;
-        this.body = body;
-        this.isOnScreen = isOnScreen;
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTitle() {
         return title;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public String getBody() {
         return body;
     }
 
-    public boolean isOnScreen() {
-        return isOnScreen;
+    public void setBody(String body) {
+        this.body = body;
     }
 
-    /**
-     * Temporary makes Article list
-     */
-    private static int lastArticleId = 0;
-    public static ArrayList<Article> createArticleList(int numArticles){
-        ArrayList<Article> articles = new ArrayList<>();
-        for (int i = 1; i <= numArticles; i++){
-            articles.add(new Article("Article " + ++lastArticleId,"Body",false));
-        }
-        return articles;
+    public String getImage() {
+        return image;
     }
 
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String[] getTags() {
+        return tags;
+    }
+
+    public void setTags(String[] tags) {
+        this.tags = tags;
+    }
 }
