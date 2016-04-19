@@ -1,7 +1,14 @@
 package martell.com.vice;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -27,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private ArticleAdapter articleAdapter;
     private AlphaInAnimationAdapter alphaAdapter;
     private Retrofit retrofit;
+    private static final int NOTIFICATION_ID = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
                 articles = new ArrayList<>(Arrays.asList(articleArray));
                 makeRV();
             }
+
             @Override
             public void onFailure(Call<ArticleArray> call, Throwable t) {
             }
@@ -66,6 +75,29 @@ public class MainActivity extends AppCompatActivity {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this,2);
         articleRV.setLayoutManager(gridLayoutManager);
         articleRV.setHasFixedSize(true);
+    }
+
+    private void showBigPictureStyle() {
+        NotificationCompat.BigPictureStyle bigPictureStyle = new NotificationCompat.BigPictureStyle();
+        bigPictureStyle.bigPicture(BitmapFactory.decodeResource(getResources(), R.drawable.nature)).build();
+
+        // update intent with appropriate fragment when fragments are merged
+        Intent intent = new Intent(this, DetailFragment.class);
+        // use System.currentTimeMillis() to have a unique ID for the pending intent
+        PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
+        mBuilder.setSmallIcon(R.mipmap.ic_notification);
+        mBuilder.setContentTitle("Notification Alert, Click Me!");
+        mBuilder.setContentText("Hi, This is Android Notification Detail!");
+        mBuilder.setContentIntent(pIntent);
+        mBuilder.setPriority(Notification.PRIORITY_MAX);
+        mBuilder.setStyle(bigPictureStyle);
+
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        // NOTIFICATION_ID allows you to update the notification later on.
+        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
 
 }
