@@ -1,4 +1,4 @@
-package martell.com.vice;
+package martell.com.vice.services;
 
 import martell.com.vice.models.ArticleArray;
 import martell.com.vice.models.ArticleData;

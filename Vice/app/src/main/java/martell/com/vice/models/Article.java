@@ -24,6 +24,12 @@ public class Article {
     String articleAuthor;
     @SerializedName("category")
     String articleCategory;
+    @SerializedName("url")
+    String articleURL;
+
+    public String getArticleURL() {
+        return articleURL;
+    }
 
     public String getArticleCategory() {
         return articleCategory;
