@@ -1,6 +1,7 @@
 package martell.com.vice;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
@@ -10,6 +11,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareButton;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
@@ -30,6 +33,10 @@ public class Main2Activity extends AppCompatActivity {
     ImageView imageView;
     Button button;
     ImageLoaderConfiguration config;
+    ViceAPIService viceService;
+    String id;
+    ShareButton shareButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,16 +46,21 @@ public class Main2Activity extends AppCompatActivity {
         imageView = (ImageView)findViewById(R.id.imageTEST);
         button = (Button)findViewById(R.id.button);
         Intent intent = getIntent();
-        String id = intent.getStringExtra("KEY");
+        id = intent.getStringExtra("KEY");
         Log.i(TAG, "onCreate: " + id);
         Retrofit retrofit = new Retrofit.Builder().baseUrl("http://www.vice.com/en_us/api/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
-        ViceAPIService viceService = retrofit.create(ViceAPIService.class);
+        viceService = retrofit.create(ViceAPIService.class);
         config = new ImageLoaderConfiguration.Builder(this).build();
 
-        int idNum = Integer.parseInt(id);
-        Log.i(TAG, "onCreate: " + idNum);
-        Call<ArticleData> call = viceService.getArticle(idNum);
+        shareButton = (ShareButton)findViewById(R.id.facebookbutton);
+        getLoadArticle();
+        testCategoryAPICall();
+        shareButtonListener();
+    }
+
+    private void getLoadArticle(){
+        Call<ArticleData> call = viceService.getArticle(Integer.parseInt(id));
         call.enqueue(new Callback<ArticleData>() {
             @Override
             public void onResponse(Call<ArticleData> call, Response<ArticleData> response) {
@@ -60,17 +72,18 @@ public class Main2Activity extends AppCompatActivity {
                     ImageLoader imageLoader = ImageLoader.getInstance(); // Get singleton instance
                     imageLoader.init(config);
                     imageLoader.displayImage(article.getArticleImageURL(), imageView);
+                    ShareLinkContent content = new ShareLinkContent.Builder().setContentUrl(Uri.parse(article.getArticleURL())).build();
+                    shareButton.setShareContent(content);
 
                     Log.d(TAG, "onResponse: " + article.getArticleTitle());
-                }
-                else Log.i(TAG, "onResponse: failed");
+                } else Log.i(TAG, "onResponse: failed");
             }
-
             @Override
             public void onFailure(Call<ArticleData> call, Throwable t) {
             }
         });
-
+    }
+    private void testCategoryAPICall(){
         Call<ArticleArray> callCategory = viceService.getArticlesByCategory("sports",1);
         callCategory.enqueue(new Callback<ArticleArray>() {
             @Override
@@ -87,7 +100,8 @@ public class Main2Activity extends AppCompatActivity {
 
             }
         });
-
+    }
+    private void shareButtonListener(){
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,6 +113,5 @@ public class Main2Activity extends AppCompatActivity {
                 startActivity(Intent.createChooser(share, "Share article with ... "));
             }
         });
-
     }
 }
