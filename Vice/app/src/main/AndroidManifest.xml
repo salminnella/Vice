@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="martell.com.vice">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -17,10 +17,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".MainFakeDrawer">
-
-        </activity>
+        <activity android:name=".MainFakeDrawer"></activity>
         <activity
             android:name=".ArticleActivity"
             android:label="@string/title_activity_article"
@@ -30,6 +27,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="martell.com.vice.MainActivity" />
         </activity>
+        <activity android:name=".Main2Activity"></activity>
     </application>
 
 </manifest>
