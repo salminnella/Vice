@@ -65,12 +65,14 @@
                     android:layout_height="wrap_content">
 
                     <TextView
+                        android:id="@+id/article_title_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Independent Voters Are Pissed They Can't Vote for Trump or Sanders in New York"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
                     <TextView
+                        android:id="@+id/article_body_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/article_content" />
