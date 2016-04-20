@@ -10,18 +10,12 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 
 import java.util.ArrayList;
 
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 import martell.com.vice.adapters.ViewPagerAdapter;
 import martell.com.vice.models.Article;
-import martell.com.vice.models.ArticleArray;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -38,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
     private ArticleAdapter articleAdapter;
     private AlphaInAnimationAdapter alphaAdapter;
     private Retrofit retrofit;
-    private Button syncButton;
 
     // Content provider authority
     public static final String AUTHORITY = "martell.com.vice.sync_adapter.StubProvider";
@@ -55,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
 
         mAccount = createSyncAccount(this);
 
-        syncButton = (Button) findViewById(R.id.button_vice);
         articles = new ArrayList<>();
         retrofit = new Retrofit.Builder().baseUrl("http://www.vice.com/en_us/api/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
@@ -66,8 +58,6 @@ public class MainActivity extends AppCompatActivity {
         adapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
 
-        //setupViewPagerOneFragment(viewPager);
-
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
@@ -76,11 +66,6 @@ public class MainActivity extends AppCompatActivity {
             public void onTabSelected(TabLayout.Tab tab) {
 
                 Log.d(TAG, "onTabSelected: " + adapter.getItem(tab.getPosition()));
-//                String tag = adapter.getItem(tab.getPosition()).getTag();
-//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//                //transaction.add(adapter.getItem(tab.getPosition()), tag);
-//                transaction.replace(R.id.viewpager, adapter.getItem(tab.getPosition()));
-//                transaction.commit();
             }
 
             @Override
@@ -95,25 +80,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //viewPager.setCurrentItem(1);
-        syncButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Call<ArticleArray> call = viceService.latestArticles(1);
-                call.enqueue(new Callback<ArticleArray>() {
-                    @Override
-                    public void onResponse(Call<ArticleArray> call, Response<ArticleArray> response) {
-                        Log.i(TAG, "onResponse: " + response.body().getData().getItems());
-//                        Article[] articleArray = response.body().getData().getItems();
-//                        ArrayList<Article> articlesNew = new ArrayList<>(Arrays.asList(articleArray));
-//                        articles.addAll(articlesNew);
 
-                    }
-                    @Override
-                    public void onFailure(Call<ArticleArray> call, Throwable t) {
-                    }
-                });
-            }
-        });
         ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
         ContentResolver.addPeriodicSync(mAccount, AUTHORITY, Bundle.EMPTY, 30);
     }
@@ -150,6 +117,4 @@ public class MainActivity extends AppCompatActivity {
         }
         return newAccount;
     }
-
-
 }
