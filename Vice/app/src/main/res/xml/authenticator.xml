@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
+<account-authenticator
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accountType="example.com"
+    android:icon="@android:drawable/ic_dialog_info"
+    android:smallIcon="@android:drawable/ic_dialog_info"
+    android:label="@string/app_name"/>
+
+    <!--TODO accountType isnt used, since vice doesnt require logins, but it still needs a type-->
+    <!--TODO icon isnt really needed, since were not making it visible-->
+    <!--TODO small icon would be used in the Accounts section of the systems Settings app-->
+    <!--TODO label would appear in the Accounts section settings, next to icon  -->
