@@ -14,7 +14,7 @@
         layout="@layout/app_bar_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-<!--
+
     <fragment
         android:id="@+id/fragment_navigation_drawer"
         android:name="martell.com.vice.fragment.NavigationDrawerFragment"
@@ -23,5 +23,5 @@
         android:layout_gravity="start"
         app:layout="@layout/fragment_navigation_drawer_main"
         tools:layout="@layout/fragment_navigation_drawer_main" />
-/-->
+
 </android.support.v4.widget.DrawerLayout>
