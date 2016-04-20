@@ -1,44 +1,64 @@
 package martell.com.vice.models;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
+import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by adao1 on 4/18/2016.
+ * Created by adao1 on 4/19/2016.
  */
 public class Article {
-    private String title;
-    private String body;
-    private boolean isOnScreen;
+    @SerializedName("id")
+    String articleId;
+    @SerializedName("title")
+    String articleTitle;
+    @SerializedName("tags")
+    String [] articleTags;
+    @SerializedName("thumb")
+    String articleThumbURL;
+    @SerializedName("image")
+    String articleImageURL;
+    @SerializedName("preview")
+    String articlePreview;
+    @SerializedName("body")
+    String articleBody;
+    @SerializedName("author")
+    String articleAuthor;
+    @SerializedName("category")
+    String articleCategory;
 
-    public Article(String title, String body, boolean isOnScreen) {
-        this.title = title;
-        this.body = body;
-        this.isOnScreen = isOnScreen;
+    public String getArticleCategory() {
+        return articleCategory;
     }
 
-    public String getTitle() {
-        return title;
+    public String getArticleId() {
+        return articleId;
     }
 
-    public String getBody() {
-        return body;
+    public String getArticleTitle() {
+        return articleTitle;
     }
 
-    public boolean isOnScreen() {
-        return isOnScreen;
+    public String[] getArticleTags() {
+        return articleTags;
     }
 
-    /**
-     * Temporary makes Article list
-     */
-    private static int lastArticleId = 0;
-    public static ArrayList<Article> createArticleList(int numArticles){
-        ArrayList<Article> articles = new ArrayList<>();
-        for (int i = 1; i <= numArticles; i++){
-            articles.add(new Article("Article " + ++lastArticleId,"Body",false));
-        }
-        return articles;
+    public String getArticleThumbURL() {
+        return articleThumbURL;
     }
 
+    public String getArticleImageURL() {
+        return articleImageURL;
+    }
+
+    public String getArticlePreview() {
+        return articlePreview;
+    }
+
+    public String getArticleBody() {
+        return articleBody;
+    }
+
+    public String getArticleAuthor() {
+        return articleAuthor;
+    }
 }
+
