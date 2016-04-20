@@ -20,6 +20,16 @@
             android:id="@+id/button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+        <com.facebook.share.widget.ShareButton
+            android:id="@+id/facebookbutton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Share to Facebook"/>
+        <Button
+            android:id="@+id/testButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Test Bookmark helper"/>
     <TextView
         android:id="@+id/textTEST"
         android:paddingLeft="@dimen/activity_horizontal_margin"
