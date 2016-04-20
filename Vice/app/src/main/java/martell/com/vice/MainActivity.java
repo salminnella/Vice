@@ -4,29 +4,35 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import martell.com.vice.adapters.ViewPagerAdapter;
 import martell.com.vice.fragment.LatestNewFragment;
+import martell.com.vice.fragment.NavigationDrawerFragment;
 import martell.com.vice.models.Article;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationDrawerFragment.NotificationPreferences{
     private static final String TAG = "Main";
     public static final String KEY_FRAGMENT_TITLE = "FragmentTitle";
+    private static final String KEY_SHARED_PREF_NOTIF = "sharedPrefNotification";
     private ViewPager viewPager;
     private ArrayList<Article> articles;
     public ViceAPIService viceService;
     private Retrofit retrofit;
-    private LatestNewFragment category;
     private ViewPagerAdapter adapter;
     private TabLayout tabLayout;
+    private String notificationPreferences;
 
     // Content provider authority
     public static final String AUTHORITY = "martell.com.vice.sync_adapter.StubProvider";
@@ -41,9 +47,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        SharedPreferences sharedPreferences = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
+        String notificationFromSharedPref = sharedPreferences.getString(KEY_SHARED_PREF_NOTIF,"");
+        setNavigationDrawer(createBoolArrayList(notificationFromSharedPref));
+
         mAccount = createSyncAccount(this);
 
-        category = new LatestNewFragment();
         articles = new ArrayList<>();
         retrofit = new Retrofit.Builder().baseUrl("http://www.vice.com/en_us/api/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
@@ -177,5 +186,63 @@ public class MainActivity extends AppCompatActivity {
         return newAccount;
 
 
+    }
+
+    private ArrayList<Boolean> createBoolArrayList(String notificationPreferences){
+        String[] categories = getResources().getStringArray(R.array.categories);
+        ArrayList<Boolean> isCheckedArray = new ArrayList<>();
+        String[] arrayNotificationPref = notificationPreferences.split(",");
+
+        for (int i = 0; i < categories.length; i++){
+            isCheckedArray.add(false);
+            for (String curNotification: arrayNotificationPref) {
+                if (categories[i].equals(curNotification)){
+                    isCheckedArray.set(i,true);
+                }
+            }
+        }
+
+        return isCheckedArray;
+    }
+
+    private void setNavigationDrawer(ArrayList<Boolean> isCheckedArray) {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar()!= null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } else {
+            Log.d(TAG, "SUPPORT ACTION BAR IS NULL");
+        }
+        List<NavDrawerEntry> drawerEntries = new ArrayList<>();
+        drawerEntries.add(new NavDrawerItem("Categories"));
+        drawerEntries.add(new NavDrawerDivider());
+        drawerEntries.add(new NavDrawerToggle("News"));
+        drawerEntries.add(new NavDrawerToggle("Music"));
+        drawerEntries.add(new NavDrawerToggle("Sports"));
+        drawerEntries.add(new NavDrawerToggle("Tech"));
+        drawerEntries.add(new NavDrawerToggle("Travel"));
+        drawerEntries.add(new NavDrawerToggle("Fashion"));
+        drawerEntries.add(new NavDrawerToggle("Guide"));
+        
+        NavigationDrawerFragment drawerFragment = (NavigationDrawerFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_navigation_drawer);
+
+        drawerFragment.initDrawer((android.support.v4.widget.DrawerLayout) findViewById(R.id.drawer_layout_main),
+                toolbar, drawerEntries,isCheckedArray);
+        Log.d(TAG, "THE initDrawer HAS BEEN CALLED ON MAIN");
+    }
+
+    @Override
+    public void setNotificationPreferences(String notificationPreferences) {
+        this.notificationPreferences = notificationPreferences;
+    }
+
+    @Override
+    protected void onDestroy() {
+        SharedPreferences sharedPreferences = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(KEY_SHARED_PREF_NOTIF,notificationPreferences);
+        editor.commit();
+        super.onDestroy();
     }
 }
