@@ -13,8 +13,9 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 import martell.com.vice.adapters.ViewPagerAdapter;
+
+import martell.com.vice.fragment.LatestNewFragment;
 import martell.com.vice.models.Article;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -22,16 +23,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity {
     private String TAG = "Main";
 
-    private static final String CATEGORY_TITLE_KEY = "Title";
-    private TabLayout tabLayout;
+    public static final String CATEGORY_TITLE_KEY = "Title";
     private ViewPager viewPager;
-    private ViewPagerAdapter adapter;
     private ArrayList<Article> articles;
-    private RecyclerView articleRV;
     public ViceAPIService viceService;
-    private ArticleAdapter articleAdapter;
-    private AlphaInAnimationAdapter alphaAdapter;
     private Retrofit retrofit;
+    private LatestNewFragment category;
+    private ViewPagerAdapter adapter;
 
     // Content provider authority
     public static final String AUTHORITY = "martell.com.vice.sync_adapter.StubProvider";
@@ -48,41 +46,79 @@ public class MainActivity extends AppCompatActivity {
 
         mAccount = createSyncAccount(this);
 
+        category = new LatestNewFragment();
         articles = new ArrayList<>();
         retrofit = new Retrofit.Builder().baseUrl("http://www.vice.com/en_us/api/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
         viceService = retrofit.create(ViceAPIService.class);
-        //displayLatestArticles();
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
+
         adapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
 
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
+        setupViewPagerOneFragment(viewPager);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
+        if (tabLayout != null) {
+            tabLayout.setupWithViewPager(viewPager);
 
-                Log.d(TAG, "onTabSelected: " + adapter.getItem(tab.getPosition()));
-            }
+            tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    Log.d(TAG, String.valueOf(viewPager.getCurrentItem()));
+                    viewPager.setCurrentItem(tab.getPosition());
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
+                }
 
-            }
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
 
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
+                }
 
-            }
-        });
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
 
-        //viewPager.setCurrentItem(1);
+                }
+            });
+        }
+
 
         ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
         ContentResolver.addPeriodicSync(mAccount, AUTHORITY, Bundle.EMPTY, 30);
+    }
+
+    private void setupViewPagerOneFragment(ViewPager viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        LatestNewFragment home = new LatestNewFragment();
+        adapter.addFragment(home, "Home");
+
+        LatestNewFragment news = new LatestNewFragment();
+        adapter.addFragment(news, "News");
+
+        LatestNewFragment music = new LatestNewFragment();
+        adapter.addFragment(music, "Music");
+
+        LatestNewFragment sports = new LatestNewFragment();
+        adapter.addFragment(sports, "Sports");
+
+        LatestNewFragment tech = new LatestNewFragment();
+        adapter.addFragment(tech, "Tech");
+
+        LatestNewFragment travel = new LatestNewFragment();
+        adapter.addFragment(travel, "Travel");
+
+        LatestNewFragment fashion = new LatestNewFragment();
+        adapter.addFragment(fashion, "Fashion");
+
+        LatestNewFragment guide = new LatestNewFragment();
+        adapter.addFragment(guide, "Guide");
+
+        LatestNewFragment bookmarks = new LatestNewFragment();
+        adapter.addFragment(bookmarks, "Bookmarks");
+
+        viewPager.setAdapter(adapter);
+
     }
 
     /**
@@ -116,5 +152,7 @@ public class MainActivity extends AppCompatActivity {
              */
         }
         return newAccount;
+
+
     }
 }

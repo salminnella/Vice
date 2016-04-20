@@ -5,6 +5,11 @@ package martell.com.vice.models;
  */
 public class Data {
     Article[] items;
+    Article article;
+
+    public Article getArticle() {
+        return article;
+    }
 
     public Article[] getItems() {
         return items;
