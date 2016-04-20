@@ -23,6 +23,7 @@ import martell.com.vice.models.ArticleArray;
 import martell.com.vice.models.ArticleData;
 import martell.com.vice.models.Data;
 import martell.com.vice.BookmarksHelper;
+import martell.com.vice.services.ViceAPIService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -53,6 +54,7 @@ public class Main2Activity extends AppCompatActivity {
         Intent intent = getIntent();
         id = intent.getStringExtra("KEY");
         Log.i(TAG, "onCreate: " + id);
+
         Retrofit retrofit = new Retrofit.Builder().baseUrl("http://www.vice.com/en_us/api/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
         viceService = retrofit.create(ViceAPIService.class);
@@ -66,6 +68,7 @@ public class Main2Activity extends AppCompatActivity {
     }
 
     private void getLoadArticle(){
+
         Call<ArticleData> call = viceService.getArticle(Integer.parseInt(id));
         call.enqueue(new Callback<ArticleData>() {
             @Override
@@ -73,6 +76,7 @@ public class Main2Activity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Article article = response.body().getData().getArticle();
                     textView.setText(article.getArticleTitle());
+
                     //bodyView.setText(article.getArticleBody());
                     bodyView.setText(Html.fromHtml(article.getArticleBody()));
                     ImageLoader imageLoader = ImageLoader.getInstance(); // Get singleton instance

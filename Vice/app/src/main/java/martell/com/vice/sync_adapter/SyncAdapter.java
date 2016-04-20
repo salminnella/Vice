@@ -11,7 +11,7 @@ import android.util.Log;
 
 import java.io.IOException;
 
-import martell.com.vice.ViceAPIService;
+import martell.com.vice.services.ViceAPIService;
 import martell.com.vice.models.ArticleArray;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -86,7 +86,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         //get a response from vice
         try {
             Response<ArticleArray> response = viceService.latestArticles(1).execute();
-            Log.i(TAG, "onResponse: " + response.body().getData());
+            Log.i(TAG, "onResponse: " + response.body().getData().getItems()[0].getArticleAuthor());
 
         } catch (IOException e) {
             e.printStackTrace();
