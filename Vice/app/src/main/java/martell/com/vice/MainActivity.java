@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
@@ -41,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     // Account
     public static final String ACCOUNT = "default_account";
     Account mAccount;
+    // A content resolver for accessing the provider
+    ContentResolver mResolver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +88,9 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                 }
             });
         }
+
+        // Get the content resolver for your app
+        mResolver = getContentResolver();
 
         ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
         ContentResolver.addPeriodicSync(mAccount, AUTHORITY, Bundle.EMPTY, 30);
@@ -150,7 +156,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         adapter.addFragment(bookmarks, "Bookmarks");
 
         viewPager.setAdapter(adapter);
-
     }
 
     /**
@@ -184,8 +189,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
              */
         }
         return newAccount;
-
-
     }
 
     private ArrayList<Boolean> createBoolArrayList(String notificationPreferences){

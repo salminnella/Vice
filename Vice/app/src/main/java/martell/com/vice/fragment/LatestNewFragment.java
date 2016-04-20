@@ -17,8 +17,8 @@ import java.util.Arrays;
 
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
+import martell.com.vice.ArticleActivity;
 import martell.com.vice.ArticleAdapter;
-import martell.com.vice.Main2Activity;
 import martell.com.vice.MainActivity;
 import martell.com.vice.R;
 import martell.com.vice.RV_SpaceDecoration;
@@ -122,8 +122,10 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
 
     @Override
     public void onRVItemClick(Article article) {
-        Intent intent = new Intent(getActivity(), Main2Activity.class);
-        intent.putExtra("KEY", article.getArticleId());
+
+        Intent intent = new Intent(getActivity(), ArticleActivity.class);
+        intent.putExtra("KEY",article.getArticleId());
+
         startActivity(intent);
     }
 }
