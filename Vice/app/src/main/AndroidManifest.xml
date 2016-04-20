@@ -33,9 +33,6 @@
                 android:value="martell.com.vice.MainActivity" />
         </activity>
 
-
-
-
         <service
             android:name="martell.com.vice.sync_adapter.AuthenticatorService">
             <intent-filter>
@@ -56,6 +53,9 @@
                 android:resource="@xml/syncadapter" />
         </service>
 
+        <service android:name=".services.NotificationIntentService"
+            android:exported="false" >
+        </service>
 
         <provider
             android:name="martell.com.vice.sync_adapter.StubProvider"

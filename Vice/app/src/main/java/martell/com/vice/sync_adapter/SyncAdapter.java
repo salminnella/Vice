@@ -11,7 +11,7 @@ import android.util.Log;
 
 import java.io.IOException;
 
-import martell.com.vice.ViceAPIService;
+import martell.com.vice.services.ViceAPIService;
 import martell.com.vice.models.ArticleArray;
 import retrofit2.Response;
 import retrofit2.Retrofit;

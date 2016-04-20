@@ -19,7 +19,7 @@
 //import martell.com.vice.ArticleAdapter;
 //import martell.com.vice.R;
 //import martell.com.vice.RV_SpaceDecoration;
-//import martell.com.vice.ViceAPIService;
+//import martell.com.vice.services.ViceAPIService;
 //import martell.com.vice.models.Article;
 //import martell.com.vice.models.ArticleArray;
 //import retrofit2.Call;
