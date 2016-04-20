@@ -11,14 +11,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
-
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
+import martell.com.vice.ArticleActivity;
 import martell.com.vice.ArticleAdapter;
 import martell.com.vice.Main2Activity;
+import martell.com.vice.MainActivity;
 import martell.com.vice.R;
 import martell.com.vice.RV_SpaceDecoration;
 import martell.com.vice.services.ViceAPIService;
@@ -29,27 +29,33 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.HEAD;
 
 /**
  * Created by adao1 on 4/19/2016.
  */
 public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVItemClickListener {
-    private String TAG = "Latest News Fragment";
+    private static final String TAG = "Latest News Fragment";
+    private ArrayList<String> tabViewsTitle;
     private ArrayList<Article> articles;
     private RecyclerView articleRV;
     public ViceAPIService viceService;
     private ArticleAdapter articleAdapter;
     private AlphaInAnimationAdapter alphaAdapter;
     private Retrofit retrofit;
-    private String category;
-    private int countViews;
+    private String fragTitle;
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_latest_news,container,false);
         articleRV = (RecyclerView)view.findViewById(R.id.articleRV);
-        countViews = 0;
         return view;
     }
 
@@ -60,16 +66,27 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
         retrofit = new Retrofit.Builder().baseUrl("http://www.vice.com/en_us/api/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
         viceService = retrofit.create(ViceAPIService.class);
-        for (int i = 0; i < 5; i++) {
-            displayLatestArticles(i);
-        }
+        displayLatestArticles(1);
     }
 
     private void displayLatestArticles(int numPages){
-        countViews +=1;
-        Log.d(TAG, "displayLatestArticles: This is the category " + countViews);
-        if (countViews == 1) {
-            Call<ArticleArray> call = viceService.latestArticles(numPages);
+        Call<ArticleArray> call =null;
+        fragTitle = getArguments().getString(MainActivity.KEY_FRAGMENT_TITLE);
+        Log.d("Frag", "title: " + fragTitle);
+        Log.d(TAG, "THIS IS THE FRAGMENT TITLE " + fragTitle);
+        if (fragTitle.equals("Home")) {
+            call = viceService.latestArticles(numPages);
+
+        } else if(fragTitle.equals("Bookmarks")) {
+            Log.d(TAG, "BOOKSMARKS HAS BEEN SELECTED IN DISPLAYLATEST ARTICLES");
+
+        } else {
+            Log.d(TAG, "ELSE IS CALLED IN DISPLAYLATEST ARTICLES + CURTITLE " + fragTitle);
+            call = viceService.getArticlesByCategory(fragTitle,numPages);
+
+        }
+
+        if (call != null) {
             call.enqueue(new Callback<ArticleArray>() {
                 @Override
                 public void onResponse(Call<ArticleArray> call, Response<ArticleArray> response) {
@@ -83,15 +100,7 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
                 public void onFailure(Call<ArticleArray> call, Throwable t) {
                 }
             });
-        } else if (countViews == 2) {
-            Log.d(TAG, "displayLatestArticles: bookmarks");
-
-
-        } else {
-            Log.d(TAG, "displayLatestArticles: all other categories");
-
         }
-
 
     }
 
@@ -113,8 +122,10 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
 
     @Override
     public void onRVItemClick(Article article) {
-        Intent intent = new Intent(getActivity(), Main2Activity.class);
-        intent.putExtra("KEY", article.getArticleId());
+
+        Intent intent = new Intent(getActivity(), ArticleActivity.class);
+        intent.putExtra("KEY",article.getArticleId());
+
         startActivity(intent);
     }
 }

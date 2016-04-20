@@ -22,7 +22,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainFakeDrawer"></activity>
         <activity
             android:name=".ArticleActivity"
             android:label="@string/title_activity_article"
@@ -59,7 +58,7 @@
 
         <provider
             android:name="martell.com.vice.sync_adapter.StubProvider"
-            android:authorities="martell.com.vice.sync_adapter.provider"
+            android:authorities="martell.com.vice.sync_adapter.StubProvider"
             android:exported="false"
             android:syncable="true"/>
 

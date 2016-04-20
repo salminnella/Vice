@@ -1,17 +1,49 @@
 package martell.com.vice;
 
+import android.accounts.Account;
+import android.content.ContentResolver;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+
+import martell.com.vice.models.Article;
+import martell.com.vice.models.ArticleData;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ArticleActivity extends AppCompatActivity {
+
+    private static final String TAG = "ArticleActivity";
+    Retrofit retrofit;
+    ImageLoaderConfiguration config;
+    String articleId;
+    ViceAPIService viceService;
+    int idNum;
+    TextView articleTitleText;
+    TextView articleBodyText;
+    Article article;
+    ImageView backDropImage;
+    CollapsingToolbarLayout collapsingToolbarLayout;
+
+    // Content provider authority
+    public static final String AUTHORITY = "martell.com.vice.sync_adapter.StubProvider";
+    Account mAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,28 +53,70 @@ public class ArticleActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        collapsingToolbarLayout.setTitle("Top Stories");
-        //collapsingToolbarLayout.setContentScrimColor(Color.GREEN);
-        collapsingToolbarLayout.setCollapsedTitleTextColor(Color.BLACK);
+        //receives article id that was clicked from main
+        receiveIntent();
+        initViews();
 
-        loadBackdrop();
+        retrofit = new Retrofit.Builder().baseUrl("http://www.vice.com/en_us/api/")
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        viceService = retrofit.create(ViceAPIService.class);
+        config = new ImageLoaderConfiguration.Builder(this).build();
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        if (fab != null) {
-//            fab.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//
-//                }
-//            });
-//        }
+        idNum = Integer.parseInt(articleId);
+        Log.i(TAG, "onCreate: " + idNum);
+
+        Call<ArticleData> call = viceService.getArticle(idNum);
+        call.enqueue(new Callback<ArticleData>() {
+            @Override
+            public void onResponse(Call<ArticleData> call, Response<ArticleData> response) {
+                if (response.isSuccessful()) {
+                    article = response.body().getData().getArticle();
+                    articleTitleText.setText(article.getArticleTitle());
+
+                    loadBody();
+                    loadBackdrop();
+
+                    Log.d(TAG, "onResponse: " + article.getArticleTitle());
+                } else Log.i(TAG, "onResponse: failed");
+            }
+
+            @Override
+            public void onFailure(Call<ArticleData> call, Throwable t) {
+            }
+        });
+
+
+    }
+
+    private void initViews() {
+        articleTitleText = (TextView) findViewById(R.id.article_title_text);
+        articleBodyText = (TextView) findViewById(R.id.article_body_text);
+        backDropImage = (ImageView) findViewById(R.id.backdrop);
+        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+    }
+
+    private void receiveIntent() {
+        Intent intent = getIntent();
+        articleId = intent.getStringExtra("KEY");
+        Log.i(TAG, "onCreate: " + articleId);
     }
 
     private void loadBackdrop() {
-        final ImageView imageView = (ImageView) findViewById(R.id.backdrop);
-        Glide.with(this).load(R.drawable.pissed).centerCrop().into(imageView);
+        ImageLoader imageLoader = ImageLoader.getInstance(); // Get singleton instance
+        imageLoader.init(config);
+        Glide.with(this).load(article.getArticleImageURL()).centerCrop().into(backDropImage);
     }
+
+    private void loadBody() {
+        collapsingToolbarLayout.setTitle(article.getArticleCategory());
+        collapsingToolbarLayout.setCollapsedTitleTextColor(Color.BLACK);
+        articleBodyText.setText(Html.fromHtml(article.getArticleBody()));
+    }
+
+
+
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -58,9 +132,19 @@ public class ArticleActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
+        if (id == R.id.bookmark_item_menu) {
+            Bundle settingsBundle = new Bundle();
+            settingsBundle.putBoolean(
+                    ContentResolver.SYNC_EXTRAS_MANUAL, true);
+            settingsBundle.putBoolean(
+                    ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+                    /*
+                     * Request the sync for the default account, authority, and
+                     * manual sync settings
+                     */
+            ContentResolver.requestSync(mAccount, AUTHORITY, settingsBundle);
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }

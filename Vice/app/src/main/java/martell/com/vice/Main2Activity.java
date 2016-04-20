@@ -42,6 +42,7 @@ public class Main2Activity extends AppCompatActivity {
         Intent intent = getIntent();
         String id = intent.getStringExtra("KEY");
         Log.i(TAG, "onCreate: " + id);
+
         Retrofit retrofit = new Retrofit.Builder().baseUrl("http://www.vice.com/en_us/api/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
         ViceAPIService viceService = retrofit.create(ViceAPIService.class);
@@ -49,6 +50,7 @@ public class Main2Activity extends AppCompatActivity {
 
         int idNum = Integer.parseInt(id);
         Log.i(TAG, "onCreate: " + idNum);
+
         Call<ArticleData> call = viceService.getArticle(idNum);
         call.enqueue(new Callback<ArticleData>() {
             @Override
@@ -56,6 +58,7 @@ public class Main2Activity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Article article = response.body().getData().getArticle();
                     textView.setText(article.getArticleTitle());
+
                     //bodyView.setText(article.getArticleBody());
                     bodyView.setText(Html.fromHtml(article.getArticleBody()));
                     ImageLoader imageLoader = ImageLoader.getInstance(); // Get singleton instance
