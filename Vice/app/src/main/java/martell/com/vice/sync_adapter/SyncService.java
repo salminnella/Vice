@@ -6,6 +6,7 @@ import android.os.IBinder;
 
 /**
  * Created by anthony on 4/19/16.
+ * This is the service for the Sync Adapter to work in
  */
 public class SyncService extends Service {
 
