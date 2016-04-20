@@ -1,5 +1,6 @@
 package martell.com.vice.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,7 +17,10 @@ import java.util.Arrays;
 
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
+import martell.com.vice.ArticleActivity;
 import martell.com.vice.ArticleAdapter;
+import martell.com.vice.Main2Activity;
+import martell.com.vice.MainActivity;
 import martell.com.vice.R;
 import martell.com.vice.RV_SpaceDecoration;
 import martell.com.vice.ViceAPIService;
@@ -31,7 +35,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * Created by adao1 on 4/19/2016.
  */
-public class LatestNewFragment extends Fragment {
+public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVItemClickListener {
     private String TAG = "Latest News Fragment";
     private ArrayList<Article> articles;
     private RecyclerView articleRV;
@@ -94,7 +98,7 @@ public class LatestNewFragment extends Fragment {
     }
 
     private void makeRV (){
-        articleAdapter = new ArticleAdapter(articles);
+        articleAdapter = new ArticleAdapter(articles,this);
         alphaAdapter = new AlphaInAnimationAdapter(articleAdapter);
         alphaAdapter.setDuration(8000);
         alphaAdapter.setInterpolator(new OvershootInterpolator());
@@ -109,4 +113,10 @@ public class LatestNewFragment extends Fragment {
         articleRV.setHasFixedSize(true);
     }
 
+    @Override
+    public void onRVItemClick(Article article) {
+        Intent intent = new Intent(getActivity(), Main2Activity.class);
+        intent.putExtra("KEY",article.getArticleId());
+        startActivity(intent);
+    }
 }

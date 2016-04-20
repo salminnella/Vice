@@ -9,7 +9,7 @@ import android.util.Log;
 import java.util.ArrayList;
 
 import martell.com.vice.adapters.ViewPagerAdapter;
-import martell.com.vice.fragment.CategoryFragment;
+//import martell.com.vice.fragment.CategoryFragment;
 import martell.com.vice.fragment.LatestNewFragment;
 import martell.com.vice.models.Article;
 import retrofit2.Retrofit;
@@ -70,28 +70,28 @@ public class MainActivity extends AppCompatActivity {
         LatestNewFragment home = new LatestNewFragment();
         adapter.addFragment(home, "Home");
 
-        CategoryFragment news = new CategoryFragment();
+        LatestNewFragment news = new LatestNewFragment();
         adapter.addFragment(news, "News");
 
-        CategoryFragment music = new CategoryFragment();
+        LatestNewFragment music = new LatestNewFragment();
         adapter.addFragment(music, "Music");
 
-        CategoryFragment sports = new CategoryFragment();
+        LatestNewFragment sports = new LatestNewFragment();
         adapter.addFragment(sports, "Sports");
 
-        CategoryFragment tech = new CategoryFragment();
+        LatestNewFragment tech = new LatestNewFragment();
         adapter.addFragment(tech, "Tech");
 
-        CategoryFragment travel = new CategoryFragment();
+        LatestNewFragment travel = new LatestNewFragment();
         adapter.addFragment(travel, "Travel");
 
-        CategoryFragment fashion = new CategoryFragment();
+        LatestNewFragment fashion = new LatestNewFragment();
         adapter.addFragment(fashion, "Fashion");
 
-        CategoryFragment guide = new CategoryFragment();
+        LatestNewFragment guide = new LatestNewFragment();
         adapter.addFragment(guide, "Guide");
 
-        CategoryFragment bookmarks = new CategoryFragment();
+        LatestNewFragment bookmarks = new LatestNewFragment();
         adapter.addFragment(bookmarks, "Bookmarks");
 
         viewPager.setAdapter(adapter);

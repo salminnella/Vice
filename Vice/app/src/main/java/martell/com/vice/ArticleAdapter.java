@@ -1,6 +1,10 @@
 package martell.com.vice;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Rect;
+
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
@@ -24,9 +28,15 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
     private List<Article> mArticles;
     private static final String TAG = "ArticleAdapter";
     private ImageLoaderConfiguration config;
+    private final OnRVItemClickListener listener;
 
-    public ArticleAdapter(List<Article> mArticles) {
+    public interface OnRVItemClickListener {
+        void onRVItemClick(Article article);
+    }
+
+    public ArticleAdapter(List<Article> mArticles, OnRVItemClickListener listener) {
         this.mArticles = mArticles;
+        this.listener = listener;
     }
 
     @Override
@@ -49,12 +59,11 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         ImageView imageView = holder.imageView;
         titleTextView.setText(article.getArticleTitle());
         previewTextView.setText(Html.fromHtml(article.getArticlePreview()));
-        Log.d(TAG, "onBindViewHolder: ");
-//        ImageLoader.getInstance().init(config);
         ImageLoader imageLoader = ImageLoader.getInstance(); // Get singleton instance
         imageLoader.init(config);
         imageLoader.displayImage(article.getArticleThumbURL(), imageView);
 
+        holder.bind(mArticles.get(position),listener);
     }
 
     @Override
@@ -62,7 +71,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         return mArticles.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView titleTextView;
         public TextView previewTextView;
         public ImageView imageView;
@@ -72,6 +81,15 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
             this.titleTextView = (TextView)itemView.findViewById(R.id.item_title);
             this.previewTextView = (TextView)itemView.findViewById(R.id.item_body);
             this.imageView = (ImageView)itemView.findViewById(R.id.item_image);
+        }
+        public void bind(final Article article, final OnRVItemClickListener listener){
+            //titleTextView.setText(article.getArticleTitle());
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onRVItemClick(article);
+                }
+            });
         }
     }
 }
