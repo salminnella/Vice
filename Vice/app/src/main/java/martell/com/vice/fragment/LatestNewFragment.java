@@ -11,18 +11,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
-
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
 import martell.com.vice.ArticleActivity;
 import martell.com.vice.ArticleAdapter;
+import martell.com.vice.Main2Activity;
 import martell.com.vice.MainActivity;
 import martell.com.vice.R;
 import martell.com.vice.RV_SpaceDecoration;
-import martell.com.vice.ViceAPIService;
+import martell.com.vice.services.ViceAPIService;
 import martell.com.vice.models.Article;
 import martell.com.vice.models.ArticleArray;
 import retrofit2.Call;
@@ -30,6 +29,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.HEAD;
 
 /**
  * Created by adao1 on 4/19/2016.

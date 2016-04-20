@@ -17,6 +17,7 @@ import martell.com.vice.models.Article;
 import martell.com.vice.models.ArticleArray;
 import martell.com.vice.models.ArticleData;
 import martell.com.vice.models.Data;
+import martell.com.vice.services.ViceAPIService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

@@ -1,15 +1,17 @@
 package martell.com.vice;
 
+import android.content.Context;
+import android.content.Intent;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
@@ -20,6 +22,8 @@ import martell.com.vice.adapters.ViewPagerAdapter;
 import martell.com.vice.fragment.LatestNewFragment;
 import martell.com.vice.fragment.NavigationDrawerFragment;
 import martell.com.vice.models.Article;
+import martell.com.vice.services.NotificationIntentService;
+import martell.com.vice.services.ViceAPIService;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -32,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     public ViceAPIService viceService;
     private Retrofit retrofit;
     private ViewPagerAdapter adapter;
+    private static final int NOTIFICATION_ID = 1;
     private TabLayout tabLayout;
     private String notificationPreferences;
 
@@ -87,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
                 }
             });
+
         }
 
         // Get the content resolver for your app
@@ -94,6 +100,10 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
         ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
         ContentResolver.addPeriodicSync(mAccount, AUTHORITY, Bundle.EMPTY, 30);
+
+        Intent intent = new Intent(this, NotificationIntentService.class);
+        // put extra with article id here
+        startService(intent);
     }
 
     private void setupViewPagerOneFragment(ViewPager viewPager) {
