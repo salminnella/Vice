@@ -10,7 +10,7 @@ import android.os.Bundle;
 /**
  * Created by anthony on 4/19/16.
  * Implements AbstractAccountAuthenticator for Sync Adapter. Creates stubs for all
- * of its methods
+ * of its methods. Used to authenticate before transmitting data to or from the server
  */
 public class Authenticator extends AbstractAccountAuthenticator {
     // Simple constructor
