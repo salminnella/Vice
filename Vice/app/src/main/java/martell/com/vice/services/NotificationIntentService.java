@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import martell.com.vice.Main2Activity;
 import martell.com.vice.MainActivity;
 import martell.com.vice.R;
 import martell.com.vice.models.Article;
@@ -86,7 +87,7 @@ public class NotificationIntentService extends IntentService{
 
     private void showArticleTitle(final String text) {
 
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, Main2Activity.class);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addParentStack(MainActivity.class);

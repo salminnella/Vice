@@ -1,7 +1,5 @@
 package martell.com.vice;
 
-import martell.com.vice.fragment.LatestNewFragment;
-
 import android.content.Context;
 import android.content.Intent;
 import android.accounts.Account;
@@ -68,7 +66,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                 .addConverterFactory(GsonConverterFactory.create()).build();
         viceService = retrofit.create(ViceAPIService.class);
 
-
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         adapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
@@ -101,13 +98,12 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         // Get the content resolver for your app
         mResolver = getContentResolver();
 
-//        ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
-//        ContentResolver.addPeriodicSync(mAccount, AUTHORITY, Bundle.EMPTY, 30);
+        ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
+        ContentResolver.addPeriodicSync(mAccount, AUTHORITY, Bundle.EMPTY, 30);
 
-
-        Intent intent = new Intent(this, NotificationIntentService.class);
-        // put extra with article id here
-        startService(intent);
+//        Intent intent = new Intent(this, NotificationIntentService.class);
+//        // put extra with article id here
+//        startService(intent);
     }
 
     private void setupViewPagerOneFragment(ViewPager viewPager) {
