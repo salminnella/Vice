@@ -44,6 +44,11 @@
         </service>
 
 
+        <provider
+            android:name="martell.com.vice.sync_adapter.StubProvider"
+            android:authorities="martell.com.vice.sync_adapter.provider"
+            android:exported="false"
+            android:syncable="true"/>
 
     </application>
 
