@@ -1,5 +1,7 @@
 package martell.com.vice;
 
+import android.accounts.Account;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -38,6 +40,10 @@ public class ArticleActivity extends AppCompatActivity {
     Article article;
     ImageView backDropImage;
     CollapsingToolbarLayout collapsingToolbarLayout;
+
+    // Content provider authority
+    public static final String AUTHORITY = "martell.com.vice.sync_adapter.StubProvider";
+    Account mAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,9 +132,19 @@ public class ArticleActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
+        if (id == R.id.bookmark_item_menu) {
+            Bundle settingsBundle = new Bundle();
+            settingsBundle.putBoolean(
+                    ContentResolver.SYNC_EXTRAS_MANUAL, true);
+            settingsBundle.putBoolean(
+                    ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+                    /*
+                     * Request the sync for the default account, authority, and
+                     * manual sync settings
+                     */
+            ContentResolver.requestSync(mAccount, AUTHORITY, settingsBundle);
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }

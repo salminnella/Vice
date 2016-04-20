@@ -8,13 +8,11 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import java.util.ArrayList;
 
 import martell.com.vice.adapters.ViewPagerAdapter;
-
 import martell.com.vice.fragment.LatestNewFragment;
 import martell.com.vice.models.Article;
 import retrofit2.Retrofit;
@@ -38,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     // Account
     public static final String ACCOUNT = "default_account";
     Account mAccount;
+    // A content resolver for accessing the provider
+    ContentResolver mResolver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +83,8 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-
+        // Get the content resolver for your app
+        mResolver = getContentResolver();
         ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
         ContentResolver.addPeriodicSync(mAccount, AUTHORITY, Bundle.EMPTY, 30);
     }
