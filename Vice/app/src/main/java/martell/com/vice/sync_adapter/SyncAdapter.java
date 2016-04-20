@@ -7,6 +7,15 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
+import android.util.Log;
+
+import java.io.IOException;
+
+import martell.com.vice.ViceAPIService;
+import martell.com.vice.models.ArticleArray;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by anthony on 4/19/16.
@@ -14,6 +23,9 @@ import android.os.Bundle;
  */
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
+    private ViceAPIService viceService;
+    private Retrofit retrofit;
+    private static final String TAG = "SyncAdapter";
     // Global variables
     // Define a variable to contain a content resolver instance
     ContentResolver mContentResolver;
@@ -66,5 +78,18 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             ContentProviderClient provider,
             SyncResult syncResult) {
 
+        Log.i(TAG, "onPerformSync: =========");
+        retrofit = new Retrofit.Builder().baseUrl("http://www.vice.com/en_us/api/")
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        viceService = retrofit.create(ViceAPIService.class);
+
+        //get a response from vice
+        try {
+            Response<ArticleArray> response = viceService.latestArticles(1).execute();
+            Log.i(TAG, "onResponse: " + response.body().getData());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

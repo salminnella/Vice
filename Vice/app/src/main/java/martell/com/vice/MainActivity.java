@@ -2,6 +2,7 @@ package martell.com.vice;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //viewPager.setCurrentItem(1);
-
+        ContentResolver.addPeriodicSync(mAccount, AUTHORITY, Bundle.EMPTY, 30);
     }
 
     /**
