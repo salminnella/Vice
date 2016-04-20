@@ -30,6 +30,21 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="martell.com.vice.MainActivity" />
         </activity>
+
+
+
+        <service
+            android:name="martell.com.vice.sync_adapter.AuthenticatorService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+
+
+
     </application>
 
 </manifest>
