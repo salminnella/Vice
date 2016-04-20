@@ -13,6 +13,7 @@
         android:id="@+id/text_view_from_fragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="some text"/>
+        android:text="some text2222"
+        android:textColor="#000000"/>
 
 </RelativeLayout>

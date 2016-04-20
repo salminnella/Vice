@@ -15,6 +15,8 @@ import martell.com.vice.R;
  */
 public class CategoryFragment  extends Fragment {
     TextView textView;
+    //member var title
+    //checkout view switcher
 
     public CategoryFragment() {
 
@@ -36,13 +38,15 @@ public class CategoryFragment  extends Fragment {
         View view = inflater.inflate(R.layout.fragment_categories, container, false);
         textView = (TextView) view.findViewById(R.id.text_view_from_fragment);
 
+        container.addView(view);
+
         return view;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        textView.setText("some text");
         super.onViewCreated(view, savedInstanceState);
+        textView.setText("some text");
     }
 
     public static void getTitle(String title) {
