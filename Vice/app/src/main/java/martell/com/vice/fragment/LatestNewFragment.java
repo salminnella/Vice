@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,12 +43,15 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
     private ArticleAdapter articleAdapter;
     private AlphaInAnimationAdapter alphaAdapter;
     private Retrofit retrofit;
+    private String category;
+    private int countViews;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_latest_news,container,false);
         articleRV = (RecyclerView)view.findViewById(R.id.articleRV);
+        countViews = 0;
         return view;
     }
 
@@ -62,20 +66,35 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
             displayLatestArticles(i);
         }
     }
+
     private void displayLatestArticles(int numPages){
-        Call<ArticleArray> call = viceService.latestArticles(numPages);
-        call.enqueue(new Callback<ArticleArray>() {
-            @Override
-            public void onResponse(Call<ArticleArray> call, Response<ArticleArray> response) {
-                Article[] articleArray = response.body().getData().getItems();
-                ArrayList<Article> articlesNew = new ArrayList<>(Arrays.asList(articleArray));
-                articles.addAll(articlesNew);
-                makeRV();
-            }
-            @Override
-            public void onFailure(Call<ArticleArray> call, Throwable t) {
-            }
-        });
+        countViews +=1;
+        Log.d(TAG, "displayLatestArticles: This is the category " + countViews);
+        if (countViews == 1) {
+            Call<ArticleArray> call = viceService.latestArticles(numPages);
+            call.enqueue(new Callback<ArticleArray>() {
+                @Override
+                public void onResponse(Call<ArticleArray> call, Response<ArticleArray> response) {
+                    Article[] articleArray = response.body().getData().getItems();
+                    ArrayList<Article> articlesNew = new ArrayList<>(Arrays.asList(articleArray));
+                    articles.addAll(articlesNew);
+                    makeRV();
+                }
+
+                @Override
+                public void onFailure(Call<ArticleArray> call, Throwable t) {
+                }
+            });
+        } else if (countViews == 2) {
+            Log.d(TAG, "displayLatestArticles: bookmarks");
+
+
+        } else {
+            Log.d(TAG, "displayLatestArticles: all other categories");
+
+        }
+
+
     }
 
     private void makeRV (){

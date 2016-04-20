@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
+
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
@@ -47,6 +48,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         ViewHolder viewHolder = new ViewHolder(articleView);
         Log.d(TAG, "onCreateViewHolder: ");
         return viewHolder;
+
     }
 
     @Override
