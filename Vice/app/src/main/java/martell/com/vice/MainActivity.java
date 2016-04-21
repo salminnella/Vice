@@ -29,6 +29,7 @@ import martell.com.vice.fragment.LatestNewFragment;
 import martell.com.vice.fragment.NavigationDrawerFragment;
 import martell.com.vice.models.Article;
 import martell.com.vice.services.ViceAPIService;
+import martell.com.vice.sync_adapter.StubProvider;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -105,6 +106,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
         ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
         ContentResolver.addPeriodicSync(mAccount, AUTHORITY, Bundle.EMPTY, 30);
+
+
 
         setNotificationAlarmManager();
 
@@ -272,6 +275,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     // this method needs to be given an article for notificationManager to push notification with
     // article data
+
     public void setNotificationAlarmManager() {
         Log.i(TAG, "onCreate: setAlarm was called");
 
