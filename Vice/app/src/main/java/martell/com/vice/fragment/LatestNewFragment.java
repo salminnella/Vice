@@ -25,8 +25,6 @@ import martell.com.vice.RV_SpaceDecoration;
 import martell.com.vice.services.ViceAPIService;
 import martell.com.vice.models.Article;
 import martell.com.vice.models.ArticleArray;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
