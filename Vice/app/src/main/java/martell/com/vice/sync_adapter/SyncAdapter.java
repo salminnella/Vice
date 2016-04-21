@@ -11,8 +11,9 @@ import android.util.Log;
 
 import java.io.IOException;
 
-import martell.com.vice.services.ViceAPIService;
 import martell.com.vice.models.ArticleArray;
+import martell.com.vice.services.NotificationIntentService;
+import martell.com.vice.services.ViceAPIService;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -23,8 +24,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
-    NotificationListener notificationListener;
-
     private ViceAPIService viceService;
     private Retrofit retrofit;
     private static final String TAG = "SyncAdapter";
@@ -32,10 +31,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     // Define a variable to contain a content resolver instance
     ContentResolver mContentResolver;
 
-
-    public interface NotificationListener{
-        void pushNotification(String authorTest);
-    }
     /**
      * Set up the sync adapter
      */
@@ -94,7 +89,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             Response<ArticleArray> response = viceService.latestArticles(1).execute();
             Log.i(TAG, "onResponse: " + response.body().getData().getItems()[0].getArticleAuthor());
             String author = response.body().getData().getItems()[0].getArticleAuthor();
-            notificationListener.pushNotification(author);
+            NotificationIntentService notificationService = new NotificationIntentService();
+            notificationService.showArticleTitle(author);
+            //notificationListener.pushNotification(author);
+
         } catch (IOException e) {
             e.printStackTrace();
         }

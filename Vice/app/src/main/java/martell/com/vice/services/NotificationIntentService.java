@@ -7,19 +7,11 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
-import android.text.Html;
 import android.util.Log;
-
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import martell.com.vice.Main2Activity;
 import martell.com.vice.MainActivity;
 import martell.com.vice.R;
-import martell.com.vice.models.Article;
-import martell.com.vice.models.ArticleData;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -85,7 +77,7 @@ public class NotificationIntentService extends IntentService{
         showArticleTitle(text);
     }
 
-    private void showArticleTitle(final String text) {
+    public void showArticleTitle(final String text) {
 
         Intent intent = new Intent(this, Main2Activity.class);
 
