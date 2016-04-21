@@ -90,6 +90,7 @@ public class ArticleActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, NotificationIntentService.class);
         intent.putExtra("TITLE_KEY", articleTitleExtra);
+        intent.putExtra("ID_KEY", articleId);
         // put extra with article id here
         startService(intent);
 
@@ -104,7 +105,7 @@ public class ArticleActivity extends AppCompatActivity {
 
     private void receiveIntent() {
         Intent intent = getIntent();
-        articleId = intent.getStringExtra("KEY");
+        articleId = intent.getStringExtra("ID_KEY");
         articleTitleExtra = intent.getStringExtra("TITLE_KEY");
         Log.i(TAG, "onCreate: " + articleId);
     }

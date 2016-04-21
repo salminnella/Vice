@@ -33,9 +33,11 @@ public class NotificationIntentService extends IntentService{
     public static final String ARTICLE_ID = "Article ID: ";
     public static final int NOTIFICATION_ID = 5453;
     public String articleIDExtra;
+    public static final String EXTRA_ID = "ID_KEY";
     public static final String EXTRA_TITLE = "TITLE_KEY";
     public static final String EXTRA_PREVIEW = "preview";
-    private String text;
+    private String articleID;
+    private String articleTitle;
 
     public NotificationIntentService() {
         super("NotificationIntentService");
@@ -51,15 +53,19 @@ public class NotificationIntentService extends IntentService{
             }
         }
 
-        text = intent.getStringExtra(EXTRA_TITLE);
-        Log.i(TAG, "onResponse: " + text);
+        articleID = intent.getStringExtra(EXTRA_ID);
+        articleTitle = intent.getStringExtra(EXTRA_TITLE);
+        Log.i(TAG, "Title: " + articleTitle);
+        Log.i(TAG, "id: " + articleID);
 
-        showArticleTitle(text);
+        showArticleTitle(articleID, articleTitle);
     }
 
-    private void showArticleTitle(final String text) {
+    private void showArticleTitle(String id, String title) {
 
         Intent intent = new Intent(this, ArticleActivity.class);
+        intent.putExtra("ID_KEY", id);
+        Log.i(TAG, "you clicked article id: " + id);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addParentStack(MainActivity.class);
@@ -68,21 +74,19 @@ public class NotificationIntentService extends IntentService{
         PendingIntent pendingIntent =
                 stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
-
         Notification notification = new Notification.Builder(this)
                 .setSmallIcon(R.mipmap.ic_notification)
                 .setContentTitle("Vice News")
                 .setAutoCancel(true)
                 .setPriority(Notification.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
-                .setContentText(text)
+                .setContentText(title)
                 .build();
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(NOTIFICATION_ID, notification);
 
-        Log.i("NotifIntentService", "showText: " + text);
     }
 
 }
