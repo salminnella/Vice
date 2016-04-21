@@ -1,6 +1,8 @@
 package martell.com.vice.fragment;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,25 +13,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
 import martell.com.vice.ArticleActivity;
 import martell.com.vice.ArticleAdapter;
-import martell.com.vice.Main2Activity;
 import martell.com.vice.MainActivity;
 import martell.com.vice.R;
 import martell.com.vice.RV_SpaceDecoration;
-import martell.com.vice.services.ViceAPIService;
+import martell.com.vice.dbHelper.DatabaseHelper;
 import martell.com.vice.models.Article;
 import martell.com.vice.models.ArticleArray;
+import martell.com.vice.services.ViceAPIService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.HEAD;
 
 /**
  * Created by adao1 on 4/19/2016.
@@ -49,6 +52,7 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
     @Nullable
@@ -93,6 +97,31 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
                     Article[] articleArray = response.body().getData().getItems();
                     ArrayList<Article> articlesNew = new ArrayList<>(Arrays.asList(articleArray));
                     articles.addAll(articlesNew);
+
+                    SharedPreferences sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+                    String stringSharedPrefs = sharedPreferences.getString(MainActivity.KEY_SHARED_PREF_NOTIF, "");
+                    String[] arrayNotificationPref = stringSharedPrefs.split(",");
+                    Log.i(TAG, "onResponse: shared prefs = " + sharedPreferences.getString(MainActivity.KEY_SHARED_PREF_NOTIF, ""));
+                    Log.i(TAG, "onResponse: title = " + fragTitle);
+                    Log.i(TAG, "onResponse: prefs as string" + stringSharedPrefs);
+                    //if (Arrays.asList(arrayNotificationPref).contains(fragTitle)) {
+                    if (true) {
+                        // if a notification pref is on, and frag title != home or bookmarks
+                        // add those articles to the database here
+                        // database items
+                        DatabaseHelper searchHelper = DatabaseHelper.getInstance(getActivity());
+                        for (Article article : articles) {
+                            int articleId = Integer.parseInt(article.getArticleId());
+                            String articleTitle = article.getArticleTitle();
+                            //Log.i(TAG, "onResponse: " + articleTitle);
+                            String articleCategory = article.getArticleCategory();
+                            //Log.i(TAG, "onResponse: " + articleCategory);
+                            String articleTimeStamp = String.valueOf(article.getArticleTimestamp());
+                            // need to add the timestamp to the model
+                            //searchHelper.insertArticles(articleId, articleTitle, articleCategory, articleTimeStamp);
+                        }
+                    }
+
                     makeRV();
                 }
 

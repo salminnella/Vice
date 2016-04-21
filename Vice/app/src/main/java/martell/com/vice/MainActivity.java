@@ -1,19 +1,18 @@
 package martell.com.vice;
 
-import android.content.Context;
-import android.content.Intent;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 
@@ -32,7 +31,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity implements NavigationDrawerFragment.NotificationPreferences{
     private static final String TAG = "Main";
     public static final String KEY_FRAGMENT_TITLE = "FragmentTitle";
-    private static final String KEY_SHARED_PREF_NOTIF = "sharedPrefNotification";
+    public static final String KEY_SHARED_PREF_NOTIF = "sharedPrefNotification";
     private ViewPager viewPager;
     private ArrayList<Article> articles;
     public ViceAPIService viceService;
@@ -252,6 +251,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     @Override
     public void setNotificationPreferences(String notificationPreferences) {
         this.notificationPreferences = notificationPreferences;
+        Log.i(TAG, "setNotificationPreferences: " + notificationPreferences);
     }
 
     @Override

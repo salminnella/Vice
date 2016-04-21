@@ -1,5 +1,6 @@
 package martell.com.vice.dbHelper;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -21,7 +22,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_ID = "_id";
     public static final String COL_ARTICLE_ID = "article_id";
     public static final String COL_ARTICLE_NAME = "name";
-    public static final String COL_ARTICLE_CATEGORY = "name";
+    public static final String COL_ARTICLE_CATEGORY = "category";
     public static final String COL_ARTICLE_TIMESTAMP = "timestamp";
 
     // builds all columns in one array for queries later on
@@ -35,7 +36,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             COL_ARTICLE_ID + " INT, " +
             COL_ARTICLE_NAME + " TEXT, " +
             COL_ARTICLE_CATEGORY + " TEXT, " +
-            COL_ARTICLE_TIMESTAMP + " INT );";
+            COL_ARTICLE_TIMESTAMP + " TEXT );";
 
     // makes sure there is only one instance of the database
     // if there isn't one, make it, otherwise return the one instance
@@ -65,8 +66,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         this.onCreate(db);
     }
 
-    public void insertArtcles() {
+    public void insertArticles(int articleId, String articleTitle, String articleCategory, String articleTimeStamp) {
+        ContentValues values = new ContentValues();
+        values.put(COL_ARTICLE_ID, articleId);
+        values.put(COL_ARTICLE_NAME, articleTitle);
+        values.put(COL_ARTICLE_CATEGORY, articleCategory);
+        values.put(COL_ARTICLE_TIMESTAMP, articleTimeStamp);
 
+        dbWrite.insert(ARTICLES_TABLE_NAME, null, values);
     }
 
     public void updateArticles() {

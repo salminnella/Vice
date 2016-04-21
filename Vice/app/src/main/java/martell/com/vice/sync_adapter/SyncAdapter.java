@@ -90,7 +90,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             Log.i(TAG, "onResponse: " + response.body().getData().getItems()[0].getArticleAuthor());
             String author = response.body().getData().getItems()[0].getArticleAuthor();
             NotificationIntentService notificationService = new NotificationIntentService();
-            notificationService.showArticleTitle(author);
+            //notificationService.showArticleTitle(author);
             //notificationListener.pushNotification(author);
 
         } catch (IOException e) {
