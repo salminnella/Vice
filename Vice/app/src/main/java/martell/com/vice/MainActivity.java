@@ -1,25 +1,24 @@
 package martell.com.vice;
 
-import android.support.v7.app.AppCompatActivity;
-
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.content.ContentResolver;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
+
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -234,17 +233,19 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         } else {
             Log.d(TAG, "SUPPORT ACTION BAR IS NULL");
         }
+        String[] tabResourceArray = getResources().getStringArray(R.array.categories);
         List<NavDrawerEntry> drawerEntries = new ArrayList<>();
-        drawerEntries.add(new NavDrawerItem("Categories"));
-        drawerEntries.add(new NavDrawerDivider());
-        drawerEntries.add(new NavDrawerToggle("News"));
-        drawerEntries.add(new NavDrawerToggle("Music"));
-        drawerEntries.add(new NavDrawerToggle("Sports"));
-        drawerEntries.add(new NavDrawerToggle("Tech"));
-        drawerEntries.add(new NavDrawerToggle("Travel"));
-        drawerEntries.add(new NavDrawerToggle("Fashion"));
-        drawerEntries.add(new NavDrawerToggle("Guide"));
-        
+
+            drawerEntries.add(new NavDrawerItem(tabResourceArray[0]));
+            drawerEntries.add(new NavDrawerDivider());
+            drawerEntries.add(new NavDrawerToggle(tabResourceArray[2]));
+            drawerEntries.add(new NavDrawerToggle(tabResourceArray[3]));
+            drawerEntries.add(new NavDrawerToggle(tabResourceArray[4]));
+            drawerEntries.add(new NavDrawerToggle(tabResourceArray[5]));
+            drawerEntries.add(new NavDrawerToggle(tabResourceArray[6]));
+            drawerEntries.add(new NavDrawerToggle(tabResourceArray[7]));
+            drawerEntries.add(new NavDrawerToggle(tabResourceArray[8]));
+
         NavigationDrawerFragment drawerFragment = (NavigationDrawerFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_navigation_drawer);
 

@@ -1,11 +1,13 @@
 package martell.com.vice;
 
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
+import martell.com.vice.dbHelper.DatabaseHelper;
 import martell.com.vice.models.Article;
 import martell.com.vice.models.ArticleData;
 import martell.com.vice.services.ViceAPIService;
@@ -19,17 +21,28 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class BookmarksHelper extends AsyncTask<Void,Void,ArrayList<Article>> {
     private static final String TAG = "BookmarkhHelper";
     ArrayList<Article> articleArrayList;
-    ArrayList<String> idList;
     BookmarksResponse bookmarksResponse;
+    DatabaseHelper bookmarkDataBaseHelper;
 
-    public BookmarksHelper(ArrayList<String> idList, BookmarksResponse bookmarksResponse){
-        this.idList = idList;
+    public BookmarksHelper(BookmarksResponse bookmarksResponse,DatabaseHelper bookmarkDataBaseHelper){
         this.bookmarksResponse = bookmarksResponse;
+        this.bookmarkDataBaseHelper = bookmarkDataBaseHelper;
     }
 
     @Override
     protected ArrayList<Article> doInBackground(Void... params) {
-        //Database call to get bookmarks
+       Cursor bookmarkCursor = bookmarkDataBaseHelper.findAllBookmarks();
+        if (bookmarkCursor.getCount() == 0) {
+            return null;
+        }
+        ArrayList<String> idList = new ArrayList<>();
+
+        while (bookmarkCursor.moveToNext()) {
+            idList.add(bookmarkCursor.getString(bookmarkCursor.getColumnIndex(DatabaseHelper.COL_ARTICLE_ID)));
+            bookmarkCursor.moveToNext();
+        }
+
+        Log.d(TAG, "THIS IS THE IDLIST SIZE AFTER DATABASE CALL " + idList.size());
 
 
         Retrofit retrofit = new Retrofit.Builder().baseUrl("http://www.vice.com/en_us/api/")
@@ -39,8 +52,12 @@ public class BookmarksHelper extends AsyncTask<Void,Void,ArrayList<Article>> {
         ArticleData articleData;
         Article article;
 
+        for (String id: idList) {
+            Log.d(TAG, "THIS IS THE ID FROM IDLIST " + id);
+        }
+
         for (String id : idList) {
-            Log.d(TAG, "THIS IS INSIDE THE LOOP");
+            Log.d(TAG, "THIS IS INSIDE THE LOOP " + id);
             Call<ArticleData> call = viceService.getArticle(Integer.parseInt(id));
 
             try {
@@ -52,16 +69,17 @@ public class BookmarksHelper extends AsyncTask<Void,Void,ArrayList<Article>> {
                 Log.d(TAG, "IO EXCEPTION HAS BEEN THROWN");
             }
         }
-
+        bookmarkCursor.close();
         return articleArrayList;
     }
 
     @Override
     protected void onPostExecute(ArrayList<Article> articles) {
-        super.onPostExecute(articles);
-        Log.d(TAG, "THIS IS THE POST EXECUTE ARRAY LIST " + articles.get(3).getArticleTitle());
-        bookmarksResponse.getResponse(articles);
-
+        if (articles.size() > 0) {
+            super.onPostExecute(articles);
+            Log.d(TAG, "THIS IS THE POST EXECUTE ARRAY LIST " + articles.get(0).getArticleTitle());
+            bookmarksResponse.getResponse(articles);
+        }
     }
 
     public interface BookmarksResponse {
