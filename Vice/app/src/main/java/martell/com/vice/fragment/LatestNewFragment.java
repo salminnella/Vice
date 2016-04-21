@@ -1,6 +1,7 @@
 package martell.com.vice.fragment;
 
 import android.content.Intent;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
@@ -137,13 +139,11 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
         alphaAdapter = new AlphaInAnimationAdapter(articleAdapter);
         alphaAdapter.setDuration(3000);
         alphaAdapter.setInterpolator(new OvershootInterpolator());
-        ScaleInAnimationAdapter scaleAdapter = new ScaleInAnimationAdapter(articleAdapter);
-        scaleAdapter.setDuration(1000);
-        //scaleAdapter.setInterpolator(new OvershootInterpolator(1f));
         articleRV.setAdapter(alphaAdapter);
         RV_SpaceDecoration decoration = new RV_SpaceDecoration(15);
         articleRV.addItemDecoration(decoration);
-        gridLayoutManager = new GridLayoutManager(getContext(), 2);
+        if (getResources().getConfiguration().orientation == 1)gridLayoutManager = new GridLayoutManager(getContext(), 2);
+        else gridLayoutManager = new GridLayoutManager(getContext(), 3);
         articleRV.setLayoutManager(gridLayoutManager);
         articleRV.setHasFixedSize(true);
     }
@@ -161,10 +161,11 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
 
     @Override
     public void getResponse(ArrayList<Article> articleArrayList) {
-        articles = articleArrayList;
-        makeRV();
-//        articleAdapter.notifyDataSetChanged();
-//        alphaAdapter.notifyDataSetChanged();
+
+        if (!articles.isEmpty())return;
+        articles.addAll(articleArrayList);
+        articleAdapter.notifyDataSetChanged();
+        alphaAdapter.notifyDataSetChanged();
         Log.d(TAG, "GET RESPONSE METHOD IS CALLED< ARTICLE VALUE IS " + articles.get(3).getArticleTitle());
     }
 }
