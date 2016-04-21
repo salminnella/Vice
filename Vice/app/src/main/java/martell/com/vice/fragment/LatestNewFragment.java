@@ -128,7 +128,7 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
         articleRV.setAdapter(alphaAdapter);
         RV_SpaceDecoration decoration = new RV_SpaceDecoration(15);
         articleRV.addItemDecoration(decoration);
-        gridLayoutManager = new GridLayoutManager(getContext(), 1);
+        gridLayoutManager = new GridLayoutManager(getContext(), 2);
         articleRV.setLayoutManager(gridLayoutManager);
         articleRV.setHasFixedSize(true);
     }
