@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import martell.com.vice.ArticleActivity;
 import martell.com.vice.Main2Activity;
 import martell.com.vice.MainActivity;
 import martell.com.vice.R;
@@ -32,13 +33,9 @@ public class NotificationIntentService extends IntentService{
     public static final String ARTICLE_ID = "Article ID: ";
     public static final int NOTIFICATION_ID = 5453;
     public String articleIDExtra;
-    public static final String EXTRA_TITLE = "title";
+    public static final String EXTRA_TITLE = "TITLE_KEY";
     public static final String EXTRA_PREVIEW = "preview";
-    private String articleID;
-
-    Retrofit retrofit = new Retrofit.Builder().baseUrl("http://www.vice.com/en_us/api/")
-            .addConverterFactory(GsonConverterFactory.create()).build();
-    ViceAPIService viceService = retrofit.create(ViceAPIService.class);
+    private String text;
 
     public NotificationIntentService() {
         super("NotificationIntentService");
@@ -54,40 +51,15 @@ public class NotificationIntentService extends IntentService{
             }
         }
 
-        //TODO: api call to get article id and title for notification
-//        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://www.vice.com/en_us/api/")
-//                .addConverterFactory(GsonConverterFactory.create()).build();
-//        ViceAPIService viceService = retrofit.create(ViceAPIService.class);
-
-//        String id = intent.getStringExtra("KEY");
-//        int idNum = Integer.parseInt(id);
-//        Log.i(TAG, "onCreate: " + idNum);
-//        Call<ArticleData> call = viceService.getArticle(idNum);
-//        call.enqueue(new Callback<ArticleData>() {
-//            @Override
-//            public void onResponse(Call<ArticleData> call, Response<ArticleData> response) {
-//                if (response.isSuccessful()) {
-//                    Article article = response.body().getData().getArticle();
-//                    articleID = article.getArticleId();
-//
-//                    Log.d(TAG, "onResponse: " + article.getArticleTitle());
-//                }
-//                else Log.i(TAG, "onResponse: failed");
-//            }
-//
-//            @Override
-//            public void onFailure(Call<ArticleData> call, Throwable t) {
-//            }
-//        });
-
-        String text = intent.getStringExtra(articleID);
+        text = intent.getStringExtra(EXTRA_TITLE);
+        Log.i(TAG, "onResponse: " + text);
 
         showArticleTitle(text);
     }
 
     private void showArticleTitle(final String text) {
 
-        Intent intent = new Intent(this, Main2Activity.class);
+        Intent intent = new Intent(this, ArticleActivity.class);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addParentStack(MainActivity.class);
@@ -103,14 +75,14 @@ public class NotificationIntentService extends IntentService{
                 .setAutoCancel(true)
                 .setPriority(Notification.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
-                .setContentText("Article Title")
+                .setContentText(text)
                 .build();
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(NOTIFICATION_ID, notification);
 
-        Log.i("NotifIntentService", "showText: " + articleIDExtra);
+        Log.i("NotifIntentService", "showText: " + text);
     }
 
 }

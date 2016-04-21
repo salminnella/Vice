@@ -21,6 +21,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import martell.com.vice.models.Article;
 import martell.com.vice.models.ArticleData;
+import martell.com.vice.services.NotificationIntentService;
 import martell.com.vice.services.ViceAPIService;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,6 +35,7 @@ public class ArticleActivity extends AppCompatActivity {
     Retrofit retrofit;
     ImageLoaderConfiguration config;
     String articleId;
+    String articleTitleExtra;
     ViceAPIService viceService;
     int idNum;
     TextView articleTitleText;
@@ -86,6 +88,10 @@ public class ArticleActivity extends AppCompatActivity {
             }
         });
 
+        Intent intent = new Intent(this, NotificationIntentService.class);
+        intent.putExtra("TITLE_KEY", articleTitleExtra);
+        // put extra with article id here
+        startService(intent);
 
     }
 
@@ -99,6 +105,7 @@ public class ArticleActivity extends AppCompatActivity {
     private void receiveIntent() {
         Intent intent = getIntent();
         articleId = intent.getStringExtra("KEY");
+        articleTitleExtra = intent.getStringExtra("TITLE_KEY");
         Log.i(TAG, "onCreate: " + articleId);
     }
 

@@ -125,6 +125,7 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
 
         Intent intent = new Intent(getActivity(), ArticleActivity.class);
         intent.putExtra("KEY",article.getArticleId());
+        intent.putExtra("TITLE_KEY", article.getArticleTitle());
 
         startActivity(intent);
     }

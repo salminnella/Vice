@@ -101,9 +101,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
         ContentResolver.addPeriodicSync(mAccount, AUTHORITY, Bundle.EMPTY, 30);
 
-        Intent intent = new Intent(this, NotificationIntentService.class);
-        // put extra with article id here
-        startService(intent);
     }
 
     private void setupViewPagerOneFragment(ViewPager viewPager) {
