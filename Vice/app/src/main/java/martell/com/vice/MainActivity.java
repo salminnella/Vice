@@ -162,10 +162,10 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
         LatestNewFragment bookmarks = new LatestNewFragment();
         Bundle bundleBookmarks = new Bundle();
-        bundleBookmarks.putString(KEY_FRAGMENT_TITLE, "bookmarks");
+        bundleBookmarks.putString(KEY_FRAGMENT_TITLE, "Bookmarks");
         //Need to change this when getNewsArticles is complete
         //from bundleNews to bundleBookmarks
-        bookmarks.setArguments(bundleNews);
+        bookmarks.setArguments(bundleBookmarks);
         adapter.addFragment(bookmarks, "Bookmarks");
 
         viewPager.setAdapter(adapter);
