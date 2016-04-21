@@ -180,7 +180,10 @@ public class ArticleActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        DatabaseHelper databaseHelper = DatabaseHelper.getInstance(ArticleActivity.this);
-        databaseHelper.insertBookmark(bookmarkId);
+        if (bookmarkId != null) {
+            Log.d(TAG, "A BOOK MARK ID IS BEING ADDED " + bookmarkId);
+            DatabaseHelper databaseHelper = DatabaseHelper.getInstance(ArticleActivity.this);
+            databaseHelper.insertBookmark(bookmarkId);
+        }
     }
 }

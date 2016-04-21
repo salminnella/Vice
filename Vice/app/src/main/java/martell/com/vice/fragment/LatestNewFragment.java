@@ -6,12 +6,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,11 +20,11 @@ import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
 import martell.com.vice.ArticleActivity;
 import martell.com.vice.ArticleAdapter;
-
 import martell.com.vice.BookmarksHelper;
 import martell.com.vice.MainActivity;
 import martell.com.vice.R;
 import martell.com.vice.RV_SpaceDecoration;
+import martell.com.vice.dbHelper.DatabaseHelper;
 import martell.com.vice.models.Article;
 import martell.com.vice.models.ArticleArray;
 import martell.com.vice.services.ViceAPIService;
@@ -52,6 +52,7 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
     boolean loading = true;
     int pastVisiblesItems, visibleItemCount, totalItemCount;
     private GridLayoutManager gridLayoutManager;
+    private TextView tabTitleView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,6 +65,7 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_latest_news,container,false);
         articleRV = (RecyclerView)view.findViewById(R.id.articleRV);
+        tabTitleView = (TextView) view.findViewById(R.id.main_title);
         return view;
     }
 
@@ -82,6 +84,7 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
     private void displayLatestArticles(int numPages){
         Call<ArticleArray> call =null;
         fragTitle = getArguments().getString(MainActivity.KEY_FRAGMENT_TITLE);
+        tabTitleView.setText(fragTitle);
         Log.d("Frag", "title: " + fragTitle);
         Log.d(TAG, "THIS IS THE FRAGMENT TITLE " + fragTitle);
         if (fragTitle.equals("Home")) {
@@ -94,8 +97,8 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
             idList.add("188184");
             idList.add("188187");
             Log.d(TAG, "BOOKSMARKS HAS BEEN SELECTED IN DISPLAYLATEST ARTICLES");
-
-            BookmarksHelper bookmarksHelper = new BookmarksHelper(idList,this);
+            DatabaseHelper bookmarkDatabaseHelper = DatabaseHelper.getInstance(getActivity());
+            BookmarksHelper bookmarksHelper = new BookmarksHelper(this, bookmarkDatabaseHelper);
             bookmarksHelper.execute();
 
         } else {
@@ -159,9 +162,9 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
     @Override
     public void getResponse(ArrayList<Article> articleArrayList) {
         articles = articleArrayList;
-//        makeRV();
-        articleAdapter.notifyDataSetChanged();
-        alphaAdapter.notifyDataSetChanged();
+        makeRV();
+//        articleAdapter.notifyDataSetChanged();
+//        alphaAdapter.notifyDataSetChanged();
         Log.d(TAG, "GET RESPONSE METHOD IS CALLED< ARTICLE VALUE IS " + articles.get(3).getArticleTitle());
     }
 }
