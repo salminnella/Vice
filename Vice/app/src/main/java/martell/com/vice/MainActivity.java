@@ -69,6 +69,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         String notificationFromSharedPref = sharedPreferences.getString(KEY_SHARED_PREF_NOTIF,"");
         setNavigationDrawer(createBoolArrayList(notificationFromSharedPref));
 
+        setAlarm();
+
         mAccount = createSyncAccount(this);
 
         articles = new ArrayList<>();
@@ -112,7 +114,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         ContentResolver.addPeriodicSync(mAccount, AUTHORITY, Bundle.EMPTY, 30);
 
 //        scheduleNotification(getNotification("5 second delay"), 3000);
-        setAlarm();
     }
 
     private void setupViewPagerOneFragment(ViewPager viewPager) {

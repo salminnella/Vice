@@ -16,8 +16,6 @@ import android.util.Log;
 public class NotificationPublisher extends BroadcastReceiver {
     String TAG = "NotificationBuilder ";
 
-
-
     @Override
     public void onReceive(Context context, Intent intent) {
 
