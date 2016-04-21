@@ -77,7 +77,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             Account account,
             Bundle extras,
             String authority,
-            ContentProviderClient provider,
+            ContentProviderClient provider, //Should this reference the StubProvider?
             SyncResult syncResult) {
 
         Log.i(TAG, "onPerformSync: =========");
@@ -92,12 +92,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             Log.i(TAG, "onResponse: " + response.body().getData().getItems().length);
             for (int i = 0; i < response.body().getData().getItems().length; i++) {
                 int id = Integer.parseInt(response.body().getData().getItems()[i].getArticleId());
-                Log.i(TAG, "onPerformSync: article id " + id);
+                String articleTitle = response.body().getData().getItems()[i].getArticleTitle();
+                Log.i(TAG, "onPerformSync: article Id " + id);
+                Log.i(TAG, "onPerformSync: articleTitle: " + articleTitle);
                 DatabaseHelper searchHelper = DatabaseHelper.getInstance(getContext());
                 searchHelper.findArticles();
             }
-
-
 
             NotificationIntentService notificationService = new NotificationIntentService();
             //notificationService.showArticleTitle(author);
