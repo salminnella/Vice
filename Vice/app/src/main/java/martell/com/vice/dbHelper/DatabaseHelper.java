@@ -88,7 +88,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public void insertBookmark(int articleId) {
+    public void insertBookmark(String articleId) {
         ContentValues values = new ContentValues();
         values.put(COL_ARTICLE_ID, articleId);
         values.put(COL_ARTICLE_CATEGORY, "bookmark");
@@ -97,9 +97,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public Cursor findBookmarks() {
+    public Cursor findAllBookmarks() {
         cursor = dbRead.query(ARTICLES_TABLE_NAME, COLUMNS,
-                COL_ARTICLE_CATEGORY + "= bookmark" ,
+                COL_ARTICLE_CATEGORY + " = ?" ,
+                new String[]{"bookmark"},
+                null,
+                null,
+                null,
+                null);
+
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+        }
+
+        return cursor;
+    }
+
+    public Cursor findBookmarkById(String articleId) {
+        cursor = dbRead.query(ARTICLES_TABLE_NAME, COLUMNS,
+                COL_ARTICLE_ID + " = " + articleId,
                 null,
                 null,
                 null,
