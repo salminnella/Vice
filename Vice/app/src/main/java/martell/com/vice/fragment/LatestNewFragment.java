@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +37,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * Created by adao1 on 4/19/2016.
  */
-public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVItemClickListener, BookmarksHelper.BookmarksResponse {
+
+public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVItemClickListener, ArticleAdapter.OnLastArticleShownListener, BookmarksHelper.BookmarksResponse {
+
     private static final String TAG = "Latest News Fragment";
     private ArrayList<String> tabViewsTitle;
     private ArrayList<Article> articles;
@@ -46,7 +49,9 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
     private AlphaInAnimationAdapter alphaAdapter;
     private Retrofit retrofit;
     private String fragTitle;
-
+    boolean loading = true;
+    int pastVisiblesItems, visibleItemCount, totalItemCount;
+    private GridLayoutManager gridLayoutManager;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,7 +74,9 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
         retrofit = new Retrofit.Builder().baseUrl("http://www.vice.com/en_us/api/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
         viceService = retrofit.create(ViceAPIService.class);
-        displayLatestArticles(1);
+        displayLatestArticles(0);
+        makeRV();
+
     }
 
     private void displayLatestArticles(int numPages){
@@ -96,7 +103,6 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
             call = viceService.getArticlesByCategory(fragTitle,numPages);
 
         }
-
         if (!fragTitle.equals("Bookmarks")) {
             if (call != null) {
                 call.enqueue(new Callback<ArticleArray>() {
@@ -105,8 +111,10 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
                         Article[] articleArray = response.body().getData().getItems();
                         ArrayList<Article> articlesNew = new ArrayList<>(Arrays.asList(articleArray));
                         articles.addAll(articlesNew);
-                        makeRV();
-                    }
+
+                        int currentSize = articleAdapter.getItemCount();
+                        articleAdapter.notifyItemRangeInserted(currentSize,articlesNew.size());
+                        alphaAdapter.notifyItemRangeInserted(currentSize,articlesNew.size());                    }
 
                     @Override
                     public void onFailure(Call<ArticleArray> call, Throwable t) {
@@ -116,18 +124,23 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
         }
     }
 
+    @Override
+    public void onLastArticleShown(int position) {
+        displayLatestArticles((position+1)/20);
+    }
+
     private void makeRV (){
-        articleAdapter = new ArticleAdapter(articles,this);
+        articleAdapter = new ArticleAdapter(articles,this,this);
         alphaAdapter = new AlphaInAnimationAdapter(articleAdapter);
-        alphaAdapter.setDuration(8000);
+        alphaAdapter.setDuration(3000);
         alphaAdapter.setInterpolator(new OvershootInterpolator());
         ScaleInAnimationAdapter scaleAdapter = new ScaleInAnimationAdapter(articleAdapter);
-        scaleAdapter.setDuration(8000);
-        scaleAdapter.setInterpolator(new OvershootInterpolator());
-        articleRV.setAdapter(scaleAdapter);
-        RV_SpaceDecoration decoration = new RV_SpaceDecoration(10);
+        scaleAdapter.setDuration(1000);
+        //scaleAdapter.setInterpolator(new OvershootInterpolator(1f));
+        articleRV.setAdapter(alphaAdapter);
+        RV_SpaceDecoration decoration = new RV_SpaceDecoration(15);
         articleRV.addItemDecoration(decoration);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),2);
+        gridLayoutManager = new GridLayoutManager(getContext(), 2);
         articleRV.setLayoutManager(gridLayoutManager);
         articleRV.setHasFixedSize(true);
     }
@@ -136,7 +149,8 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
     public void onRVItemClick(Article article) {
 
         Intent intent = new Intent(getActivity(), ArticleActivity.class);
-        intent.putExtra("KEY",article.getArticleId());
+        intent.putExtra("ID_KEY", article.getArticleId());
+        intent.putExtra("TITLE_KEY", article.getArticleTitle());
 
         startActivity(intent);
     }
@@ -145,7 +159,9 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
     @Override
     public void getResponse(ArrayList<Article> articleArrayList) {
         articles = articleArrayList;
-        makeRV();
+//        makeRV();
+        articleAdapter.notifyDataSetChanged();
+        alphaAdapter.notifyDataSetChanged();
         Log.d(TAG, "GET RESPONSE METHOD IS CALLED< ARTICLE VALUE IS " + articles.get(3).getArticleTitle());
     }
 }

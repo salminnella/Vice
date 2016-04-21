@@ -27,8 +27,12 @@ public class Article {
     @SerializedName("url")
     String articleURL;
     @SerializedName("pubTimestamp")
-    long articleTimestamp;
+    String articleTimeStamp;
 
+
+    public String getArticleTimeStamp() {
+        return articleTimeStamp;
+    }
     public String getArticleURL() {
         return articleURL;
     }
@@ -69,8 +73,5 @@ public class Article {
         return articleAuthor;
     }
 
-    public long getArticleTimestamp() {
-        return articleTimestamp;
-    }
 }
 
