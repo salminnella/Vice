@@ -1,5 +1,10 @@
 package martell.com.vice;
 
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.accounts.Account;
@@ -7,6 +12,7 @@ import android.accounts.AccountManager;
 import android.content.ContentResolver;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -14,8 +20,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import martell.com.vice.adapters.ViewPagerAdapter;
@@ -39,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     private static final int NOTIFICATION_ID = 1;
     private TabLayout tabLayout;
     private String notificationPreferences;
+    NotificationManager notificationManager;
+    boolean isNotificActive = false;
 
     // Content provider authority
     public static final String AUTHORITY = "martell.com.vice.sync_adapter.StubProvider";
@@ -101,9 +111,12 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
         ContentResolver.addPeriodicSync(mAccount, AUTHORITY, Bundle.EMPTY, 30);
 
+//        scheduleNotification(getNotification("5 second delay"), 3000);
+        setAlarm();
     }
 
     private void setupViewPagerOneFragment(ViewPager viewPager) {
+
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
         LatestNewFragment home = new LatestNewFragment();
@@ -255,4 +268,48 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         editor.commit();
         super.onDestroy();
     }
+
+//    private void scheduleNotification(Notification notification, int delay) {
+//
+//        Intent notificationIntent = new Intent(this, NotificationPublisher.class);
+//        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, 1);
+//        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
+//        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+//
+//        Log.i(TAG, "scheduleNotification: has been called");
+//        long futureInMillis = delay;
+//        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+//        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+//        Log.i(TAG, "scheduleNotification: alarmmanager created");
+//    }
+//
+//    private Notification getNotification(String content) {
+//        Notification.Builder builder = new Notification.Builder(this);
+//        builder.setSmallIcon(R.mipmap.ic_notification);
+//        builder.setContentTitle("Vice News");
+//        builder.setAutoCancel(true);
+//        builder.setPriority(Notification.PRIORITY_DEFAULT);
+//        builder.setContentText(content);
+//        return builder.build();
+//    }
+
+    public void setAlarm() {
+
+        Log.i(TAG, "onCreate: setAlarm was called");
+
+        Long alertTime = new GregorianCalendar().getTimeInMillis()+5000;
+
+        Intent alertIntent = new Intent(this, NotificationPublisher.class);
+
+        TaskStackBuilder tStackBuilder = TaskStackBuilder.create(this);
+        tStackBuilder.addParentStack(MainActivity.class);
+        tStackBuilder.addNextIntent(alertIntent);
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        alarmManager.set(AlarmManager.RTC_WAKEUP, alertTime,
+                PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+        Log.i(TAG, "setAlarm: alarm manager should have been set");
+    }
+
 }
