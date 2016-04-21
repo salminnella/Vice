@@ -139,8 +139,10 @@ public class ArticleActivity extends AppCompatActivity {
         if (id == R.id.bookmark_item_menu) {
             if (bookmarkId == null) {
                 bookmarkId = String.valueOf(idNum);
+                item.setIcon(R.drawable.ic_search);
             } else {
                 bookmarkId = null;
+                item.setIcon(R.drawable.bookmark);
             }
         }
         if (id == R.id.share_item_menu){
@@ -159,7 +161,7 @@ public class ArticleActivity extends AppCompatActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         DatabaseHelper databaseHelper = DatabaseHelper.getInstance(ArticleActivity.this);
         Cursor cursor = databaseHelper.findBookmarkById(articleId);
-        if (cursor != null) {
+        if (cursor.getCount()>0) {
             menu.getItem(1).setIcon(R.drawable.ic_search);
         }
         return super.onPrepareOptionsMenu(menu);
