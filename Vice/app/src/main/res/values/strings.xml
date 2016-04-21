@@ -13,14 +13,13 @@
     <string-array name="categories">
         <item>categories</item>
         <item>divider</item>
-        <item>ViceLand</item>
-        <item>Crime</item>
-        <item>Culture</item>
-        <item>LGBT</item>
-        <item>Election2016</item>
-        <item>CityGuides</item>
-        <item>Opinion</item>
-        <item>Environment</item>
+        <item>News</item>
+        <item>Music</item>
+        <item>Sports</item>
+        <item>Tech</item>
+        <item>Travel</item>
+        <item>Fashion</item>
+        <item>Guide</item>
     </string-array>
 
 </resources>
