@@ -267,7 +267,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
      */
 
 
-    // this method needs to be given an article for notificationManager to 
+    // this method needs to be given an article for notificationManager to push notification with
+    // article data
     public void setNotificationAlarmManager() {
         Log.i(TAG, "onCreate: setAlarm was called");
 
