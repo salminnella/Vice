@@ -154,6 +154,14 @@ public class ArticleActivity extends AppCompatActivity {
             ContentResolver.requestSync(mAccount, AUTHORITY, settingsBundle);
             return true;
         }
+        if (id == R.id.share_item_menu){
+            String message = article.getArticleURL();
+            Intent share = new Intent(Intent.ACTION_SEND);
+            share.setType("text/plain");
+            share.putExtra(Intent.EXTRA_TEXT, message);
+
+            startActivity(Intent.createChooser(share, "Share article with ... "));
+        }
 
         return super.onOptionsItemSelected(item);
     }
