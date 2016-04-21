@@ -29,14 +29,19 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
     private static final String TAG = "ArticleAdapter";
     private ImageLoaderConfiguration config;
     private final OnRVItemClickListener listener;
+    private final OnLastArticleShownListener lastArticleShownListener;
 
     public interface OnRVItemClickListener {
         void onRVItemClick(Article article);
     }
+    public interface OnLastArticleShownListener {
+        void onLastArticleShown(int position);
+    }
 
-    public ArticleAdapter(List<Article> mArticles, OnRVItemClickListener listener) {
+    public ArticleAdapter(List<Article> mArticles, OnRVItemClickListener listener, OnLastArticleShownListener lastArticleShownListener) {
         this.mArticles = mArticles;
         this.listener = listener;
+        this.lastArticleShownListener = lastArticleShownListener;
     }
 
     @Override
@@ -55,15 +60,20 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
     public void onBindViewHolder(ArticleAdapter.ViewHolder holder, int position) {
         Article article = mArticles.get(position);
         TextView titleTextView = holder.titleTextView;
-        TextView previewTextView = holder.previewTextView;
+        //TextView previewTextView = holder.previewTextView;
         ImageView imageView = holder.imageView;
         titleTextView.setText(article.getArticleTitle());
-        previewTextView.setText(Html.fromHtml(article.getArticlePreview()));
+        //previewTextView.setText(Html.fromHtml(article.getArticlePreview()));
         ImageLoader imageLoader = ImageLoader.getInstance(); // Get singleton instance
         imageLoader.init(config);
         imageLoader.displayImage(article.getArticleThumbURL(), imageView);
 
-        holder.bind(mArticles.get(position),listener);
+        holder.bind(mArticles.get(position), listener);
+
+        if (position== mArticles.size()-1){
+            lastArticleShownListener.onLastArticleShown(position);
+        }
+
     }
 
     @Override
@@ -73,13 +83,13 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView titleTextView;
-        public TextView previewTextView;
+        //public TextView previewTextView;
         public ImageView imageView;
 
         public ViewHolder(View itemView) {
             super(itemView);
             this.titleTextView = (TextView)itemView.findViewById(R.id.item_title);
-            this.previewTextView = (TextView)itemView.findViewById(R.id.item_body);
+            //this.previewTextView = (TextView)itemView.findViewById(R.id.item_body);
             this.imageView = (ImageView)itemView.findViewById(R.id.item_image);
         }
         public void bind(final Article article, final OnRVItemClickListener listener){

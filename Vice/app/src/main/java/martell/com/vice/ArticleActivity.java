@@ -119,7 +119,9 @@ public class ArticleActivity extends AppCompatActivity {
     private void loadBody() {
         collapsingToolbarLayout.setTitle(article.getArticleCategory());
         collapsingToolbarLayout.setCollapsedTitleTextColor(Color.BLACK);
-        articleBodyText.setText(Html.fromHtml(article.getArticleBody()));
+//        textView.setText(Html.fromHtml(htmlString.replaceAll("<img.+?>", "")));
+        articleBodyText.setText(Html.fromHtml(article.getArticleBody().replaceAll("<img.+?>", "")));
+
     }
 
 
