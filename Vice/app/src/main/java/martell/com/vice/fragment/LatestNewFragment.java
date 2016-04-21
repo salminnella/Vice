@@ -1,7 +1,6 @@
 package martell.com.vice.fragment;
 
 import android.content.Intent;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,10 +15,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
-import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
 import martell.com.vice.ArticleActivity;
 import martell.com.vice.ArticleAdapter;
 import martell.com.vice.BookmarksHelper;
@@ -166,6 +163,6 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
         articles.addAll(articleArrayList);
         articleAdapter.notifyDataSetChanged();
         alphaAdapter.notifyDataSetChanged();
-        Log.d(TAG, "GET RESPONSE METHOD IS CALLED< ARTICLE VALUE IS " + articles.get(3).getArticleTitle());
+        Log.d(TAG, "GET RESPONSE METHOD IS CALLED< ARTICLE VALUE IS " + articles.get(0).getArticleTitle());
     }
 }

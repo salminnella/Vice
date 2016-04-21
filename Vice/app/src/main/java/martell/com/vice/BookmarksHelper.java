@@ -37,6 +37,11 @@ public class BookmarksHelper extends AsyncTask<Void,Void,ArrayList<Article>> {
         }
         ArrayList<String> idList = new ArrayList<>();
 
+        while (bookmarkCursor.moveToNext()) {
+            idList.add(bookmarkCursor.getString(bookmarkCursor.getColumnIndex(DatabaseHelper.COL_ARTICLE_ID)));
+            bookmarkCursor.moveToNext();
+        }
+
         Log.d(TAG, "THIS IS THE IDLIST SIZE AFTER DATABASE CALL " + idList.size());
 
 
@@ -72,7 +77,7 @@ public class BookmarksHelper extends AsyncTask<Void,Void,ArrayList<Article>> {
     protected void onPostExecute(ArrayList<Article> articles) {
         if (articles.size() > 0) {
             super.onPostExecute(articles);
-            Log.d(TAG, "THIS IS THE POST EXECUTE ARRAY LIST " + articles.get(3).getArticleTitle());
+            Log.d(TAG, "THIS IS THE POST EXECUTE ARRAY LIST " + articles.get(0).getArticleTitle());
             bookmarksResponse.getResponse(articles);
         }
     }
