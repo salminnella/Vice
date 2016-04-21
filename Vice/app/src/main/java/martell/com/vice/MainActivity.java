@@ -281,6 +281,9 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
         Long alertTime = new GregorianCalendar().getTimeInMillis()+5000;
 
+        //perform sync here?
+        ContentResolver.addPeriodicSync(mAccount, AUTHORITY, Bundle.EMPTY, 30);
+
         Intent alertIntent = new Intent(this, NotificationPublisher.class);
 
         alertIntent.putExtra("TITLE_KEY", "test title that is too long so i can test format of notification");

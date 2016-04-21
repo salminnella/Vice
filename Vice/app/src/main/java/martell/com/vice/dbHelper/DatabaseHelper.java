@@ -84,6 +84,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
+    public Cursor getPlacesList() {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(ARTICLES_TABLE_NAME, // a. table
+                COLUMNS, // b. column names
+                null, // c. selections
+                null, // d. selections args
+                null, // e. group by
+                null, // f. having
+                null, // g. order by
+                null); // h. limit
+
+        return cursor;
+    }
+
     public void deleteArticles() {
 
     }
