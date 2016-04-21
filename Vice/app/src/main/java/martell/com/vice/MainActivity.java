@@ -1,8 +1,6 @@
 package martell.com.vice;
 
 import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
@@ -30,7 +28,6 @@ import martell.com.vice.adapters.ViewPagerAdapter;
 import martell.com.vice.fragment.LatestNewFragment;
 import martell.com.vice.fragment.NavigationDrawerFragment;
 import martell.com.vice.models.Article;
-import martell.com.vice.services.NotificationIntentService;
 import martell.com.vice.services.ViceAPIService;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -44,11 +41,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     public ViceAPIService viceService;
     private Retrofit retrofit;
     private ViewPagerAdapter adapter;
-    private static final int NOTIFICATION_ID = 1;
     private TabLayout tabLayout;
     private String notificationPreferences;
-    NotificationManager notificationManager;
-    boolean isNotificActive = false;
 
     // Content provider authority
     public static final String AUTHORITY = "martell.com.vice.sync_adapter.StubProvider";
@@ -68,8 +62,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         SharedPreferences sharedPreferences = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
         String notificationFromSharedPref = sharedPreferences.getString(KEY_SHARED_PREF_NOTIF,"");
         setNavigationDrawer(createBoolArrayList(notificationFromSharedPref));
-
-        setAlarm();
 
         mAccount = createSyncAccount(this);
 
@@ -104,7 +96,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
                 }
             });
-
         }
 
         // Get the content resolver for your app
@@ -113,7 +104,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
         ContentResolver.addPeriodicSync(mAccount, AUTHORITY, Bundle.EMPTY, 30);
 
-//        scheduleNotification(getNotification("5 second delay"), 3000);
+        setNotificationAlarmManager();
+
     }
 
     private void setupViewPagerOneFragment(ViewPager viewPager) {
@@ -270,37 +262,21 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         super.onDestroy();
     }
 
-//    private void scheduleNotification(Notification notification, int delay) {
-//
-//        Intent notificationIntent = new Intent(this, NotificationPublisher.class);
-//        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, 1);
-//        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
-//        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-//
-//        Log.i(TAG, "scheduleNotification: has been called");
-//        long futureInMillis = delay;
-//        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-//        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
-//        Log.i(TAG, "scheduleNotification: alarmmanager created");
-//    }
-//
-//    private Notification getNotification(String content) {
-//        Notification.Builder builder = new Notification.Builder(this);
-//        builder.setSmallIcon(R.mipmap.ic_notification);
-//        builder.setContentTitle("Vice News");
-//        builder.setAutoCancel(true);
-//        builder.setPriority(Notification.PRIORITY_DEFAULT);
-//        builder.setContentText(content);
-//        return builder.build();
-//    }
+    /** method below takes in latest articles and user preferences to generate notifications with
+     * new articles related to user's favorite news categories
+     */
 
-    public void setAlarm() {
 
+    // this method needs to be given an article for notificationManager to 
+    public void setNotificationAlarmManager() {
         Log.i(TAG, "onCreate: setAlarm was called");
 
         Long alertTime = new GregorianCalendar().getTimeInMillis()+5000;
 
         Intent alertIntent = new Intent(this, NotificationPublisher.class);
+
+        alertIntent.putExtra("TITLE_KEY", "test title that is too long so i can test format of notification");
+        alertIntent.putExtra("ID_KEY", "212318");
 
         TaskStackBuilder tStackBuilder = TaskStackBuilder.create(this);
         tStackBuilder.addParentStack(MainActivity.class);

@@ -14,24 +14,24 @@ import android.util.Log;
  * Created by stewartmcmillan on 4/20/16.
  */
 public class NotificationPublisher extends BroadcastReceiver {
-    String TAG = "NotificationBuilder ";
+    String TAG = "NotificationPublisher: ";
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.i(TAG, "onReceive method called");
 
-        String code = intent.getStringExtra("KEY");
-        Log.i(TAG, "onReceive: " + code);
+        String articleID = intent.getStringExtra("ID_KEY");
+        String articleTitle = intent.getStringExtra("TITLE_KEY");
 
-        createNotification(context, "Article Title", "Other Content", "Alert");
+        createNotification(context, "Vice News", articleTitle, articleID);
 
     }
 
     public void createNotification(Context context, String appName, String articleTitle, String articleId) {
-
-        Log.i(TAG, "onReceive: createNotification was called");
+        Log.i(TAG, "onReceive: " + articleId + articleTitle);
 
         PendingIntent notificationIntent = PendingIntent.getActivity(context, 0,
-                new Intent(context, ArticleActivity.class), 0);
+                new Intent(context, ArticleActivity.class).putExtra("ID_KEY", articleId), 0);
 
         Notification.Builder mBuilder = new Notification.Builder(context)
                 .setSmallIcon(R.mipmap.ic_notification)
@@ -50,22 +50,5 @@ public class NotificationPublisher extends BroadcastReceiver {
     }
 
 }
-//    public static String NOTIFICATION_ID = "notification-id";
-//    public static String NOTIFICATION = "notification";
-//    public static final String EXTRA_TITLE = "TITLE_KEY";
-//
-//
-//    public void onReceive(Context context, Intent intent) {
-//
-//        String title = intent.getStringExtra(EXTRA_TITLE);
-//
-//        Notification notification = intent.getParcelableExtra(NOTIFICATION);
-//        int id = intent.getIntExtra(NOTIFICATION_ID, 0);
-//
-//        NotificationManager notificationManager = (NotificationManager) context
-//                .getSystemService(Context.NOTIFICATION_SERVICE);
-//
-//        notificationManager.notify(id, notification);
-//    }
 
 

@@ -61,9 +61,8 @@
             android:exported="false"
             android:syncable="true"/>
 
-
-        <activity android:name=".Main2Activity"></activity>
         <receiver android:name=".NotificationPublisher" />
+
     </application>
 
 </manifest>
