@@ -1,29 +1,33 @@
 package martell.com.vice;
 
+import android.support.v7.app.AppCompatActivity;
+
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
+import android.content.Context;
+import android.content.Intent;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.ContentResolver;
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
-
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import martell.com.vice.adapters.ViewPagerAdapter;
 import martell.com.vice.fragment.LatestNewFragment;
 import martell.com.vice.fragment.NavigationDrawerFragment;
 import martell.com.vice.models.Article;
-import martell.com.vice.services.NotificationIntentService;
 import martell.com.vice.services.ViceAPIService;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -37,7 +41,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     public ViceAPIService viceService;
     private Retrofit retrofit;
     private ViewPagerAdapter adapter;
-    private static final int NOTIFICATION_ID = 1;
     private TabLayout tabLayout;
     private String notificationPreferences;
 
@@ -95,7 +98,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
                 }
             });
-
         }
 
         // Get the content resolver for your app
@@ -104,12 +106,12 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
         ContentResolver.addPeriodicSync(mAccount, AUTHORITY, Bundle.EMPTY, 30);
 
-        Intent intent = new Intent(this, NotificationIntentService.class);
-        // put extra with article id here
-        startService(intent);
+        setNotificationAlarmManager();
+
     }
 
     private void setupViewPagerOneFragment(ViewPager viewPager) {
+
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
         LatestNewFragment home = new LatestNewFragment();
@@ -262,4 +264,33 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         editor.commit();
         super.onDestroy();
     }
+
+    /** method below takes in latest articles and user preferences to generate notifications with
+     * new articles related to user's favorite news categories
+     */
+
+
+    // this method needs to be given an article for notificationManager to push notification with
+    // article data
+    public void setNotificationAlarmManager() {
+        Log.i(TAG, "onCreate: setAlarm was called");
+
+        Long alertTime = new GregorianCalendar().getTimeInMillis()+5000;
+
+        Intent alertIntent = new Intent(this, NotificationPublisher.class);
+
+        alertIntent.putExtra("TITLE_KEY", "test title that is too long so i can test format of notification");
+        alertIntent.putExtra("ID_KEY", "212318");
+
+        TaskStackBuilder tStackBuilder = TaskStackBuilder.create(this);
+        tStackBuilder.addParentStack(MainActivity.class);
+        tStackBuilder.addNextIntent(alertIntent);
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        alarmManager.set(AlarmManager.RTC_WAKEUP, alertTime,
+                PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+        Log.i(TAG, "setAlarm: alarm manager should have been set");
+    }
+
 }
