@@ -99,8 +99,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor findAllBookmarks() {
         cursor = dbRead.query(ARTICLES_TABLE_NAME, COLUMNS,
-                COL_ARTICLE_CATEGORY + " = bookmark" ,
-                null,
+                COL_ARTICLE_CATEGORY + " = ?" ,
+                new String[]{"bookmark"},
                 null,
                 null,
                 null,
