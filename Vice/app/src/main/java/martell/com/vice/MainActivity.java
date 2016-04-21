@@ -1,19 +1,18 @@
 package martell.com.vice;
 
-import android.content.Context;
-import android.content.Intent;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 
@@ -163,10 +162,10 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
         LatestNewFragment bookmarks = new LatestNewFragment();
         Bundle bundleBookmarks = new Bundle();
-        bundleBookmarks.putString(KEY_FRAGMENT_TITLE, "bookmarks");
+        bundleBookmarks.putString(KEY_FRAGMENT_TITLE, "Bookmarks");
         //Need to change this when getNewsArticles is complete
         //from bundleNews to bundleBookmarks
-        bookmarks.setArguments(bundleNews);
+        bookmarks.setArguments(bundleBookmarks);
         adapter.addFragment(bookmarks, "Bookmarks");
 
         viewPager.setAdapter(adapter);
