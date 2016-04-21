@@ -19,6 +19,7 @@ import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
 import martell.com.vice.ArticleActivity;
 import martell.com.vice.ArticleAdapter;
+
 import martell.com.vice.BookmarksHelper;
 import martell.com.vice.MainActivity;
 import martell.com.vice.R;
@@ -50,6 +51,7 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
     @Nullable

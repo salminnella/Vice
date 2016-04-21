@@ -63,7 +63,9 @@ public class NavigationDrawerFragment extends Fragment {
 
             @Override
             public void onDrawerClosed(View drawerView) {
-
+                ArrayList<Boolean> isCheckedArray = navigationDrawerAdapter.getIsCheckedArray();
+                NotificationPreferences notificationPreferences = (NotificationPreferences)getActivity();
+                notificationPreferences.setNotificationPreferences(createNotificationString(isCheckedArray));
                 super.onDrawerClosed(drawerView);
                 //getActivity().invalidateOptionsMenu();
             }

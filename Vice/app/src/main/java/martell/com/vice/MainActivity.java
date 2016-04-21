@@ -31,7 +31,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity implements NavigationDrawerFragment.NotificationPreferences{
     private static final String TAG = "Main";
     public static final String KEY_FRAGMENT_TITLE = "FragmentTitle";
-    private static final String KEY_SHARED_PREF_NOTIF = "sharedPrefNotification";
+    public static final String KEY_SHARED_PREF_NOTIF = "sharedPrefNotification";
     private ViewPager viewPager;
     private ArrayList<Article> articles;
     public ViceAPIService viceService;
@@ -251,6 +251,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     @Override
     public void setNotificationPreferences(String notificationPreferences) {
         this.notificationPreferences = notificationPreferences;
+        Log.i(TAG, "setNotificationPreferences: " + notificationPreferences);
     }
 
     @Override
