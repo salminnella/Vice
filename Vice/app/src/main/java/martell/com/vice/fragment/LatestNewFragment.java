@@ -118,7 +118,7 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
                             //Log.i(TAG, "onResponse: " + articleCategory);
                             String articleTimeStamp = String.valueOf(article.getArticleTimestamp());
                             // need to add the timestamp to the model
-                            //searchHelper.insertArticles(articleId, articleTitle, articleCategory, articleTimeStamp);
+                            searchHelper.insertArticles(articleId, articleTitle, articleCategory, articleTimeStamp);
                         }
                     }
 

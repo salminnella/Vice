@@ -11,6 +11,7 @@ import android.util.Log;
 
 import java.io.IOException;
 
+import martell.com.vice.dbHelper.DatabaseHelper;
 import martell.com.vice.models.ArticleArray;
 import martell.com.vice.services.NotificationIntentService;
 import martell.com.vice.services.ViceAPIService;
@@ -87,11 +88,19 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         //get a response from vice
         try {
             Response<ArticleArray> response = viceService.latestArticles(1).execute();
-            Log.i(TAG, "onResponse: " + response.body().getData().getItems()[0].getArticleAuthor());
-            String author = response.body().getData().getItems()[0].getArticleAuthor();
+            Log.i(TAG, "onResponse: " + response.body().getData().getItems()[0].getArticleId());
+            Log.i(TAG, "onResponse: " + response.body().getData().getItems().length);
+            for (int i = 0; i < response.body().getData().getItems().length; i++) {
+                int id = Integer.parseInt(response.body().getData().getItems()[i].getArticleId());
+                Log.i(TAG, "onPerformSync: article id " + id);
+                DatabaseHelper searchHelper = DatabaseHelper.getInstance(getContext());
+                searchHelper.findArticles();
+            }
+
+
+
             NotificationIntentService notificationService = new NotificationIntentService();
             //notificationService.showArticleTitle(author);
-            //notificationListener.pushNotification(author);
 
         } catch (IOException e) {
             e.printStackTrace();

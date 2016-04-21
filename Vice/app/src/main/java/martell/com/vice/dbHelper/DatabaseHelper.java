@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Created by anthony on 4/20/16.
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "ArticleNotices";
 
     Cursor cursor;
@@ -80,11 +80,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public void findArticlesl() {
+    public void findArticles() {
 
     }
 
     public void deleteArticles() {
 
+    }
+
+    public void insertBookmark(int articleId) {
+        ContentValues values = new ContentValues();
+        values.put(COL_ARTICLE_ID, articleId);
+        values.put(COL_ARTICLE_CATEGORY, "bookmark");
+
+        dbWrite.insert(ARTICLES_TABLE_NAME, null, values);
+
+    }
+
+    public Cursor findBookmarks() {
+        cursor = dbRead.query(ARTICLES_TABLE_NAME, COLUMNS,
+                COL_ARTICLE_CATEGORY + "= bookmark" ,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+        }
+
+        return cursor;
     }
 }
