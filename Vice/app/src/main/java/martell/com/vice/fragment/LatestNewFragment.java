@@ -128,27 +128,9 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
         articleRV.setAdapter(alphaAdapter);
         RV_SpaceDecoration decoration = new RV_SpaceDecoration(15);
         articleRV.addItemDecoration(decoration);
-        gridLayoutManager = new GridLayoutManager(getContext(), 2);
+        gridLayoutManager = new GridLayoutManager(getContext(), 1);
         articleRV.setLayoutManager(gridLayoutManager);
         articleRV.setHasFixedSize(true);
-//        articleRV.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                //super.onScrolled(recyclerView, dx, dy);
-//                if(dy > 0){
-//                    visibleItemCount = gridLayoutManager.getChildCount();
-//                    totalItemCount = gridLayoutManager.getItemCount();
-//                    pastVisiblesItems = gridLayoutManager.findFirstVisibleItemPosition();
-//                    if(loading){
-//                        if ((visibleItemCount + pastVisiblesItems)>=totalItemCount){
-//                            loading = false;
-//                            displayLatestArticles(totalItemCount/20);
-//                        }
-//                    }
-//                }
-//            }
-//        });
-
     }
 
     @Override
