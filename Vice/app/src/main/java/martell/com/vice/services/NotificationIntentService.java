@@ -7,22 +7,10 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
-import android.text.Html;
 import android.util.Log;
-
-import com.nostra13.universalimageloader.core.ImageLoader;
-
 import martell.com.vice.ArticleActivity;
-import martell.com.vice.Main2Activity;
 import martell.com.vice.MainActivity;
 import martell.com.vice.R;
-import martell.com.vice.models.Article;
-import martell.com.vice.models.ArticleData;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by stewartmcmillan on 4/20/16.
@@ -30,12 +18,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class NotificationIntentService extends IntentService{
 
     private static final String TAG = "NotificationService";
-    public static final String ARTICLE_ID = "Article ID: ";
     public static final int NOTIFICATION_ID = 5453;
     public String articleIDExtra;
     public static final String EXTRA_ID = "ID_KEY";
     public static final String EXTRA_TITLE = "TITLE_KEY";
-    public static final String EXTRA_PREVIEW = "preview";
+    public static final String EXTRA_PREVIEW = "PREVIEW_KEY";
     private String articleID;
     private String articleTitle;
 
