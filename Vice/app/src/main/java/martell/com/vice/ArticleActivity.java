@@ -1,8 +1,8 @@
 package martell.com.vice;
 
 import android.accounts.Account;
-import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
+import martell.com.vice.dbHelper.DatabaseHelper;
 import martell.com.vice.models.Article;
 import martell.com.vice.models.ArticleData;
 import martell.com.vice.services.NotificationIntentService;
@@ -43,6 +44,7 @@ public class ArticleActivity extends AppCompatActivity {
     Article article;
     ImageView backDropImage;
     CollapsingToolbarLayout collapsingToolbarLayout;
+    String bookmarkId;
 
     // Content provider authority
     public static final String AUTHORITY = "martell.com.vice.sync_adapter.StubProvider";
@@ -101,6 +103,7 @@ public class ArticleActivity extends AppCompatActivity {
         articleBodyText = (TextView) findViewById(R.id.article_body_text);
         backDropImage = (ImageView) findViewById(R.id.backdrop);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+
     }
 
     private void receiveIntent() {
@@ -144,17 +147,13 @@ public class ArticleActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.bookmark_item_menu) {
-            Bundle settingsBundle = new Bundle();
-            settingsBundle.putBoolean(
-                    ContentResolver.SYNC_EXTRAS_MANUAL, true);
-            settingsBundle.putBoolean(
-                    ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-                    /*
-                     * Request the sync for the default account, authority, and
-                     * manual sync settings
-                     */
-            ContentResolver.requestSync(mAccount, AUTHORITY, settingsBundle);
-            return true;
+            if (bookmarkId == null) {
+                bookmarkId = String.valueOf(idNum);
+                item.setIcon(R.drawable.ic_search);
+            } else {
+                bookmarkId = null;
+                item.setIcon(R.drawable.bookmark);
+            }
         }
         if (id == R.id.share_item_menu){
             String message = article.getArticleURL();
@@ -166,5 +165,22 @@ public class ArticleActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        DatabaseHelper databaseHelper = DatabaseHelper.getInstance(ArticleActivity.this);
+        Cursor cursor = databaseHelper.findBookmarkById(articleId);
+        if (cursor.getCount()>0) {
+            menu.getItem(1).setIcon(R.drawable.ic_search);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        DatabaseHelper databaseHelper = DatabaseHelper.getInstance(ArticleActivity.this);
+        databaseHelper.insertBookmark(bookmarkId);
     }
 }
