@@ -16,6 +16,7 @@ import android.view.animation.OvershootInterpolator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
@@ -157,8 +158,9 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
 
     @Override
     public void getResponse(ArrayList<Article> articleArrayList) {
-        articles = articleArrayList;
-//        makeRV();
+        if (!articles.isEmpty())return;
+        articles.addAll(articleArrayList);
+        //makeRV();
         articleAdapter.notifyDataSetChanged();
         alphaAdapter.notifyDataSetChanged();
         Log.d(TAG, "GET RESPONSE METHOD IS CALLED< ARTICLE VALUE IS " + articles.get(3).getArticleTitle());
