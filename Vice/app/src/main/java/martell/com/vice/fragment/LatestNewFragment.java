@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,8 @@ import martell.com.vice.RV_SpaceDecoration;
 import martell.com.vice.services.ViceAPIService;
 import martell.com.vice.models.Article;
 import martell.com.vice.models.ArticleArray;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -34,7 +37,7 @@ import retrofit2.http.HEAD;
 /**
  * Created by adao1 on 4/19/2016.
  */
-public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVItemClickListener {
+public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVItemClickListener, ArticleAdapter.OnLastArticleShownListener{
     private static final String TAG = "Latest News Fragment";
     private ArrayList<String> tabViewsTitle;
     private ArrayList<Article> articles;
@@ -44,7 +47,9 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
     private AlphaInAnimationAdapter alphaAdapter;
     private Retrofit retrofit;
     private String fragTitle;
-
+    boolean loading = true;
+    int pastVisiblesItems, visibleItemCount, totalItemCount;
+    private GridLayoutManager gridLayoutManager;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,7 +71,12 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
         retrofit = new Retrofit.Builder().baseUrl("http://www.vice.com/en_us/api/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
         viceService = retrofit.create(ViceAPIService.class);
-        displayLatestArticles(1);
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+        displayLatestArticles(0);
+        makeRV();
+
     }
 
     private void displayLatestArticles(int numPages){
@@ -93,7 +103,10 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
                     Article[] articleArray = response.body().getData().getItems();
                     ArrayList<Article> articlesNew = new ArrayList<>(Arrays.asList(articleArray));
                     articles.addAll(articlesNew);
-                    makeRV();
+
+                    int currentSize = articleAdapter.getItemCount();
+                    articleAdapter.notifyItemRangeInserted(currentSize,articlesNew.size());
+                    alphaAdapter.notifyItemRangeInserted(currentSize,articlesNew.size());
                 }
 
                 @Override
@@ -104,20 +117,43 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
 
     }
 
+    @Override
+    public void onLastArticleShown(int position) {
+        displayLatestArticles((position+1)/20);
+    }
+
     private void makeRV (){
-        articleAdapter = new ArticleAdapter(articles,this);
+        articleAdapter = new ArticleAdapter(articles,this,this);
         alphaAdapter = new AlphaInAnimationAdapter(articleAdapter);
-        alphaAdapter.setDuration(8000);
+        alphaAdapter.setDuration(3000);
         alphaAdapter.setInterpolator(new OvershootInterpolator());
         ScaleInAnimationAdapter scaleAdapter = new ScaleInAnimationAdapter(articleAdapter);
-        scaleAdapter.setDuration(8000);
-        scaleAdapter.setInterpolator(new OvershootInterpolator());
-        articleRV.setAdapter(scaleAdapter);
-        RV_SpaceDecoration decoration = new RV_SpaceDecoration(10);
+        scaleAdapter.setDuration(1000);
+        //scaleAdapter.setInterpolator(new OvershootInterpolator(1f));
+        articleRV.setAdapter(alphaAdapter);
+        RV_SpaceDecoration decoration = new RV_SpaceDecoration(15);
         articleRV.addItemDecoration(decoration);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),2);
+        gridLayoutManager = new GridLayoutManager(getContext(), 2);
         articleRV.setLayoutManager(gridLayoutManager);
         articleRV.setHasFixedSize(true);
+//        articleRV.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                //super.onScrolled(recyclerView, dx, dy);
+//                if(dy > 0){
+//                    visibleItemCount = gridLayoutManager.getChildCount();
+//                    totalItemCount = gridLayoutManager.getItemCount();
+//                    pastVisiblesItems = gridLayoutManager.findFirstVisibleItemPosition();
+//                    if(loading){
+//                        if ((visibleItemCount + pastVisiblesItems)>=totalItemCount){
+//                            loading = false;
+//                            displayLatestArticles(totalItemCount/20);
+//                        }
+//                    }
+//                }
+//            }
+//        });
+
     }
 
     @Override

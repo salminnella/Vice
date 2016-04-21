@@ -26,7 +26,12 @@ public class Article {
     String articleCategory;
     @SerializedName("url")
     String articleURL;
+    @SerializedName("pubTimestamp")
+    String articleTimeStamp;
 
+    public String getArticleTimeStamp() {
+        return articleTimeStamp;
+    }
     public String getArticleURL() {
         return articleURL;
     }
