@@ -1,8 +1,6 @@
 package martell.com.vice.fragment;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -24,7 +22,6 @@ import martell.com.vice.ArticleAdapter;
 import martell.com.vice.MainActivity;
 import martell.com.vice.R;
 import martell.com.vice.RV_SpaceDecoration;
-import martell.com.vice.dbHelper.DatabaseHelper;
 import martell.com.vice.models.Article;
 import martell.com.vice.models.ArticleArray;
 import martell.com.vice.services.ViceAPIService;
@@ -97,31 +94,6 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
                     Article[] articleArray = response.body().getData().getItems();
                     ArrayList<Article> articlesNew = new ArrayList<>(Arrays.asList(articleArray));
                     articles.addAll(articlesNew);
-
-                    SharedPreferences sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-                    String stringSharedPrefs = sharedPreferences.getString(MainActivity.KEY_SHARED_PREF_NOTIF, "");
-                    String[] arrayNotificationPref = stringSharedPrefs.split(",");
-                    Log.i(TAG, "onResponse: shared prefs = " + sharedPreferences.getString(MainActivity.KEY_SHARED_PREF_NOTIF, ""));
-                    Log.i(TAG, "onResponse: title = " + fragTitle);
-                    Log.i(TAG, "onResponse: prefs as string" + stringSharedPrefs);
-                    //if (Arrays.asList(arrayNotificationPref).contains(fragTitle)) {
-                    if (true) {
-                        // if a notification pref is on, and frag title != home or bookmarks
-                        // add those articles to the database here
-                        // database items
-                        DatabaseHelper searchHelper = DatabaseHelper.getInstance(getActivity());
-                        for (Article article : articles) {
-                            int articleId = Integer.parseInt(article.getArticleId());
-                            String articleTitle = article.getArticleTitle();
-                            //Log.i(TAG, "onResponse: " + articleTitle);
-                            String articleCategory = article.getArticleCategory();
-                            //Log.i(TAG, "onResponse: " + articleCategory);
-                            String articleTimeStamp = String.valueOf(article.getArticleTimestamp());
-                            // need to add the timestamp to the model
-                            searchHelper.insertArticles(articleId, articleTitle, articleCategory, articleTimeStamp);
-                        }
-                    }
-
                     makeRV();
                 }
 
