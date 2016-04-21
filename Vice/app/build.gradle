@@ -38,6 +38,4 @@ dependencies {
     compile 'jp.wasabeef:recyclerview-animators:2.2.3'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.2.0'
-
 }
