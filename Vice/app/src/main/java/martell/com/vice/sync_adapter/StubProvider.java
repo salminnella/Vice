@@ -37,6 +37,7 @@ public class StubProvider extends ContentProvider {
             String selection,
             String[] selectionArgs,
             String sortOrder) {
+
         return null;
     }
     /*

@@ -2,8 +2,8 @@ package martell.com.vice;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
@@ -16,13 +16,10 @@ import com.facebook.share.widget.ShareButton;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
-import java.util.ArrayList;
-
 import martell.com.vice.models.Article;
 import martell.com.vice.models.ArticleArray;
 import martell.com.vice.models.ArticleData;
 import martell.com.vice.models.Data;
-import martell.com.vice.BookmarksHelper;
 import martell.com.vice.services.ViceAPIService;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -64,7 +61,7 @@ public class Main2Activity extends AppCompatActivity {
         getLoadArticle();
         testCategoryAPICall();
         shareButtonListener();
-        testBookmarkHelper();
+//        testBookmarkHelper();
     }
 
     private void getLoadArticle(){
@@ -124,22 +121,22 @@ public class Main2Activity extends AppCompatActivity {
             }
         });
     }
-    private void testBookmarkHelper(){
-        testButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ArrayList<String> idList = new ArrayList<String>();
-                ArrayList<Article> articleList = new ArrayList<Article>();
-                idList.add("195491");
-                idList.add("188277");
-                idList.add("188184");
-                idList.add("188187");
-                Log.i(TAG, "onClick: ");
-                articleList = BookmarksHelper.getBookmarkArticles(idList);
-                for (Article article : articleList){
-                    Log.i(TAG, "onClick: "+article.getArticleTitle());
-                }
-            }
-        });
-    }
+//    private void testBookmarkHelper(){
+//        testButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                ArrayList<String> idList = new ArrayList<String>();
+//                ArrayList<Article> articleList = new ArrayList<Article>();
+//                idList.add("195491");
+//                idList.add("188277");
+//                idList.add("188184");
+//                idList.add("188187");
+//                Log.i(TAG, "onClick: ");
+//                articleList = BookmarksHelper.getBookmarkArticles(idList);
+//                for (Article article : articleList){
+//                    Log.i(TAG, "onClick: "+article.getArticleTitle());
+//                }
+//            }
+//        });
+//    }
 }
