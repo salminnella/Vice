@@ -12,11 +12,11 @@
 
         <ImageView
             android:id="@+id/nav_app_icon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="55dp"
-            android:src="@drawable/vice_200_200" />
+            android:src="@drawable/vice_logo_p" />
 
         <TextView
             android:layout_width="wrap_content"

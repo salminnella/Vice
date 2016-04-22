@@ -3,6 +3,7 @@ package martell.com.vice.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,7 +90,7 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
         retrofit = new Retrofit.Builder().baseUrl("http://www.vice.com/en_us/api/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
         viceService = retrofit.create(ViceAPIService.class);
-        displayLatestArticles(0);
+        if (isNetworkConnected())displayLatestArticles(0);
         makeRV();
 
     }
@@ -116,6 +118,7 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
     }
 
     private void displayLatestArticles(int numPages){
+
         Call<ArticleArray> call =null;
         fragTitle = getArguments().getString(MainActivity.KEY_FRAGMENT_TITLE);
 
@@ -149,36 +152,38 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
                         articles.addAll(articlesNew);
 
 
-                        sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-                        stringSharedPrefs = sharedPreferences.getString(MainActivity.KEY_SHARED_PREF_NOTIF, "");
-                        arrayNotificationPref = stringSharedPrefs.split(",");
-                        Log.i(TAG, "onResponse: shared prefs = " + sharedPreferences);
-                        Log.i(TAG, "onResponse: title = " + fragTitle);
-                        Log.i(TAG, "onResponse: prefs as string" + stringSharedPrefs);
+                        if (getActivity() != null) {
+                            sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+                            stringSharedPrefs = sharedPreferences.getString(MainActivity.KEY_SHARED_PREF_NOTIF, "");
+                            arrayNotificationPref = stringSharedPrefs.split(",");
+                            Log.i(TAG, "onResponse: shared prefs = " + sharedPreferences);
+                            Log.i(TAG, "onResponse: title = " + fragTitle);
+                            Log.i(TAG, "onResponse: prefs as string" + stringSharedPrefs);
 
-                        if (Arrays.asList(arrayNotificationPref).contains(fragTitle)) {
-                            // if a notification pref is on, add those articles to the database here
-                            // will use them as a reference point for notifications on new articles
-                            Log.i(TAG, "onResponse: entered if statement for database entry");
-                            DatabaseHelper searchHelper = DatabaseHelper.getInstance(getActivity());
-                            // checks if the category articles are already in the database, if not, then add them.
-                            Cursor articleCursor = searchHelper.findByCategory(fragTitle.toLowerCase());
-                            if (articleCursor.getCount() == 0) {
-                                for (Article article : articles) {
-                                    int articleId = Integer.parseInt(article.getArticleId());
-                                    String articleTitle = article.getArticleTitle();
-                                    String articleCategory = article.getArticleCategory();
-                                    String articleTimeStamp = String.valueOf(article.getArticleTimeStamp());
-                                    // adds articles to database based on users preference notifications
-                                    searchHelper.insertArticles(articleId, articleTitle, articleCategory, articleTimeStamp);
+                            if (Arrays.asList(arrayNotificationPref).contains(fragTitle)) {
+                                // if a notification pref is on, add those articles to the database here
+                                // will use them as a reference point for notifications on new articles
+                                Log.i(TAG, "onResponse: entered if statement for database entry");
+                                DatabaseHelper searchHelper = DatabaseHelper.getInstance(getActivity());
+                                // checks if the category articles are already in the database, if not, then add them.
+                                Cursor articleCursor = searchHelper.findByCategory(fragTitle.toLowerCase());
+                                if (articleCursor.getCount() == 0) {
+                                    for (Article article : articles) {
+                                        int articleId = Integer.parseInt(article.getArticleId());
+                                        String articleTitle = article.getArticleTitle();
+                                        String articleCategory = article.getArticleCategory();
+                                        String articleTimeStamp = String.valueOf(article.getArticleTimeStamp());
+                                        // adds articles to database based on users preference notifications
+                                        searchHelper.insertArticles(articleId, articleTitle, articleCategory, articleTimeStamp);
+                                    }
                                 }
                             }
+
+                            int currentSize = articleAdapter.getItemCount();
+                            articleAdapter.notifyItemRangeInserted(currentSize, articlesNew.size());
+                            alphaAdapter.notifyItemRangeInserted(currentSize, articlesNew.size());
                         }
-
-                        int currentSize = articleAdapter.getItemCount();
-                        articleAdapter.notifyItemRangeInserted(currentSize,articlesNew.size());
-                        alphaAdapter.notifyItemRangeInserted(currentSize, articlesNew.size());                    }
-
+                    }
                     @Override
                     public void onFailure(Call<ArticleArray> call, Throwable t) {
                     }
@@ -189,6 +194,9 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
 
     @Override
     public void onLastArticleShown(int position) {
+        if (!isNetworkConnected())
+            Toast.makeText(getActivity(), "No Network Connection", Toast.LENGTH_LONG).show();
+
         if(fragTitle.equals("Bookmarks"))return;
         displayLatestArticles((position+1)/20);
     }
@@ -245,5 +253,11 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
     //setter for notification prefs to pass to fragment to save category articles that users wants notices for
     public void setNotificationString(String notificationPreferences) {
         this.notificationPreferences = notificationPreferences;
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null;
     }
 }

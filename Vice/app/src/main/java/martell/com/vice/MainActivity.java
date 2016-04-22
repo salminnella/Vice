@@ -9,12 +9,17 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
@@ -24,7 +29,6 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import martell.com.vice.adapters.ViewPagerAdapter;
-import martell.com.vice.dbHelper.DatabaseHelper;
 import martell.com.vice.dbHelper.NotificationDBHelper;
 import martell.com.vice.fragment.LatestNewFragment;
 import martell.com.vice.fragment.NavigationDrawerFragment;
@@ -62,8 +66,15 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
+        setSupportActionBar(toolbar);
+        toolbar.setTitle("");
+
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
+
+        if (!isNetworkConnected())Toast.makeText(this,"No Network Connection", Toast.LENGTH_LONG).show();
 
         SharedPreferences sharedPreferences = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
         String notificationFromSharedPref = sharedPreferences.getString(KEY_SHARED_PREF_NOTIF,"");
@@ -267,7 +278,24 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(KEY_SHARED_PREF_NOTIF,notificationPreferences);
         editor.commit();
+
+        unbindDrawables(findViewById(R.id.rootLayout));
+        System.gc();
+
+
         super.onDestroy();
+    }
+
+    private void unbindDrawables(View view) {
+        if (view.getBackground()!=null){
+            view.getBackground().setCallback(null);
+        }
+        if (view instanceof ViewGroup && !(view instanceof AdapterView)){
+            for (int i =0 ; i < ((ViewGroup) view).getChildCount();i++){
+                unbindDrawables(((ViewGroup)view).getChildAt(i));
+            }
+            ((ViewGroup)view).removeAllViews();
+        }
     }
 
     /** method below generates notifications that, when clicked, take the user to the most popular
@@ -303,5 +331,14 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alertTime, intervalTime,
                 PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT));
     }
+    
+    /**
+     * Checks if device is currently connected to a network
+     * @return a boolean
+     */
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
+        return cm.getActiveNetworkInfo() != null;
+    }
 }

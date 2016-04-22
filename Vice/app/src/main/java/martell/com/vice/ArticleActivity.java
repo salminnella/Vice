@@ -1,6 +1,5 @@
 package martell.com.vice;
 
-import android.accounts.Account;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -22,7 +21,6 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import martell.com.vice.dbHelper.DatabaseHelper;
 import martell.com.vice.models.Article;
 import martell.com.vice.models.ArticleData;
-import martell.com.vice.services.NotificationIntentService;
 import martell.com.vice.services.ViceAPIService;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,22 +31,21 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ArticleActivity extends AppCompatActivity {
 
     private static final String TAG = "ArticleActivity";
-    Retrofit retrofit;
-    ImageLoaderConfiguration config;
-    String articleId;
-    String articleTitleExtra;
-    ViceAPIService viceService;
+
     int idNum;
     TextView articleTitleText;
     TextView articleBodyText;
-    Article article;
-    ImageView backDropImage;
-    CollapsingToolbarLayout collapsingToolbarLayout;
+    TextView articleAuthorText;
+    TextView articleDateText;
+    String articleId;
+    String articleTitleExtra;
     String bookmarkId;
-
-    // Content provider authority
-    public static final String AUTHORITY = "martell.com.vice.sync_adapter.StubProvider";
-    Account mAccount;
+    ImageView backDropImage;
+    Retrofit retrofit;
+    ImageLoaderConfiguration config;
+    ViceAPIService viceService;
+    Article article;
+    CollapsingToolbarLayout collapsingToolbarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +76,8 @@ public class ArticleActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     article = response.body().getData().getArticle();
                     articleTitleText.setText(article.getArticleTitle());
+                    articleAuthorText.setText(article.getArticleAuthor());
+                    articleDateText.setText(article.getArticlePubDate());
 
                     loadBody();
                     loadBackdrop();
@@ -91,7 +90,6 @@ public class ArticleActivity extends AppCompatActivity {
             public void onFailure(Call<ArticleData> call, Throwable t) {
             }
         });
-
     }
 
     private void initViews() {
@@ -99,6 +97,8 @@ public class ArticleActivity extends AppCompatActivity {
         articleBodyText = (TextView) findViewById(R.id.article_body_text);
         backDropImage = (ImageView) findViewById(R.id.backdrop);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        articleAuthorText = (TextView) findViewById(R.id.article_author_text);
+        articleDateText = (TextView) findViewById(R.id.article_date_text);
 
     }
 
@@ -117,7 +117,6 @@ public class ArticleActivity extends AppCompatActivity {
     private void loadBody() {
         collapsingToolbarLayout.setTitle(article.getArticleCategory());
         collapsingToolbarLayout.setCollapsedTitleTextColor(Color.BLACK);
-//        textView.setText(Html.fromHtml(htmlString.replaceAll("<img.+?>", "")));
         articleBodyText.setText(Html.fromHtml(article.getArticleBody().replaceAll("<img.+?>", "")));
 
     }
@@ -144,7 +143,7 @@ public class ArticleActivity extends AppCompatActivity {
         if (id == R.id.bookmark_item_menu) {
             if (bookmarkId == null) {
                 bookmarkId = String.valueOf(idNum);
-                item.setIcon(R.drawable.ic_search);
+                item.setIcon(R.drawable.bookmark_selected);
             } else {
                 bookmarkId = null;
                 item.setIcon(R.drawable.bookmark);
@@ -167,7 +166,7 @@ public class ArticleActivity extends AppCompatActivity {
         DatabaseHelper databaseHelper = DatabaseHelper.getInstance(ArticleActivity.this);
         Cursor cursor = databaseHelper.findBookmarkById(articleId);
         if (cursor.getCount()>0) {
-            menu.getItem(1).setIcon(R.drawable.ic_search);
+            menu.getItem(1).setIcon(R.drawable.bookmark_selected);
             bookmarkId = String.valueOf(idNum);
         }
         return super.onPrepareOptionsMenu(menu);
