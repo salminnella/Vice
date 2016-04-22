@@ -59,7 +59,9 @@ public class ArticleActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         //receives article id that was clicked from main
+        Log.i(TAG, "onCreate: article id: " + articleId);
         receiveIntent();
+        Log.i(TAG, "onCreate: article id after receiveIntent: " + articleId);
         initViews();
 
         retrofit = new Retrofit.Builder().baseUrl("http://www.vice.com/en_us/api/")
@@ -68,7 +70,7 @@ public class ArticleActivity extends AppCompatActivity {
         config = new ImageLoaderConfiguration.Builder(this).build();
 
         idNum = Integer.parseInt(articleId);
-        Log.i(TAG, "onCreate: " + idNum);
+        Log.i(TAG, "onCreate: after parseInt" + idNum);
 
         Call<ArticleData> call = viceService.getArticle(idNum);
         call.enqueue(new Callback<ArticleData>() {
@@ -90,12 +92,6 @@ public class ArticleActivity extends AppCompatActivity {
             }
         });
 
-//        Intent intent = new Intent(this, NotificationIntentService.class);
-//        intent.putExtra("TITLE_KEY", articleTitleExtra);
-//        intent.putExtra("ID_KEY", articleId);
-//        // put extra with article id here
-//        startService(intent);
-
     }
 
     private void initViews() {
@@ -110,7 +106,6 @@ public class ArticleActivity extends AppCompatActivity {
         Intent intent = getIntent();
         articleId = intent.getStringExtra("ID_KEY");
         articleTitleExtra = intent.getStringExtra("TITLE_KEY");
-        Log.i(TAG, "onCreate: " + articleId);
     }
 
     private void loadBackdrop() {

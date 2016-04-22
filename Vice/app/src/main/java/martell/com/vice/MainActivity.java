@@ -295,7 +295,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         alertIntent.putExtra("ID_KEY", popularArticleId);
 
         TaskStackBuilder tStackBuilder = TaskStackBuilder.create(this);
-        tStackBuilder.addParentStack(ArticleActivity.class);
+        tStackBuilder.addParentStack(MainActivity.class);
         tStackBuilder.addNextIntent(alertIntent);
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);

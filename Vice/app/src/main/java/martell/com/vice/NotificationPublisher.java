@@ -28,7 +28,7 @@ public class NotificationPublisher extends BroadcastReceiver {
         Log.i(TAG, "notificationArticleId: " + notificationArticleId);
         Log.i(TAG, "notificationArticleTitle: " + notificationArticleTitle);
 
-        createNotification(context, "Today's Most Popular Story", notificationArticleTitle, notificationArticleId);
+        createNotification(context, "What's New on Vice", notificationArticleTitle, notificationArticleId);
 
     }
 
@@ -36,7 +36,8 @@ public class NotificationPublisher extends BroadcastReceiver {
         Log.i(TAG, "onReceive: " + articleId + " " + articleTitle);
 
         PendingIntent notificationIntent = PendingIntent.getActivity(context, 0,
-                new Intent(context, ArticleActivity.class).putExtra("ID_KEY", articleId), 0);
+                new Intent(context, MainActivity.class).putExtra("ID_KEY", articleId).putExtra("TITLE_KEY", articleTitle), 0);
+        Log.i(TAG, "createNotification: " + articleId);
 
         Notification.Builder mBuilder = new Notification.Builder(context)
                 .setSmallIcon(R.mipmap.ic_notification)
