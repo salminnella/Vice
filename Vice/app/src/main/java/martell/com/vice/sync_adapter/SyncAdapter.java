@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.util.Log;
 import java.io.IOException;
 import java.util.ArrayList;
-import martell.com.vice.dbHelper.DatabaseHelper;
 import martell.com.vice.dbHelper.NotificationDBHelper;
 import martell.com.vice.models.Article;
 import martell.com.vice.models.ArticleArray;
@@ -99,7 +98,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         //get a response from vice
         try {
-            Response<ArticleArray> response = viceService.latestArticles(0).execute();
+            Response<ArticleArray> response = viceService.popularArticles(0).execute();
             Article articleList[] = response.body().getData().getItems().clone();
             Log.i(TAG, "onResponse: " + response.body().getData().getItems()[0].getArticleId());
             Log.i(TAG, "number of Articles: " + response.body().getData().getItems().length);
@@ -109,58 +108,22 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             articleCategory = articleList[0].getArticleCategory();
             articleTimeStamp = articleList[0].getArticleTimeStamp();
 
-            Log.i(TAG, "onPerformSync: articleTitle is: " + articleTitle);
-            Log.i(TAG, "onPerformSync: article Id " + articleId);
-
             notificationHelper = NotificationDBHelper.getInstance(getContext());
-            notificationHelper.insertArticles(0, articleId, articleTitle, articleCategory, articleTimeStamp);
-            
-            Log.i(TAG, "onPerformSync: Retrofit title is: " + articleTitle);
-            Log.i(TAG, "onPerformSync: sql db title is: " + notificationHelper.getLatestArticleTitle(0));
 
-            Log.i(TAG, "onPerformSync: Retrofit firstArticleId: " + articleList[0].getArticleId());
-            Log.i(TAG, "onPerformSync: sql DB firstArticleId: " + notificationHelper.getLatestArticleId(0));
+            if (notificationHelper == null) {
 
-//            for (int i = 0; i < articleList.length; i++) {
-//
-//                articleId = Integer.parseInt(articleList[i].getArticleId());
-//                articleTitle = articleList[i].getArticleTitle();
-//                articleCategory = articleList[i].getArticleCategory();
-//                articleTimeStamp = articleList[i].getArticleTimeStamp();
-//
-//                Log.i(TAG, "onPerformSync: articleTitle is: " + articleTitle);
-//                Log.i(TAG, "onPerformSync: article Id " + articleId);
-//
-//                notificationHelper = NotificationDBHelper.getInstance(getContext());
-//                notificationHelper.insertArticles(i, articleId, articleTitle, articleCategory, articleTimeStamp);
-//                String latestArticleTitle = notificationHelper.getLatestArticleTitle(0);
-//                Log.i(TAG, "onPerformSync: Retrofit title is: " + articleTitle);
-//                Log.i(TAG, "onPerformSync: sql db title is: " + notificationHelper.getLatestArticleTitle(0));
-//
-//            }
+                notificationHelper.insertArticles(0, articleId, articleTitle, articleCategory, articleTimeStamp);
+
+            } else {
+                notificationHelper.deleteArticle(0);
+                Log.i(TAG, "onPerformSync: deleted an article");
+
+                notificationHelper.insertArticles(0, articleId, articleTitle, articleCategory, articleTimeStamp);
+
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        //get a response from vice
-//        try {
-//            Response<ArticleArray> response = viceService.latestArticles(1).execute();
-//            Log.i(TAG, "onResponse: " + response.body().getData().getItems()[0].getArticleId());
-//            Log.i(TAG, "onResponse: " + response.body().getData().getItems().length);
-//            for (int i = 0; i < response.body().getData().getItems().length; i++) {
-//                int id = Integer.parseInt(response.body().getData().getItems()[i].getArticleId());
-//                Log.i(TAG, "onPerformSync: article id " + id);
-//                DatabaseHelper searchHelper = DatabaseHelper.getInstance(getContext());
-//                searchHelper.findArticles();
-//            }
-
-
-//
-//            NotificationIntentService notificationService = new NotificationIntentService();
-//            //notificationService.showArticleTitle(author);
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
     }
 }

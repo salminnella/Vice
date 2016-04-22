@@ -86,7 +86,7 @@ public class NotificationDBHelper extends SQLiteOpenHelper{
 
     }
 
-    public String getLatestArticleId(int id) {
+    public String getPopularArticleId(int id) {
 
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -105,7 +105,7 @@ public class NotificationDBHelper extends SQLiteOpenHelper{
             return "No type found";
         }    }
 
-    public String getLatestArticleTitle(int id) {
+    public String getPopularArticleTitle(int id) {
 
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -124,7 +124,14 @@ public class NotificationDBHelper extends SQLiteOpenHelper{
             return "No type found";
         }    }
 
-    public void deleteArticles() {
+    public int deleteArticle(int rowId) {
+
+        SQLiteDatabase db = getWritableDatabase();
+        int deleteNum = db.delete(ARTICLES_TABLE_NAME,
+                COL_ID + " = ?",
+                new String[]{String.valueOf(rowId)});
+        db.close();
+        return deleteNum;
 
     }
 
