@@ -9,9 +9,11 @@ import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.SyncResult;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.util.Log;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,6 +46,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     public String articleTimeStamp;
     NotificationDBHelper notificationHelper;
     public ArrayList<Article> articlesArray;
+    public Context context;
 
     /**
      * Set up the sync adapter
@@ -55,6 +58,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
          * from the incoming Context
          */
         mContentResolver = context.getContentResolver();
+        this.context = context;
     }
 
     /**
@@ -102,7 +106,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             Article articleList[] = response.body().getData().getItems().clone();
             Log.i(TAG, "onResponse: " + response.body().getData().getItems()[0].getArticleId());
             Log.i(TAG, "number of Articles: " + response.body().getData().getItems().length);
-
             articleId = Integer.parseInt(articleList[0].getArticleId());
             articleTitle = articleList[0].getArticleTitle();
             articleCategory = articleList[0].getArticleCategory();
