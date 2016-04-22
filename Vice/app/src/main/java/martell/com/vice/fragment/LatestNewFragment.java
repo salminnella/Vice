@@ -3,6 +3,7 @@ package martell.com.vice.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,7 +90,7 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
         retrofit = new Retrofit.Builder().baseUrl("http://www.vice.com/en_us/api/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
         viceService = retrofit.create(ViceAPIService.class);
-        displayLatestArticles(0);
+        if (isNetworkConnected())displayLatestArticles(0);
         makeRV();
 
     }
@@ -116,6 +118,7 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
     }
 
     private void displayLatestArticles(int numPages){
+
         Call<ArticleArray> call =null;
         fragTitle = getArguments().getString(MainActivity.KEY_FRAGMENT_TITLE);
 
@@ -189,6 +192,9 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
 
     @Override
     public void onLastArticleShown(int position) {
+        if (!isNetworkConnected())
+            Toast.makeText(getActivity(), "No Network Connection", Toast.LENGTH_LONG).show();
+
         if(fragTitle.equals("Bookmarks"))return;
         displayLatestArticles((position+1)/20);
     }
@@ -245,5 +251,11 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
     //setter for notification prefs to pass to fragment to save category articles that users wants notices for
     public void setNotificationString(String notificationPreferences) {
         this.notificationPreferences = notificationPreferences;
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null;
     }
 }
