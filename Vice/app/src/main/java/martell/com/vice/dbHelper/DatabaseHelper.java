@@ -5,6 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import java.util.ArrayList;
+
+import martell.com.vice.models.Article;
 
 /**
  * Created by anthony on 4/20/16.
@@ -12,6 +17,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "ArticleNotices";
+    public static final String TAG = "DatabaseHelper: ";
 
     Cursor cursor;
     SQLiteDatabase dbWrite = getWritableDatabase();
@@ -84,21 +90,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public Cursor getPlacesList() {
+    public String getLatestArticleTitle(int id) {
 
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(ARTICLES_TABLE_NAME, // a. table
-                COLUMNS, // b. column names
-                null, // c. selections
-                null, // d. selections args
+                new String[]{COL_ARTICLE_NAME},
+                COL_ID + " = ?", // c. selections
+                new String[]{String.valueOf(id)},
                 null, // e. group by
                 null, // f. having
                 null, // g. order by
                 null); // h. limit
 
-        return cursor;
-    }
+        if (cursor.moveToFirst()) {
+            return cursor.getString(cursor.getColumnIndex(COL_ARTICLE_NAME));
+        } else {
+            return "No type found";
+        }    }
 
     public void deleteArticles() {
 
@@ -143,5 +152,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         return cursor;
+    }
+
+    public String getArticleIdByTableId(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(ARTICLES_TABLE_NAME, // a. table
+                new String[]{COL_ARTICLE_ID},
+                COL_ID + " = ?", // c. selections
+                new String[]{String.valueOf(id)},
+                null, // e. group by
+                null, // f. having
+                null, // g. order by
+                null); // h. limit
+
+        if (cursor.moveToFirst()) {
+            return cursor.getString(cursor.getColumnIndex(COL_ARTICLE_ID));
+        } else {
+            return "No type found";
+        }
     }
 }

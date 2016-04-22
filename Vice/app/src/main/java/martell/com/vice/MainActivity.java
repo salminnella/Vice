@@ -9,6 +9,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -24,6 +25,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import martell.com.vice.adapters.ViewPagerAdapter;
+import martell.com.vice.dbHelper.DatabaseHelper;
 import martell.com.vice.fragment.LatestNewFragment;
 import martell.com.vice.fragment.NavigationDrawerFragment;
 import martell.com.vice.models.Article;
@@ -43,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     private ViewPagerAdapter adapter;
     private TabLayout tabLayout;
     private String notificationPreferences;
+    String latestArticleTitle;
+    String latestArticleId;
 
     // Content provider authority
     public static final String AUTHORITY = "martell.com.vice.sync_adapter.StubProvider";
@@ -103,8 +107,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         // Get the content resolver for your app
         mResolver = getContentResolver();
 
-        ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
-        ContentResolver.addPeriodicSync(mAccount, AUTHORITY, Bundle.EMPTY, 30);
+//        ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
+//        ContentResolver.addPeriodicSync(mAccount, AUTHORITY, Bundle.EMPTY, 30);
 
 
 
@@ -283,12 +287,21 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         Long alertTime = new GregorianCalendar().getTimeInMillis()+5000;
 
         //perform sync here?
+        ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
         ContentResolver.addPeriodicSync(mAccount, AUTHORITY, Bundle.EMPTY, 30);
 
         Intent alertIntent = new Intent(this, NotificationPublisher.class);
 
-        alertIntent.putExtra("TITLE_KEY", "test title that is too long so i can test format of notification");
-        alertIntent.putExtra("ID_KEY", "212318");
+        DatabaseHelper searchHelper = DatabaseHelper.getInstance(this);
+//        searchHelper.findArticles();
+//        Cursor cursor = searchHelper.getLatestArticle();
+//        latestArticleId = cursor.getString(0);
+        latestArticleTitle = searchHelper.getLatestArticleTitle(0);
+        Log.i(TAG, "latestArticleId: " + latestArticleId);
+        Log.i(TAG, "latestArticleTitle: " + latestArticleTitle);
+
+        alertIntent.putExtra("TITLE_KEY", latestArticleTitle);
+        alertIntent.putExtra("ID_KEY", latestArticleId);
 
         TaskStackBuilder tStackBuilder = TaskStackBuilder.create(this);
         tStackBuilder.addParentStack(MainActivity.class);

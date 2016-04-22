@@ -10,15 +10,18 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SyncResult;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
 import martell.com.vice.MainActivity;
 import martell.com.vice.NotificationPublisher;
 import martell.com.vice.dbHelper.DatabaseHelper;
+import martell.com.vice.models.Article;
 import martell.com.vice.models.ArticleArray;
 import martell.com.vice.services.NotificationIntentService;
 import martell.com.vice.services.ViceAPIService;
@@ -40,6 +43,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     ContentResolver mContentResolver;
     public String articleTitle;
     public int articleId;
+    public ArrayList<Article> articlesArray;
 
     /**
      * Set up the sync adapter
@@ -98,17 +102,21 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         try {
             Response<ArticleArray> response = viceService.latestArticles(0).execute();
             Log.i(TAG, "onResponse: " + response.body().getData().getItems()[0].getArticleId());
-            Log.i(TAG, "onResponse: " + response.body().getData().getItems().length);
+            Log.i(TAG, "number of Articles: " + response.body().getData().getItems().length);
             for (int i = 0; i < response.body().getData().getItems().length; i++) {
+//                articlesArray.add(response.body().getData().getArticle());
                 articleId = Integer.parseInt(response.body().getData().getItems()[i].getArticleId());
                 articleTitle = response.body().getData().getItems()[i].getArticleTitle();
+                Log.i(TAG, "onPerformSync: articleTitle is: " + articleTitle);
                 Log.i(TAG, "onPerformSync: article Id " + articleId);
                 Log.i(TAG, "onPerformSync: articleTitle: " + articleTitle);
                 DatabaseHelper searchHelper = DatabaseHelper.getInstance(getContext());
                 searchHelper.findArticles();
+                String latestArticleTitle = searchHelper.getLatestArticleTitle(0);
+                Log.i(TAG, "onPerformSync: now articleTitle is " + articleTitle);
+                Log.i(TAG, "onPerformSync: now articleTitle is " + latestArticleTitle);
+
             }
-
-
 
             NotificationIntentService notificationService = new NotificationIntentService();
             //notificationService.showArticleTitle(author);
@@ -117,26 +125,4 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             e.printStackTrace();
         }
     }
-
-//    //do we do this here and not in main??
-//    public void setNotificationAlarmManager() {
-//        Log.i(TAG, "onCreate: setAlarm was called");
-//
-//        Long alertTime = new GregorianCalendar().getTimeInMillis()+5000;
-//
-//        Intent alertIntent = new Intent(this, NotificationPublisher.class);
-//
-//        alertIntent.putExtra("TITLE_KEY", "test title that is too long so i can test format of notification");
-//        alertIntent.putExtra("ID_KEY", "212318");
-//
-//        TaskStackBuilder tStackBuilder = TaskStackBuilder.create(this);
-//        tStackBuilder.addParentStack(MainActivity.class);
-//        tStackBuilder.addNextIntent(alertIntent);
-//
-//        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-//
-//        alarmManager.set(AlarmManager.RTC_WAKEUP, alertTime,
-//                PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT));
-//        Log.i(TAG, "setAlarm: alarm manager should have been set");
-//    }
 }
