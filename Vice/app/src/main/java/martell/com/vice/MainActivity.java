@@ -10,12 +10,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
@@ -64,6 +66,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         setContentView(R.layout.activity_main);
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
+
+        if (!isNetworkConnected())Toast.makeText(this,"No Network Connection", Toast.LENGTH_LONG).show();
 
         SharedPreferences sharedPreferences = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
         String notificationFromSharedPref = sharedPreferences.getString(KEY_SHARED_PREF_NOTIF,"");
@@ -315,4 +319,13 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         Log.i(TAG, "setAlarm: alarm manager should have been set");
     }
 
+    /**
+     * Checks if device is currently connected to a network
+     * @return a boolean
+     */
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null;
+    }
 }

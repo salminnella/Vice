@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -78,12 +80,13 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
         retrofit = new Retrofit.Builder().baseUrl("http://www.vice.com/en_us/api/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
         viceService = retrofit.create(ViceAPIService.class);
-        displayLatestArticles(0);
+        if (isNetworkConnected())displayLatestArticles(0);
         makeRV();
 
     }
 
     private void displayLatestArticles(int numPages){
+
         Call<ArticleArray> call =null;
         fragTitle = getArguments().getString(MainActivity.KEY_FRAGMENT_TITLE);
         tabTitleView.setText(fragTitle);
@@ -155,6 +158,9 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
 
     @Override
     public void onLastArticleShown(int position) {
+        if (!isNetworkConnected())
+            Toast.makeText(getActivity(), "No Network Connection", Toast.LENGTH_LONG).show();
+
         displayLatestArticles((position+1)/20);
     }
 
@@ -194,5 +200,11 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
         articleAdapter.notifyDataSetChanged();
         alphaAdapter.notifyDataSetChanged();
         Log.d(TAG, "GET RESPONSE METHOD IS CALLED< ARTICLE VALUE IS " + articles.get(0).getArticleTitle());
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null;
     }
 }
