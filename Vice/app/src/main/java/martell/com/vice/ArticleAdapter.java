@@ -1,10 +1,6 @@
 package martell.com.vice;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Rect;
-
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
@@ -14,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.squareup.picasso.Picasso;
 
@@ -64,7 +59,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         TextView titleTextView = holder.titleTextView;
         if (holder.previewTextView!=null){
             TextView previewTextView = holder.previewTextView;
-            previewTextView.setText(Html.fromHtml(article.getArticlePreview()));
+            if (article.getArticlePreview()!=null) previewTextView.setText(Html.fromHtml(article.getArticlePreview()));
         }
         ImageView imageView = holder.imageView;
         titleTextView.setText(article.getArticleTitle());
