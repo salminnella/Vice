@@ -26,11 +26,11 @@
 
 
             <ImageView
-                android:layout_marginLeft="40dp"
                 android:id="@+id/toolbar_image"
                 android:layout_height="50dp"
                 android:layout_width="wrap_content"
-                android:src="@drawable/vice_200_200"
+                android:layout_gravity="center"
+                android:src="@drawable/vice_logo_p"
                 />
 
         </android.support.v7.widget.Toolbar>

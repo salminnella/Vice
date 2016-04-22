@@ -22,7 +22,6 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import martell.com.vice.dbHelper.DatabaseHelper;
 import martell.com.vice.models.Article;
 import martell.com.vice.models.ArticleData;
-import martell.com.vice.services.NotificationIntentService;
 import martell.com.vice.services.ViceAPIService;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -41,6 +40,8 @@ public class ArticleActivity extends AppCompatActivity {
     int idNum;
     TextView articleTitleText;
     TextView articleBodyText;
+    TextView articleAuthorText;
+    TextView articleDateText;
     Article article;
     ImageView backDropImage;
     CollapsingToolbarLayout collapsingToolbarLayout;
@@ -77,6 +78,8 @@ public class ArticleActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     article = response.body().getData().getArticle();
                     articleTitleText.setText(article.getArticleTitle());
+                    articleAuthorText.setText(article.getArticleAuthor());
+                    articleDateText.setText(article.getArticlePubDate());
 
                     loadBody();
                     loadBackdrop();
@@ -89,13 +92,6 @@ public class ArticleActivity extends AppCompatActivity {
             public void onFailure(Call<ArticleData> call, Throwable t) {
             }
         });
-
-//        Intent intent = new Intent(this, NotificationIntentService.class);
-//        intent.putExtra("TITLE_KEY", articleTitleExtra);
-//        intent.putExtra("ID_KEY", articleId);
-//        // put extra with article id here
-//        startService(intent);
-
     }
 
     private void initViews() {
@@ -103,6 +99,8 @@ public class ArticleActivity extends AppCompatActivity {
         articleBodyText = (TextView) findViewById(R.id.article_body_text);
         backDropImage = (ImageView) findViewById(R.id.backdrop);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        articleAuthorText = (TextView) findViewById(R.id.article_author_text);
+        articleDateText = (TextView) findViewById(R.id.article_date_text);
 
     }
 
@@ -149,7 +147,7 @@ public class ArticleActivity extends AppCompatActivity {
         if (id == R.id.bookmark_item_menu) {
             if (bookmarkId == null) {
                 bookmarkId = String.valueOf(idNum);
-                item.setIcon(R.drawable.ic_search);
+                item.setIcon(R.drawable.bookmark_selected);
             } else {
                 bookmarkId = null;
                 item.setIcon(R.drawable.bookmark);
@@ -172,7 +170,7 @@ public class ArticleActivity extends AppCompatActivity {
         DatabaseHelper databaseHelper = DatabaseHelper.getInstance(ArticleActivity.this);
         Cursor cursor = databaseHelper.findBookmarkById(articleId);
         if (cursor.getCount()>0) {
-            menu.getItem(1).setIcon(R.drawable.ic_search);
+            menu.getItem(1).setIcon(R.drawable.bookmark_selected);
             bookmarkId = String.valueOf(idNum);
         }
         return super.onPrepareOptionsMenu(menu);
