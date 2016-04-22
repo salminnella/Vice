@@ -32,6 +32,13 @@ public class NavigationDrawerFragment extends Fragment {
     private DrawerLayout navDrawerLayout;
     private NavigationDrawerAdapter navigationDrawerAdapter;
 
+    /**
+     * inflates NavigatonDrawerView
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -40,6 +47,10 @@ public class NavigationDrawerFragment extends Fragment {
         return navFragmentView;
     }
 
+    /**
+     * Converts an array of booleans that represent the toggle switches in the Nav Drawer to
+     * a ',' seperated string and passes to the main activity
+     */
     @Override
     public void onPause() {
         ArrayList<Boolean> isCheckedArray = navigationDrawerAdapter.getIsCheckedArray();
@@ -48,6 +59,16 @@ public class NavigationDrawerFragment extends Fragment {
         super.onPause();
     }
 
+    /**
+     * initializes the NavDrawer layout
+     * onDrawerClosed
+     * Converts an array of booleans that represent the toggle switches in the Nav Drawer to
+     * a ',' seperated string and passes to the main activity
+     * @param drawerLayout
+     * @param toolbar
+     * @param navDrawerEntryList
+     * @param booleanArrayList
+     */
     public void initDrawer(DrawerLayout drawerLayout, final Toolbar toolbar, List<NavDrawerEntry> navDrawerEntryList,
                            ArrayList<Boolean> booleanArrayList){
         Log.d(TAG_NAV_FRAG,"initDrawer HAS BEEN CALLED IN THE NAVIGATION FRAGMENT");
@@ -109,6 +130,9 @@ public class NavigationDrawerFragment extends Fragment {
         return strNotificationPref;
     }
 
+    /**
+     * interface for passing notifications to the main activity
+     */
     public interface NotificationPreferences {
         void setNotificationPreferences(String notificationPreferences);
     }

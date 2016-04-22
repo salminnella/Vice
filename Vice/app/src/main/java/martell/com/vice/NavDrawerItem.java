@@ -1,6 +1,8 @@
 package martell.com.vice;
 
 /**
+ * Represents an Item in the nav drawer layout
+ * superclass NavDrawer
  * Created by mstarace on 4/18/16.
  */
 public class NavDrawerItem extends NavDrawerEntry {

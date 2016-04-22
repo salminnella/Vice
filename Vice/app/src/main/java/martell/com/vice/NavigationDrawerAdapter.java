@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Adapter for the Nav Drawer RecyclerView
  * Created by mstarace on 4/18/16.
  */
 public class NavigationDrawerAdapter extends RecyclerView.Adapter {
@@ -30,6 +31,12 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter {
         this.inflater = LayoutInflater.from(context);
     }
 
+    /**
+     * Creates a viewHolder based on viewType of current item
+     * @param parent
+     * @param viewType
+     * @return
+     */
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemLayoutView;
@@ -57,6 +64,11 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter {
         return null;
     }
 
+    /**
+     * Creates the functionality of each view in the Nav Drawer based on item type
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         final NavDrawerEntry item = data.get(position);
@@ -131,6 +143,11 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter {
         return data.size();
     }
 
+    /**
+     * Gets the Array of Booleans based on toggle items position to the
+     * Fragment
+     * @return
+     */
     public ArrayList<Boolean> getIsCheckedArray() {
         return isCheckedArray;
     }
@@ -172,9 +189,4 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter {
         }
     }
 
-    @Override
-    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
-        Log.d(TAG_NAV_ADAPTER,"Deteched is Called");
-        super.onDetachedFromRecyclerView(recyclerView);
-    }
 }
