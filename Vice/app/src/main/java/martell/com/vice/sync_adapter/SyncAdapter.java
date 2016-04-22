@@ -13,13 +13,8 @@ import android.content.SyncResult;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
-
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
-
-import martell.com.vice.MainActivity;
-import martell.com.vice.NotificationPublisher;
 import martell.com.vice.dbHelper.DatabaseHelper;
 import martell.com.vice.models.Article;
 import martell.com.vice.models.ArticleArray;
@@ -28,6 +23,7 @@ import martell.com.vice.services.ViceAPIService;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.HEAD;
 
 /**
  * Created by anthony on 4/19/16.
@@ -124,5 +120,25 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         } catch (IOException e) {
             e.printStackTrace();
         }
+//        //get a response from vice
+//        try {
+//            Response<ArticleArray> response = viceService.latestArticles(1).execute();
+//            Log.i(TAG, "onResponse: " + response.body().getData().getItems()[0].getArticleId());
+//            Log.i(TAG, "onResponse: " + response.body().getData().getItems().length);
+//            for (int i = 0; i < response.body().getData().getItems().length; i++) {
+//                int id = Integer.parseInt(response.body().getData().getItems()[i].getArticleId());
+//                Log.i(TAG, "onPerformSync: article id " + id);
+//                DatabaseHelper searchHelper = DatabaseHelper.getInstance(getContext());
+//                searchHelper.findArticles();
+//            }
+
+
+//
+//            NotificationIntentService notificationService = new NotificationIntentService();
+//            //notificationService.showArticleTitle(author);
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 }

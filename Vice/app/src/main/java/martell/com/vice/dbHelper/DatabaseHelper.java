@@ -172,4 +172,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return "No type found";
         }
     }
+
+    public void deleteBookmarkById(String articleId) {
+
+        dbWrite.delete(ARTICLES_TABLE_NAME,
+                COL_ARTICLE_ID + " = ? AND " + COL_ARTICLE_CATEGORY + " = ?",
+                new String[]{articleId, "bookmark"});
+    }
 }

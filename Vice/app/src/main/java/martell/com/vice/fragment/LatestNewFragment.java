@@ -116,30 +116,29 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
                         ArrayList<Article> articlesNew = new ArrayList<>(Arrays.asList(articleArray));
                         articles.addAll(articlesNew);
 
-                        //From Anthony M's slack message
-//                        SharedPreferences sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-//                        String stringSharedPrefs = sharedPreferences.getString(MainActivity.KEY_SHARED_PREF_NOTIF, "");
-//                        String[] arrayNotificationPref = stringSharedPrefs.split(",");
-//
-//                        Log.i(TAG, "onResponse: shared prefs = " + sharedPreferences.getString(MainActivity.KEY_SHARED_PREF_NOTIF, ""));
-//                        Log.i(TAG, "onResponse: title = " + fragTitle);
-//                        Log.i(TAG, "onResponse: prefs as string" + stringSharedPrefs);
-//                        if (Arrays.asList(arrayNotificationPref).contains(fragTitle)) {
-//                            // if a notification pref is on, and frag title != home or bookmarks
-//                            // add those articles to the database here
-//                            // database items
-//                            DatabaseHelper searchHelper = DatabaseHelper.getInstance(getActivity());
-//                            for (Article article : articles) {
-//                                int articleId = Integer.parseInt(article.getArticleId());
-//                                String articleTitle = article.getArticleTitle();
-//                                //Log.i(TAG, "onResponse: " + articleTitle);
-//                                String articleCategory = article.getArticleCategory();
-//                                //Log.i(TAG, "onResponse: " + articleCategory);
-//                                String articleTimeStamp = String.valueOf(article.getArticleTimeStamp());
-//                                // need to add the timestamp to the model
-//                                searchHelper.insertArticles(articleId, articleTitle, articleCategory, articleTimeStamp);
-//                            }
-//                        }
+                        SharedPreferences sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+                        String stringSharedPrefs = sharedPreferences.getString(MainActivity.KEY_SHARED_PREF_NOTIF, "");
+                        String[] arrayNotificationPref = stringSharedPrefs.split(",");
+
+                        Log.i(TAG, "onResponse: shared prefs = " + sharedPreferences.getString(MainActivity.KEY_SHARED_PREF_NOTIF, ""));
+                        Log.i(TAG, "onResponse: title = " + fragTitle);
+                        Log.i(TAG, "onResponse: prefs as string" + stringSharedPrefs);
+                        if (Arrays.asList(arrayNotificationPref).contains(fragTitle)) {
+                            // if a notification pref is on, and frag title != home or bookmarks
+                            // add those articles to the database here
+                            // database items
+                            DatabaseHelper searchHelper = DatabaseHelper.getInstance(getActivity());
+                            for (Article article : articles) {
+                                int articleId = Integer.parseInt(article.getArticleId());
+                                String articleTitle = article.getArticleTitle();
+                                //Log.i(TAG, "onResponse: " + articleTitle);
+                                String articleCategory = article.getArticleCategory();
+                                //Log.i(TAG, "onResponse: " + articleCategory);
+                                String articleTimeStamp = String.valueOf(article.getArticleTimeStamp());
+                                // adds articles to database based on users preference notifications
+                                searchHelper.insertArticles(articleId, articleTitle, articleCategory, articleTimeStamp);
+                            }
+                        }
 
                         int currentSize = articleAdapter.getItemCount();
                         articleAdapter.notifyItemRangeInserted(currentSize,articlesNew.size());
