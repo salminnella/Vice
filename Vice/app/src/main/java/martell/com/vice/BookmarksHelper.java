@@ -38,9 +38,9 @@ public class BookmarksHelper extends AsyncTask<Void,Void,ArrayList<Article>> {
         bookmarkCursor.moveToFirst();
         ArrayList<String> idList = new ArrayList<>();
 
+        idList.add(bookmarkCursor.getString(bookmarkCursor.getColumnIndex(DatabaseHelper.COL_ARTICLE_ID)));
         while (bookmarkCursor.moveToNext()) {
             idList.add(bookmarkCursor.getString(bookmarkCursor.getColumnIndex(DatabaseHelper.COL_ARTICLE_ID)));
-            bookmarkCursor.moveToNext();
         }
 
         Log.d(TAG, "THIS IS THE IDLIST SIZE AFTER DATABASE CALL " + idList.size());

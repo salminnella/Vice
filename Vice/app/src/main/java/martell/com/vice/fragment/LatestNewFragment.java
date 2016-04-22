@@ -2,6 +2,7 @@ package martell.com.vice.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -54,7 +55,6 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
     int pastVisiblesItems, visibleItemCount, totalItemCount;
     private GridLayoutManager gridLayoutManager;
     private TextView tabTitleView;
-    private Boolean wasCreated;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,7 +70,6 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
         View view = inflater.inflate(R.layout.fragment_latest_news,container,false);
         articleRV = (RecyclerView)view.findViewById(R.id.articleRV);
         tabTitleView = (TextView) view.findViewById(R.id.main_title);
-        Log.d(TAG, "OnCreateView has been called");
         return view;
     }
 
@@ -83,7 +82,6 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
         viceService = retrofit.create(ViceAPIService.class);
         displayLatestArticles(0);
         makeRV();
-        Log.d(TAG, "onViewCreated has been called");
 
     }
 
@@ -116,9 +114,8 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
         if (tabTitleView != null)
             tabTitleView.setText(fragTitle);
 
-
-        Log.d("Frag", "title: " + fragTitle);
         Log.d(TAG, "THIS IS THE FRAGMENT TITLE " + fragTitle);
+
         if (fragTitle.equals("Home")) {
             call = viceService.latestArticles(numPages);
 
@@ -133,6 +130,7 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
             call = viceService.getArticlesByCategory(fragTitle,numPages);
 
         }
+
         if (!fragTitle.equals("Bookmarks")) {
             if (call != null) {
                 call.enqueue(new Callback<ArticleArray>() {
@@ -192,7 +190,10 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
         articleRV.setAdapter(alphaAdapter);
         RV_SpaceDecoration decoration = new RV_SpaceDecoration(15);
         articleRV.addItemDecoration(decoration);
-        if (getResources().getConfiguration().orientation == 1)gridLayoutManager = new GridLayoutManager(getContext(), 2);
+        if ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL) {
+            gridLayoutManager = new GridLayoutManager(getContext(),1);
+        }
+        else if (getResources().getConfiguration().orientation == 1)gridLayoutManager = new GridLayoutManager(getContext(), 2);
         else gridLayoutManager = new GridLayoutManager(getContext(), 3);
         articleRV.setLayoutManager(gridLayoutManager);
         articleRV.setHasFixedSize(true);
@@ -220,7 +221,6 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
         if (articleArrayList.size() != articles.size()) {
             isEqual = false;
         }
-
 
         if (isEqual)return;
 

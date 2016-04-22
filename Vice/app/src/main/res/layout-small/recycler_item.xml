@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    card_view:cardCornerRadius="5dp"
+    card_view:cardCornerRadius="10dp"
     android:elevation="10dp"
     card_view:cardUseCompatPadding="false"
     android:layout_height="wrap_content"
@@ -20,7 +20,9 @@
         <ImageView
             android:id="@+id/item_image"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent"
+            android:scaleType="fitStart"
+            android:adjustViewBounds="true"/>
         <TextView
             android:id="@+id/item_title"
             android:layout_marginRight="10dp"
