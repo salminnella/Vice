@@ -170,6 +170,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         adapter.addFragment(bookmarks, "Bookmarks");
 
         viewPager.setAdapter(adapter);
+        viewPager.setOffscreenPageLimit(4);
     }
 
     /**
