@@ -14,6 +14,9 @@ public interface ViceAPIService {
     @GET("getlatest/{page}")
     Call<ArticleArray> latestArticles(@Path("page") int latestArticlesPage);
 
+    @GET("getmostpopular/{page}")
+    Call<ArticleArray> popularArticles(@Path("page") int popularArticlesPage);
+
     //http://vice.com/api/getlatest/category/<:category>/<:page>
     @GET("getlatest/category/{category}/{page}")
     Call<ArticleArray> getArticlesByCategory(@Path("category") String category, @Path("page") int page);

@@ -9,7 +9,7 @@
         android:id="@+id/nav_header_image"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@drawable/vice_200_200"
+        android:src="@drawable/vice_logo_p"
         android:layout_gravity="center"/>
 
     <TextView

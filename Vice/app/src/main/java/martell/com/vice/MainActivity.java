@@ -9,12 +9,17 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
@@ -24,7 +29,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import martell.com.vice.adapters.ViewPagerAdapter;
-import martell.com.vice.dbHelper.DatabaseHelper;
+import martell.com.vice.dbHelper.NotificationDBHelper;
 import martell.com.vice.fragment.LatestNewFragment;
 import martell.com.vice.fragment.NavigationDrawerFragment;
 import martell.com.vice.models.Article;
@@ -43,8 +48,9 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     private ViewPagerAdapter adapter;
     private TabLayout tabLayout;
     private String notificationPreferences;
-    String latestArticleTitle;
-    String latestArticleId;
+    private String popularArticleTitle;
+    private String popularArticleId;
+    private NotificationDBHelper notificationHelper;
 
     // Content provider authority
     public static final String AUTHORITY = "martell.com.vice.sync_adapter.StubProvider";
@@ -60,8 +66,15 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
+        setSupportActionBar(toolbar);
+        toolbar.setTitle("");
+
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
+
+        if (!isNetworkConnected())Toast.makeText(this,"No Network Connection", Toast.LENGTH_LONG).show();
 
         SharedPreferences sharedPreferences = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
         String notificationFromSharedPref = sharedPreferences.getString(KEY_SHARED_PREF_NOTIF,"");
@@ -102,16 +115,12 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             });
         }
 
-        // Get the content resolver for your app
         mResolver = getContentResolver();
 
-//        ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
-//        ContentResolver.addPeriodicSync(mAccount, AUTHORITY, Bundle.EMPTY, 30);
-
-
+        ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
+        ContentResolver.addPeriodicSync(mAccount, AUTHORITY, Bundle.EMPTY, 60);
 
         setNotificationAlarmManager();
-
     }
 
     /**
@@ -289,48 +298,67 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(KEY_SHARED_PREF_NOTIF,notificationPreferences);
         editor.commit();
+
+        unbindDrawables(findViewById(R.id.rootLayout));
+        System.gc();
+
+
         super.onDestroy();
     }
 
-    /** method below takes in latest articles and user preferences to generate notifications with
-     * new articles related to user's favorite news categories
+    private void unbindDrawables(View view) {
+        if (view.getBackground()!=null){
+            view.getBackground().setCallback(null);
+        }
+        if (view instanceof ViewGroup && !(view instanceof AdapterView)){
+            for (int i =0 ; i < ((ViewGroup) view).getChildCount();i++){
+                unbindDrawables(((ViewGroup)view).getChildAt(i));
+            }
+            ((ViewGroup)view).removeAllViews();
+        }
+    }
+
+    /** method below generates notifications that, when clicked, take the user to the most popular
+     * article of the day
      */
-
-
-    // this method needs to be given an article for notificationManager to push notification with
-    // article data
 
     public void setNotificationAlarmManager() {
         Log.i(TAG, "onCreate: setAlarm was called");
 
-        Long alertTime = new GregorianCalendar().getTimeInMillis()+5000;
+        notificationHelper = NotificationDBHelper.getInstance(this);
 
-        //perform sync here?
-        ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
-        ContentResolver.addPeriodicSync(mAccount, AUTHORITY, Bundle.EMPTY, 30);
+        popularArticleId = notificationHelper.getPopularArticleId(0);
+        popularArticleTitle = notificationHelper.getPopularArticleTitle(0);
+
+        Log.i(TAG, "popularArticleId: " + popularArticleId);
+        Log.i(TAG, "popularArticleTitle: " + popularArticleTitle);
+
+        Long alertTime = new GregorianCalendar().getTimeInMillis()+7*1000;
+
+        Long intervalTime = 120*1000L;
 
         Intent alertIntent = new Intent(this, NotificationPublisher.class);
 
-        DatabaseHelper searchHelper = DatabaseHelper.getInstance(this);
-//        searchHelper.findArticles();
-//        Cursor cursor = searchHelper.getLatestArticle();
-//        latestArticleId = cursor.getString(0);
-        latestArticleTitle = searchHelper.getLatestArticleTitle(0);
-        Log.i(TAG, "latestArticleId: " + latestArticleId);
-        Log.i(TAG, "latestArticleTitle: " + latestArticleTitle);
-
-        alertIntent.putExtra("TITLE_KEY", latestArticleTitle);
-        alertIntent.putExtra("ID_KEY", latestArticleId);
+        alertIntent.putExtra("TITLE_KEY", popularArticleTitle);
+        alertIntent.putExtra("ID_KEY", popularArticleId);
 
         TaskStackBuilder tStackBuilder = TaskStackBuilder.create(this);
-        tStackBuilder.addParentStack(MainActivity.class);
+        tStackBuilder.addParentStack(ArticleActivity.class);
         tStackBuilder.addNextIntent(alertIntent);
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
-        alarmManager.set(AlarmManager.RTC_WAKEUP, alertTime,
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alertTime, intervalTime,
                 PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT));
-        Log.i(TAG, "setAlarm: alarm manager should have been set");
     }
+    
+    /**
+     * Checks if device is currently connected to a network
+     * @return a boolean
+     */
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
+        return cm.getActiveNetworkInfo() != null;
+    }
 }

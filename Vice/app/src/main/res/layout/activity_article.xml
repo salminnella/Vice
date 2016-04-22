@@ -11,7 +11,7 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="256dp"
+        android:layout_height="295dp"
         android:theme="@style/AppTheme.AppBarOverlay"
         android:fitsSystemWindows="true">
 
@@ -54,6 +54,9 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:paddingTop="24dp">
+
+
+
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -68,104 +71,28 @@
                         android:id="@+id/article_title_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Independent Voters Are Pissed They Can't Vote for Trump or Sanders in New York"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+                    <TextView
+                        android:id="@+id/article_author_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/article_date_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
 
                     <TextView
                         android:id="@+id/article_body_text"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content" />
 
                 </LinearLayout>
 
             </android.support.v7.widget.CardView>
-<!--
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp">
-
-                <LinearLayout
-                    style="@style/Widget.CardContent"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Info"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="cheese's ipsum blah blah blah blah cheese's ipsum blah blah blah blah" />
-
-                </LinearLayout>
-
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp">
-
-                <LinearLayout
-                    style="@style/Widget.CardContent"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Info"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="cheese's ipsum blah blah blah blah cheese's ipsum blah blah blah blah" />
-
-                </LinearLayout>
-
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp">
-
-                <LinearLayout
-                    style="@style/Widget.CardContent"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Info"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="cheese's ipsum blah blah blah blah cheese's ipsum blah blah blah blah" />
-
-                </LinearLayout>
-
-            </android.support.v7.widget.CardView>
-/-->
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
-
-    <!--<android.support.design.widget.FloatingActionButton-->
-        <!--android:id="@+id/fab"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--app:layout_anchor="@id/appBar"-->
-        <!--app:layout_anchorGravity="bottom|right|end"-->
-        <!--android:layout_margin="@dimen/fab_margin"-->
-        <!--android:src="@android:drawable/ic_menu_camera" />-->
 
 </android.support.design.widget.CoordinatorLayout>
