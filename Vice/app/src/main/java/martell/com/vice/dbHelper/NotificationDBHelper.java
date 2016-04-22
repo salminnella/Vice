@@ -4,19 +4,16 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 
 /**
  * Created by stewartmcmillan on 4/21/16.
  */
-public class NotificationDBHelper {
+public class NotificationDBHelper extends SQLiteOpenHelper{
 
     private static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "ArticleNotices";
-    public static final String TAG = "DatabaseHelper: ";
-
-    Cursor cursor;
-    SQLiteDatabase dbWrite = getWritableDatabase();
-    SQLiteDatabase dbRead = getReadableDatabase();
+    public static final String TAG = "NotificationDBHelper: ";
 
     // table and columns
     public static final String ARTICLES_TABLE_NAME = "articles";
@@ -41,18 +38,18 @@ public class NotificationDBHelper {
 
     // makes sure there is only one instance of the database
     // if there isn't one, make it, otherwise return the one instance
-    private static DatabaseHelper instance;
+    private static NotificationDBHelper instance;
 
-    public static DatabaseHelper getInstance(Context context) {
+    public static NotificationDBHelper getInstance(Context context) {
         if (instance == null) {
-            instance = new DatabaseHelper(context);
+            instance = new NotificationDBHelper(context);
         }
 
         return instance;
     }
 
     // database constructor
-    public DatabaseHelper(Context context) {
+    public NotificationDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -89,6 +86,25 @@ public class NotificationDBHelper {
 
     }
 
+    public String getLatestArticleId(int id) {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(ARTICLES_TABLE_NAME, // a. table
+                new String[]{COL_ARTICLE_ID},
+                COL_ID + " = ?", // c. selections
+                new String[]{String.valueOf(id)},
+                null, // e. group by
+                null, // f. having
+                null, // g. order by
+                null); // h. limit
+
+        if (cursor.moveToFirst()) {
+            return cursor.getString(cursor.getColumnIndex(COL_ARTICLE_ID));
+        } else {
+            return "No type found";
+        }    }
+
     public String getLatestArticleTitle(int id) {
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -112,48 +128,8 @@ public class NotificationDBHelper {
 
     }
 
-    public void insertBookmark(String articleId) {
-        ContentValues values = new ContentValues();
-        values.put(COL_ARTICLE_ID, articleId);
-        values.put(COL_ARTICLE_CATEGORY, "bookmark");
-
-        dbWrite.insert(ARTICLES_TABLE_NAME, null, values);
-
-    }
-
-    public Cursor findAllBookmarks() {
-        cursor = dbRead.query(ARTICLES_TABLE_NAME, COLUMNS,
-                COL_ARTICLE_CATEGORY + " = ?" ,
-                new String[]{"bookmark"},
-                null,
-                null,
-                null,
-                null);
-
-        if (cursor.getCount() > 0) {
-            cursor.moveToFirst();
-        }
-
-        return cursor;
-    }
-
-    public Cursor findBookmarkById(String articleId) {
-        cursor = dbRead.query(ARTICLES_TABLE_NAME, COLUMNS,
-                COL_ARTICLE_ID + " = " + articleId,
-                null,
-                null,
-                null,
-                null,
-                null);
-
-        if (cursor.getCount() > 0) {
-            cursor.moveToFirst();
-        }
-
-        return cursor;
-    }
-
     public String getArticleIdByTableId(int id) {
+
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(ARTICLES_TABLE_NAME, // a. table
@@ -170,13 +146,6 @@ public class NotificationDBHelper {
         } else {
             return "No type found";
         }
-    }
-
-    public void deleteBookmarkById(String articleId) {
-
-        dbWrite.delete(ARTICLES_TABLE_NAME,
-                COL_ARTICLE_ID + " = ? AND " + COL_ARTICLE_CATEGORY + " = ?",
-                new String[]{articleId, "bookmark"});
     }
 }
 

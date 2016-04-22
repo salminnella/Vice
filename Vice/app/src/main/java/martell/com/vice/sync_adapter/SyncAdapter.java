@@ -16,6 +16,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.util.ArrayList;
 import martell.com.vice.dbHelper.DatabaseHelper;
+import martell.com.vice.dbHelper.NotificationDBHelper;
 import martell.com.vice.models.Article;
 import martell.com.vice.models.ArticleArray;
 import martell.com.vice.services.NotificationIntentService;
@@ -37,11 +38,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     // Global variables
     // Define a variable to contain a content resolver instance
     ContentResolver mContentResolver;
+    public int rowId;
     public int articleId;
     public String articleTitle;
     public String articleCategory;
     public String articleTimeStamp;
-    DatabaseHelper searchHelper;
+    NotificationDBHelper notificationHelper;
     public ArrayList<Article> articlesArray;
 
     /**
@@ -102,25 +104,40 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             Log.i(TAG, "onResponse: " + response.body().getData().getItems()[0].getArticleId());
             Log.i(TAG, "number of Articles: " + response.body().getData().getItems().length);
 
-            for (int i = 0; i < articleList.length; i++) {
+            articleId = Integer.parseInt(articleList[0].getArticleId());
+            articleTitle = articleList[0].getArticleTitle();
+            articleCategory = articleList[0].getArticleCategory();
+            articleTimeStamp = articleList[0].getArticleTimeStamp();
 
-                articleId = Integer.parseInt(articleList[i].getArticleId());
-                articleTitle = articleList[i].getArticleTitle();
-                articleCategory = articleList[i].getArticleCategory();
-                articleTimeStamp = articleList[i].getArticleTimeStamp();
+            Log.i(TAG, "onPerformSync: articleTitle is: " + articleTitle);
+            Log.i(TAG, "onPerformSync: article Id " + articleId);
 
-                Log.i(TAG, "onPerformSync: articleTitle is: " + articleTitle);
-                Log.i(TAG, "onPerformSync: article Id " + articleId);
+            notificationHelper = NotificationDBHelper.getInstance(getContext());
+            notificationHelper.insertArticles(0, articleId, articleTitle, articleCategory, articleTimeStamp);
+            
+            Log.i(TAG, "onPerformSync: Retrofit title is: " + articleTitle);
+            Log.i(TAG, "onPerformSync: sql db title is: " + notificationHelper.getLatestArticleTitle(0));
 
-                searchHelper = DatabaseHelper.getInstance(getContext());
-                searchHelper.insertArticles(i, articleId, articleTitle, articleCategory, articleTimeStamp);
-                String latestArticleTitle = searchHelper.getLatestArticleTitle(0);
-                Log.i(TAG, "onPerformSync: Retrofit title is: " + articleTitle);
-                Log.i(TAG, "onPerformSync: sql db title is: " + latestArticleTitle);
+            Log.i(TAG, "onPerformSync: Retrofit firstArticleId: " + articleList[0].getArticleId());
+            Log.i(TAG, "onPerformSync: sql DB firstArticleId: " + notificationHelper.getLatestArticleId(0));
 
-            }
-            Log.i(TAG, "onPerformSync: Retrofit firstArticleTitle: " + articleList[0].getArticleTitle());
-            Log.i(TAG, "onPerformSync: sql DB firstArticleTitle: " + searchHelper.getLatestArticleTitle(0));
+//            for (int i = 0; i < articleList.length; i++) {
+//
+//                articleId = Integer.parseInt(articleList[i].getArticleId());
+//                articleTitle = articleList[i].getArticleTitle();
+//                articleCategory = articleList[i].getArticleCategory();
+//                articleTimeStamp = articleList[i].getArticleTimeStamp();
+//
+//                Log.i(TAG, "onPerformSync: articleTitle is: " + articleTitle);
+//                Log.i(TAG, "onPerformSync: article Id " + articleId);
+//
+//                notificationHelper = NotificationDBHelper.getInstance(getContext());
+//                notificationHelper.insertArticles(i, articleId, articleTitle, articleCategory, articleTimeStamp);
+//                String latestArticleTitle = notificationHelper.getLatestArticleTitle(0);
+//                Log.i(TAG, "onPerformSync: Retrofit title is: " + articleTitle);
+//                Log.i(TAG, "onPerformSync: sql db title is: " + notificationHelper.getLatestArticleTitle(0));
+//
+//            }
 
         } catch (IOException e) {
             e.printStackTrace();
