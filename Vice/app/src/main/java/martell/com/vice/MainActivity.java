@@ -9,7 +9,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -30,7 +29,6 @@ import martell.com.vice.fragment.LatestNewFragment;
 import martell.com.vice.fragment.NavigationDrawerFragment;
 import martell.com.vice.models.Article;
 import martell.com.vice.services.ViceAPIService;
-import martell.com.vice.sync_adapter.StubProvider;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
