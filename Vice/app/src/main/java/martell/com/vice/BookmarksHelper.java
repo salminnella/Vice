@@ -35,6 +35,7 @@ public class BookmarksHelper extends AsyncTask<Void,Void,ArrayList<Article>> {
         if (bookmarkCursor.getCount() == 0) {
             return null;
         }
+        bookmarkCursor.moveToFirst();
         ArrayList<String> idList = new ArrayList<>();
 
         while (bookmarkCursor.moveToNext()) {
@@ -75,10 +76,12 @@ public class BookmarksHelper extends AsyncTask<Void,Void,ArrayList<Article>> {
 
     @Override
     protected void onPostExecute(ArrayList<Article> articles) {
-        if (articles.size() > 0) {
-            super.onPostExecute(articles);
-            Log.d(TAG, "THIS IS THE POST EXECUTE ARRAY LIST " + articles.get(0).getArticleTitle());
-            bookmarksResponse.getResponse(articles);
+        if (articles != null) {
+            if (articles.size() > 0) {
+                super.onPostExecute(articles);
+                Log.d(TAG, "THIS IS THE POST EXECUTE ARRAY LIST " + articles.get(0).getArticleTitle());
+                bookmarksResponse.getResponse(articles);
+            }
         }
     }
 

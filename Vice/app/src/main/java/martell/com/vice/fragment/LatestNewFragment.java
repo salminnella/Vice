@@ -52,10 +52,13 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
     int pastVisiblesItems, visibleItemCount, totalItemCount;
     private GridLayoutManager gridLayoutManager;
     private TextView tabTitleView;
+    private Boolean wasCreated;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        fragTitle = getArguments().getString(MainActivity.KEY_FRAGMENT_TITLE);
+        Log.d(TAG,"onCreate has been called and " +fragTitle);
 
     }
 
@@ -65,6 +68,7 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
         View view = inflater.inflate(R.layout.fragment_latest_news,container,false);
         articleRV = (RecyclerView)view.findViewById(R.id.articleRV);
         tabTitleView = (TextView) view.findViewById(R.id.main_title);
+        Log.d(TAG, "OnCreateView has been called");
         return view;
     }
 
@@ -77,24 +81,46 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
         viceService = retrofit.create(ViceAPIService.class);
         displayLatestArticles(0);
         makeRV();
+        Log.d(TAG, "onViewCreated has been called");
+
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        Log.d(TAG, "setUserVisibilityHint has been run " + fragTitle);
+        if (fragTitle != null) {
+            if (isVisibleToUser && fragTitle.equals("Bookmarks")) {
+                    Log.d(TAG, "!!!!!IS VISIBLE AND IS BOOKMARKS!!!! " + fragTitle);
+                    displayLatestArticles(0);
+            }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(getUserVisibleHint() && fragTitle.equals("Bookmarks")){
+            Log.d(TAG,"ON RESUME HAS BEEN CALLED AND FRAG TITLE = BOOKMARKS");
+            displayLatestArticles(0);
+        }
 
     }
 
     private void displayLatestArticles(int numPages){
         Call<ArticleArray> call =null;
         fragTitle = getArguments().getString(MainActivity.KEY_FRAGMENT_TITLE);
-        tabTitleView.setText(fragTitle);
+
+        if (tabTitleView != null)
+            tabTitleView.setText(fragTitle);
+
+
         Log.d("Frag", "title: " + fragTitle);
         Log.d(TAG, "THIS IS THE FRAGMENT TITLE " + fragTitle);
         if (fragTitle.equals("Home")) {
             call = viceService.latestArticles(numPages);
 
         } else if(fragTitle.equals("Bookmarks")) {
-            ArrayList<String> idList = new ArrayList<>();
-            idList.add("195491");
-            idList.add("188277");
-            idList.add("188184");
-            idList.add("188187");
             Log.d(TAG, "BOOKSMARKS HAS BEEN SELECTED IN DISPLAYLATEST ARTICLES");
             DatabaseHelper bookmarkDatabaseHelper = DatabaseHelper.getInstance(getActivity());
             BookmarksHelper bookmarksHelper = new BookmarksHelper(this, bookmarkDatabaseHelper);
@@ -128,6 +154,7 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
 
     @Override
     public void onLastArticleShown(int position) {
+        if(fragTitle.equals("Bookmarks"))return;
         displayLatestArticles((position+1)/20);
     }
 
@@ -158,11 +185,22 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
 
     @Override
     public void getResponse(ArrayList<Article> articleArrayList) {
+        boolean isEqual = true;
+        for (int i = 0; i< articleArrayList.size(); i++) {
+           if(!articles.contains(articleArrayList.get(i))) {
+               isEqual = false;
+           }
+        }
+        if (articleArrayList.size() != articles.size()) {
+            isEqual = false;
+        }
 
-        if (!articles.isEmpty())return;
+
+        if (isEqual)return;
+
+        articles.clear();
         articles.addAll(articleArrayList);
         articleAdapter.notifyDataSetChanged();
         alphaAdapter.notifyDataSetChanged();
-        Log.d(TAG, "GET RESPONSE METHOD IS CALLED< ARTICLE VALUE IS " + articles.get(0).getArticleTitle());
     }
 }
