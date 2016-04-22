@@ -2,6 +2,7 @@ package martell.com.vice.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -165,7 +166,10 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
         articleRV.setAdapter(alphaAdapter);
         RV_SpaceDecoration decoration = new RV_SpaceDecoration(15);
         articleRV.addItemDecoration(decoration);
-        if (getResources().getConfiguration().orientation == 1)gridLayoutManager = new GridLayoutManager(getContext(), 2);
+        if ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL) {
+            gridLayoutManager = new GridLayoutManager(getContext(),1);
+        }
+        else if (getResources().getConfiguration().orientation == 1)gridLayoutManager = new GridLayoutManager(getContext(), 2);
         else gridLayoutManager = new GridLayoutManager(getContext(), 3);
         articleRV.setLayoutManager(gridLayoutManager);
         articleRV.setHasFixedSize(true);

@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
     private ImageLoaderConfiguration config;
     private final OnRVItemClickListener listener;
     private final OnLastArticleShownListener lastArticleShownListener;
+    private Context context;
 
     public interface OnRVItemClickListener {
         void onRVItemClick(Article article);
@@ -46,7 +48,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
 
     @Override
     public ArticleAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
+        context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         config = new ImageLoaderConfiguration.Builder(parent.getContext()).build();
         View articleView = inflater.inflate(R.layout.recycler_item, parent, false);
@@ -60,14 +62,18 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
     public void onBindViewHolder(ArticleAdapter.ViewHolder holder, int position) {
         Article article = mArticles.get(position);
         TextView titleTextView = holder.titleTextView;
-        //TextView previewTextView = holder.previewTextView;
+        if (holder.previewTextView!=null){
+            TextView previewTextView = holder.previewTextView;
+            previewTextView.setText(Html.fromHtml(article.getArticlePreview()));
+        }
         ImageView imageView = holder.imageView;
         titleTextView.setText(article.getArticleTitle());
-        //previewTextView.setText(Html.fromHtml(article.getArticlePreview()));
-        ImageLoader imageLoader = ImageLoader.getInstance(); // Get singleton instance
-        imageLoader.init(config);
-        imageLoader.displayImage(article.getArticleThumbURL(), imageView);
-
+//        ImageLoader imageLoader = ImageLoader.getInstance(); // Get singleton instance
+//        imageLoader.init(config);
+//        imageLoader.displayImage(article.getArticleThumbURL(), imageView);
+        Picasso.with(context)
+                .load(article.getArticleThumbURL())
+                .into(imageView);
         holder.bind(mArticles.get(position), listener);
 
         if (position== mArticles.size()-1){
@@ -83,13 +89,13 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView titleTextView;
-        //public TextView previewTextView;
+        public TextView previewTextView;
         public ImageView imageView;
 
         public ViewHolder(View itemView) {
             super(itemView);
             this.titleTextView = (TextView)itemView.findViewById(R.id.item_title);
-            //this.previewTextView = (TextView)itemView.findViewById(R.id.item_body);
+            if (itemView.findViewById(R.id.item_body)!=null)this.previewTextView = (TextView)itemView.findViewById(R.id.item_body);
             this.imageView = (ImageView)itemView.findViewById(R.id.item_image);
         }
         public void bind(final Article article, final OnRVItemClickListener listener){
