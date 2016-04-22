@@ -97,25 +97,29 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         //get a response from vice
         try {
             Response<ArticleArray> response = viceService.latestArticles(0).execute();
+            Article articleList[] = response.body().getData().getItems().clone();
             Log.i(TAG, "onResponse: " + response.body().getData().getItems()[0].getArticleId());
             Log.i(TAG, "number of Articles: " + response.body().getData().getItems().length);
-            for (int i = 0; i < response.body().getData().getItems().length; i++) {
-//                articlesArray.add(response.body().getData().getArticle());
-                articleId = Integer.parseInt(response.body().getData().getItems()[i].getArticleId());
-                articleTitle = response.body().getData().getItems()[i].getArticleTitle();
+
+            for (int i = 0; i < articleList.length; i++) {
+
+                articleId = Integer.parseInt(articleList[i].getArticleId());
+                articleTitle = articleList[i].getArticleTitle();
+                articleCategory = articleList[i].getArticleCategory();
+                articleTimeStamp = articleList[i].getArticleTimeStamp();
+
                 Log.i(TAG, "onPerformSync: articleTitle is: " + articleTitle);
                 Log.i(TAG, "onPerformSync: article Id " + articleId);
-                Log.i(TAG, "onPerformSync: articleTitle: " + articleTitle);
-                DatabaseHelper searchHelper = DatabaseHelper.getInstance(getContext());
-                searchHelper.findArticles();
+
+                searchHelper = DatabaseHelper.getInstance(getContext());
+                searchHelper.insertArticles(i, articleId, articleTitle, articleCategory, articleTimeStamp);
                 String latestArticleTitle = searchHelper.getLatestArticleTitle(0);
-                Log.i(TAG, "onPerformSync: now articleTitle is " + articleTitle);
-                Log.i(TAG, "onPerformSync: now articleTitle is " + latestArticleTitle);
+                Log.i(TAG, "onPerformSync: Retrofit title is: " + articleTitle);
+                Log.i(TAG, "onPerformSync: sql db title is: " + latestArticleTitle);
 
             }
-
-            NotificationIntentService notificationService = new NotificationIntentService();
-            //notificationService.showArticleTitle(author);
+            Log.i(TAG, "onPerformSync: Retrofit firstArticleTitle: " + articleList[0].getArticleTitle());
+            Log.i(TAG, "onPerformSync: sql DB firstArticleTitle: " + searchHelper.getLatestArticleTitle(0));
 
         } catch (IOException e) {
             e.printStackTrace();
