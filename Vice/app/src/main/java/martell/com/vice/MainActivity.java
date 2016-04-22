@@ -9,6 +9,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -18,6 +19,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
@@ -27,7 +29,6 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import martell.com.vice.adapters.ViewPagerAdapter;
-import martell.com.vice.dbHelper.DatabaseHelper;
 import martell.com.vice.dbHelper.NotificationDBHelper;
 import martell.com.vice.fragment.LatestNewFragment;
 import martell.com.vice.fragment.NavigationDrawerFragment;
@@ -65,8 +66,15 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
+        setSupportActionBar(toolbar);
+        toolbar.setTitle("");
+
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
+
+        if (!isNetworkConnected())Toast.makeText(this,"No Network Connection", Toast.LENGTH_LONG).show();
 
         SharedPreferences sharedPreferences = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
         String notificationFromSharedPref = sharedPreferences.getString(KEY_SHARED_PREF_NOTIF,"");
@@ -323,7 +331,14 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alertTime, intervalTime,
                 PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT));
     }
+    
+    /**
+     * Checks if device is currently connected to a network
+     * @return a boolean
+     */
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
-
-
+        return cm.getActiveNetworkInfo() != null;
+    }
 }

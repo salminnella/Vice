@@ -15,11 +15,11 @@
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tabs"
-        android:background="#88FFFFFF"
+        android:background="#FFFFFF"
         app:tabTextColor="#2f4f4f"
         app:tabSelectedTextColor="@android:color/black"
         app:tabIndicatorColor="@android:color/black"
-        app:tabIndicatorHeight="1dp"
+        app:tabIndicatorHeight="2dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:tabMode="scrollable"
