@@ -173,6 +173,7 @@ public class ArticleActivity extends AppCompatActivity {
         Cursor cursor = databaseHelper.findBookmarkById(articleId);
         if (cursor.getCount()>0) {
             menu.getItem(1).setIcon(R.drawable.ic_search);
+            bookmarkId = String.valueOf(idNum);
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -180,10 +181,17 @@ public class ArticleActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        DatabaseHelper databaseHelper = DatabaseHelper.getInstance(ArticleActivity.this);
         if (bookmarkId != null) {
             Log.d(TAG, "A BOOK MARK ID IS BEING ADDED " + bookmarkId);
-            DatabaseHelper databaseHelper = DatabaseHelper.getInstance(ArticleActivity.this);
             databaseHelper.insertBookmark(bookmarkId);
+        } else if (bookmarkId == null) {
+            Cursor cursor = databaseHelper.findBookmarkById(articleId);
+            if (cursor.getCount()>0) {
+                Log.d(TAG, "onDestroy: a book mark is being deleted" + bookmarkId);
+                databaseHelper.deleteBookmarkById(articleId);
+            }
         }
     }
 }
