@@ -323,15 +323,11 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
      */
 
     public void setNotificationAlarmManager() {
-        Log.i(TAG, "onCreate: setAlarm was called");
 
         notificationHelper = NotificationDBHelper.getInstance(this);
 
         popularArticleId = notificationHelper.getPopularArticleId(0);
         popularArticleTitle = notificationHelper.getPopularArticleTitle(0);
-
-        Log.i(TAG, "popularArticleId: " + popularArticleId);
-        Log.i(TAG, "popularArticleTitle: " + popularArticleTitle);
 
         Long alertTime = new GregorianCalendar().getTimeInMillis()+7*1000;
 
@@ -343,7 +339,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         alertIntent.putExtra("ID_KEY", popularArticleId);
 
         TaskStackBuilder tStackBuilder = TaskStackBuilder.create(this);
-        tStackBuilder.addParentStack(ArticleActivity.class);
+        tStackBuilder.addParentStack(MainActivity.class);
         tStackBuilder.addNextIntent(alertIntent);
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
