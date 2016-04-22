@@ -1,6 +1,8 @@
 package martell.com.vice;
 
 /**
+ * Represents a Toggle switch in the nav drawer layout
+ * superclass NavDrawer
  * Created by mstarace on 4/18/16.
  */
 public class NavDrawerToggle extends NavDrawerEntry{

@@ -74,8 +74,7 @@
                     <TextView
                         android:id="@+id/article_body_text"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/article_content" />
+                        android:layout_height="wrap_content"/>
 
                 </LinearLayout>
 

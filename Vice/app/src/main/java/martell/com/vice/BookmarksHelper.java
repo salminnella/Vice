@@ -16,19 +16,36 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
+ * Runs an asynctask in order to loop through Vice api calls for an arraylist of article ids
+ *
  * Created by adao1 on 4/20/2016.
  */
 public class BookmarksHelper extends AsyncTask<Void,Void,ArrayList<Article>> {
-    private static final String TAG = "BookmarkhHelper";
+    private static final String TAG = "BookmarkHelper";
     ArrayList<Article> articleArrayList;
     BookmarksResponse bookmarksResponse;
     DatabaseHelper bookmarkDataBaseHelper;
 
+    /**
+     * Constructor needs and instance of BookmarkResponse (an interface defined in LatestNewFragment)
+     * and an instance of the DatabaseHelper
+     * @param bookmarksResponse
+     * @param bookmarkDataBaseHelper
+     */
     public BookmarksHelper(BookmarksResponse bookmarksResponse,DatabaseHelper bookmarkDataBaseHelper){
         this.bookmarksResponse = bookmarksResponse;
         this.bookmarkDataBaseHelper = bookmarkDataBaseHelper;
     }
 
+    /**
+     * doInBackground
+     * pulls all the article ids from the database where Category = bookmarks
+     * uses the list of ids to make a looping call to the Vice api
+     * on postExecute
+     * uses an interface to pass article data back to LatestNewFragment
+     * @param params
+     * @return
+     */
     @Override
     protected ArrayList<Article> doInBackground(Void... params) {
        Cursor bookmarkCursor = bookmarkDataBaseHelper.findAllBookmarks();
@@ -85,6 +102,9 @@ public class BookmarksHelper extends AsyncTask<Void,Void,ArrayList<Article>> {
         }
     }
 
+    /**
+     * interface to pass Article data to LatestNewsFragment
+     */
     public interface BookmarksResponse {
         void getResponse (ArrayList<Article> articleArrayList);
     }
