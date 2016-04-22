@@ -5,11 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
-
-import java.util.ArrayList;
-
-import martell.com.vice.models.Article;
 
 /**
  * Created by anthony on 4/20/16.
@@ -90,6 +85,39 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
+    public Cursor findByCategory(String category) {
+        cursor = dbRead.query(ARTICLES_TABLE_NAME, COLUMNS,
+                COL_ARTICLE_CATEGORY + " = ?",
+                new String[]{category},
+                null,
+                null,
+                null,
+                null);
+
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+        }
+
+        return cursor;
+    }
+
+    //TODO this is a dupe of findbookmark by id
+    public Cursor findArticleById(String articleId) {
+        cursor = dbRead.query(ARTICLES_TABLE_NAME, COLUMNS,
+                COL_ARTICLE_ID + " = ?",
+                new String[]{articleId},
+                null,
+                null,
+                null,
+                null);
+
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+        }
+
+        return cursor;
+    }
+
     public String getLatestArticleTitle(int id) {
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -119,10 +147,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COL_ARTICLE_CATEGORY, "bookmark");
 
         dbWrite.insert(ARTICLES_TABLE_NAME, null, values);
-
     }
 
     public Cursor findAllBookmarks() {
+//        cursor = dbRead.rawQuery("SELECT * FROM articles WHERE category = \"bookmark\"",null);
         cursor = dbRead.query(ARTICLES_TABLE_NAME, COLUMNS,
                 COL_ARTICLE_CATEGORY + " = ?" ,
                 new String[]{"bookmark"},
@@ -140,8 +168,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor findBookmarkById(String articleId) {
         cursor = dbRead.query(ARTICLES_TABLE_NAME, COLUMNS,
-                COL_ARTICLE_ID + " = " + articleId,
-                null,
+                COL_ARTICLE_ID + " = ?",
+                new String[]{articleId},
                 null,
                 null,
                 null,
