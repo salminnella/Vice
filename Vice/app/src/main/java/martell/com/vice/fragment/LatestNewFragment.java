@@ -170,7 +170,7 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
                                     String articleCategory = article.getArticleCategory();
                                     String articleTimeStamp = String.valueOf(article.getArticleTimeStamp());
                                     // adds articles to database based on users preference notifications
-                                    //searchHelper.insertArticles(articleId, articleTitle, articleCategory, articleTimeStamp);
+                                    searchHelper.insertArticles(articleId, articleTitle, articleCategory, articleTimeStamp);
                                 }
                             }
                         }
