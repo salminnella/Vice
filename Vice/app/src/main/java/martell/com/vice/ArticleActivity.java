@@ -1,6 +1,5 @@
 package martell.com.vice;
 
-import android.accounts.Account;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -32,24 +31,21 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ArticleActivity extends AppCompatActivity {
 
     private static final String TAG = "ArticleActivity";
-    Retrofit retrofit;
-    ImageLoaderConfiguration config;
-    String articleId;
-    String articleTitleExtra;
-    ViceAPIService viceService;
+
     int idNum;
     TextView articleTitleText;
     TextView articleBodyText;
     TextView articleAuthorText;
     TextView articleDateText;
-    Article article;
-    ImageView backDropImage;
-    CollapsingToolbarLayout collapsingToolbarLayout;
+    String articleId;
+    String articleTitleExtra;
     String bookmarkId;
-
-    // Content provider authority
-    public static final String AUTHORITY = "martell.com.vice.sync_adapter.StubProvider";
-    Account mAccount;
+    ImageView backDropImage;
+    Retrofit retrofit;
+    ImageLoaderConfiguration config;
+    ViceAPIService viceService;
+    Article article;
+    CollapsingToolbarLayout collapsingToolbarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,7 +116,6 @@ public class ArticleActivity extends AppCompatActivity {
     private void loadBody() {
         collapsingToolbarLayout.setTitle(article.getArticleCategory());
         collapsingToolbarLayout.setCollapsedTitleTextColor(Color.BLACK);
-//        textView.setText(Html.fromHtml(htmlString.replaceAll("<img.+?>", "")));
         articleBodyText.setText(Html.fromHtml(article.getArticleBody().replaceAll("<img.+?>", "")));
 
     }
