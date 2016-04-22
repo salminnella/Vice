@@ -37,8 +37,11 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     // Global variables
     // Define a variable to contain a content resolver instance
     ContentResolver mContentResolver;
-    public String articleTitle;
     public int articleId;
+    public String articleTitle;
+    public String articleCategory;
+    public String articleTimeStamp;
+    DatabaseHelper searchHelper;
     public ArrayList<Article> articlesArray;
 
     /**
@@ -52,8 +55,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
          */
         mContentResolver = context.getContentResolver();
     }
-
-
 
     /**
      * Set up the sync adapter. This form of the
