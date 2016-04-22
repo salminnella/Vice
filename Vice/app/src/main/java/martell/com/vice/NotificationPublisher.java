@@ -10,33 +10,37 @@ import android.content.Intent;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
+import martell.com.vice.dbHelper.NotificationDBHelper;
+
 /**
  * Created by stewartmcmillan on 4/20/16.
  */
 public class NotificationPublisher extends BroadcastReceiver {
     String TAG = "NotificationPublisher: ";
+    NotificationDBHelper dbHelper;
 
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.i(TAG, "onReceive method called");
 
-        String articleID = intent.getStringExtra("ID_KEY");
-        String articleTitle = intent.getStringExtra("TITLE_KEY");
+        String notificationArticleId = intent.getStringExtra("ID_KEY");
+        String notificationArticleTitle = intent.getStringExtra("TITLE_KEY");
+        Log.i(TAG, "notificationArticleId: " + notificationArticleId);
+        Log.i(TAG, "notificationArticleTitle: " + notificationArticleTitle);
 
-        createNotification(context, "Vice News", articleTitle, articleID);
+        createNotification(context, "Today's Most Popular Story", notificationArticleTitle, notificationArticleId);
 
     }
 
-    public void createNotification(Context context, String appName, String articleTitle, String articleId) {
-        Log.i(TAG, "onReceive: " + articleId + articleTitle);
+    public void createNotification(Context context, String header, String articleTitle, String articleId) {
+        Log.i(TAG, "onReceive: " + articleId + " " + articleTitle);
 
         PendingIntent notificationIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, ArticleActivity.class).putExtra("ID_KEY", articleId), 0);
 
         Notification.Builder mBuilder = new Notification.Builder(context)
                 .setSmallIcon(R.mipmap.ic_notification)
-                .setContentTitle(appName)
-                .setTicker(articleId)
+                .setContentTitle(header)
                 .setContentText(articleTitle);
 
         mBuilder.setContentIntent(notificationIntent);

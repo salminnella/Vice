@@ -90,11 +90,11 @@ public class ArticleActivity extends AppCompatActivity {
             }
         });
 
-        Intent intent = new Intent(this, NotificationIntentService.class);
-        intent.putExtra("TITLE_KEY", articleTitleExtra);
-        intent.putExtra("ID_KEY", articleId);
-        // put extra with article id here
-        startService(intent);
+//        Intent intent = new Intent(this, NotificationIntentService.class);
+//        intent.putExtra("TITLE_KEY", articleTitleExtra);
+//        intent.putExtra("ID_KEY", articleId);
+//        // put extra with article id here
+//        startService(intent);
 
     }
 

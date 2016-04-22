@@ -9,13 +9,15 @@ import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.SyncResult;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.util.Log;
 import java.io.IOException;
 import java.util.ArrayList;
-import martell.com.vice.dbHelper.DatabaseHelper;
+import martell.com.vice.dbHelper.NotificationDBHelper;
 import martell.com.vice.models.Article;
 import martell.com.vice.models.ArticleArray;
 import martell.com.vice.services.NotificationIntentService;
@@ -37,9 +39,14 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     // Global variables
     // Define a variable to contain a content resolver instance
     ContentResolver mContentResolver;
-    public String articleTitle;
+    public int rowId;
     public int articleId;
+    public String articleTitle;
+    public String articleCategory;
+    public String articleTimeStamp;
+    NotificationDBHelper notificationHelper;
     public ArrayList<Article> articlesArray;
+    public Context context;
 
     /**
      * Set up the sync adapter
@@ -51,9 +58,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
          * from the incoming Context
          */
         mContentResolver = context.getContentResolver();
+        this.context = context;
     }
-
-
 
     /**
      * Set up the sync adapter. This form of the
@@ -96,49 +102,31 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         //get a response from vice
         try {
-            Response<ArticleArray> response = viceService.latestArticles(0).execute();
+            Response<ArticleArray> response = viceService.popularArticles(0).execute();
+            Article articleList[] = response.body().getData().getItems().clone();
             Log.i(TAG, "onResponse: " + response.body().getData().getItems()[0].getArticleId());
             Log.i(TAG, "number of Articles: " + response.body().getData().getItems().length);
-            for (int i = 0; i < response.body().getData().getItems().length; i++) {
-//                articlesArray.add(response.body().getData().getArticle());
-                articleId = Integer.parseInt(response.body().getData().getItems()[i].getArticleId());
-                articleTitle = response.body().getData().getItems()[i].getArticleTitle();
-                Log.i(TAG, "onPerformSync: articleTitle is: " + articleTitle);
-                Log.i(TAG, "onPerformSync: article Id " + articleId);
-                Log.i(TAG, "onPerformSync: articleTitle: " + articleTitle);
-                DatabaseHelper searchHelper = DatabaseHelper.getInstance(getContext());
-                searchHelper.findArticles();
-                String latestArticleTitle = searchHelper.getLatestArticleTitle(0);
-                Log.i(TAG, "onPerformSync: now articleTitle is " + articleTitle);
-                Log.i(TAG, "onPerformSync: now articleTitle is " + latestArticleTitle);
+            articleId = Integer.parseInt(articleList[0].getArticleId());
+            articleTitle = articleList[0].getArticleTitle();
+            articleCategory = articleList[0].getArticleCategory();
+            articleTimeStamp = articleList[0].getArticleTimeStamp();
+
+            notificationHelper = NotificationDBHelper.getInstance(getContext());
+
+            if (notificationHelper == null) {
+
+                notificationHelper.insertArticles(0, articleId, articleTitle, articleCategory, articleTimeStamp);
+
+            } else {
+                notificationHelper.deleteArticle(0);
+                Log.i(TAG, "onPerformSync: deleted an article");
+
+                notificationHelper.insertArticles(0, articleId, articleTitle, articleCategory, articleTimeStamp);
 
             }
-
-            NotificationIntentService notificationService = new NotificationIntentService();
-            //notificationService.showArticleTitle(author);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        //get a response from vice
-//        try {
-//            Response<ArticleArray> response = viceService.latestArticles(1).execute();
-//            Log.i(TAG, "onResponse: " + response.body().getData().getItems()[0].getArticleId());
-//            Log.i(TAG, "onResponse: " + response.body().getData().getItems().length);
-//            for (int i = 0; i < response.body().getData().getItems().length; i++) {
-//                int id = Integer.parseInt(response.body().getData().getItems()[i].getArticleId());
-//                Log.i(TAG, "onPerformSync: article id " + id);
-//                DatabaseHelper searchHelper = DatabaseHelper.getInstance(getContext());
-//                searchHelper.findArticles();
-//            }
-
-
-//
-//            NotificationIntentService notificationService = new NotificationIntentService();
-//            //notificationService.showArticleTitle(author);
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
     }
 }
