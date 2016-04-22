@@ -303,15 +303,11 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
      */
 
     public void setNotificationAlarmManager() {
-        Log.i(TAG, "onCreate: setAlarm was called");
 
         notificationHelper = NotificationDBHelper.getInstance(this);
 
         popularArticleId = notificationHelper.getPopularArticleId(0);
         popularArticleTitle = notificationHelper.getPopularArticleTitle(0);
-
-        Log.i(TAG, "popularArticleId: " + popularArticleId);
-        Log.i(TAG, "popularArticleTitle: " + popularArticleTitle);
 
         Long alertTime = new GregorianCalendar().getTimeInMillis()+7*1000;
 
