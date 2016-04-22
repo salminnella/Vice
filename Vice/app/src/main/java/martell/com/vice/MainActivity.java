@@ -123,65 +123,68 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         setNotificationAlarmManager();
     }
 
+    /**
+     * ViewPager set up
+     * fragaments for the scrolling tab bar are set up
+     * @param viewPager
+     */
     private void setupViewPagerOneFragment(ViewPager viewPager) {
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
         LatestNewFragment home = new LatestNewFragment();
         Bundle bundleHome = new Bundle();
-        bundleHome.putString(KEY_FRAGMENT_TITLE, "Home");
+        bundleHome.putString(KEY_FRAGMENT_TITLE, getResources().getString(R.string.home_page)); //Home
         home.setArguments(bundleHome);
-        adapter.addFragment(home, "Home");
+        adapter.addFragment(home, getResources().getString(R.string.home_page));
 
         LatestNewFragment news = new LatestNewFragment();
         Bundle bundleNews = new Bundle();
-        bundleNews.putString(KEY_FRAGMENT_TITLE, "News");
+        bundleNews.putString(KEY_FRAGMENT_TITLE, getResources().getStringArray(R.array.categories)[2]); //News
         news.setArguments(bundleNews);
-        adapter.addFragment(news, "News");
+        adapter.addFragment(news, getResources().getStringArray(R.array.categories)[2]);
 
         LatestNewFragment music = new LatestNewFragment();
         Bundle bundleMusic = new Bundle();
-        bundleMusic.putString(KEY_FRAGMENT_TITLE, "Music");
+        bundleMusic.putString(KEY_FRAGMENT_TITLE, getResources().getStringArray(R.array.categories)[3]); //Music;
         music.setArguments(bundleMusic);
-        adapter.addFragment(music, "Music");
+        adapter.addFragment(music, getResources().getStringArray(R.array.categories)[3]);
 
         LatestNewFragment sports = new LatestNewFragment();
         Bundle bundleSports = new Bundle();
-        bundleSports.putString(KEY_FRAGMENT_TITLE, "Sports");
+        bundleSports.putString(KEY_FRAGMENT_TITLE, getResources().getStringArray(R.array.categories)[4]); //Sports
         sports.setArguments(bundleSports);
-        adapter.addFragment(sports, "Sports");
+        adapter.addFragment(sports, getResources().getStringArray(R.array.categories)[4]);
 
         LatestNewFragment tech = new LatestNewFragment();
         Bundle bundleTech = new Bundle();
-        bundleTech.putString(KEY_FRAGMENT_TITLE, "Tech");
+        bundleTech.putString(KEY_FRAGMENT_TITLE, getResources().getStringArray(R.array.categories)[5]); //tech
         tech.setArguments(bundleTech);
-        adapter.addFragment(tech, "Tech");
+        adapter.addFragment(tech, getResources().getStringArray(R.array.categories)[5]);
 
         LatestNewFragment travel = new LatestNewFragment();
         Bundle bundleTravel = new Bundle();
-        bundleTravel.putString(KEY_FRAGMENT_TITLE, "Travel");
+        bundleTravel.putString(KEY_FRAGMENT_TITLE, getResources().getStringArray(R.array.categories)[6]); //Travel
         travel.setArguments(bundleTravel);
-        adapter.addFragment(travel, "Travel");
+        adapter.addFragment(travel,getResources().getStringArray(R.array.categories)[6]);
 
         LatestNewFragment fashion = new LatestNewFragment();
         Bundle bundleFashion = new Bundle();
-        bundleFashion.putString(KEY_FRAGMENT_TITLE, "Fashion");
+        bundleFashion.putString(KEY_FRAGMENT_TITLE, getResources().getStringArray(R.array.categories)[7]); //Fashion
         fashion.setArguments(bundleFashion);
-        adapter.addFragment(fashion, "Fashion");
+        adapter.addFragment(fashion, getResources().getStringArray(R.array.categories)[7]);
 
         LatestNewFragment guide = new LatestNewFragment();
         Bundle bundleGuide = new Bundle();
-        bundleGuide.putString(KEY_FRAGMENT_TITLE, "Guide");
+        bundleGuide.putString(KEY_FRAGMENT_TITLE, getResources().getStringArray(R.array.categories)[8]); //guide
         guide.setArguments(bundleGuide);
-        adapter.addFragment(guide, "Guide");
+        adapter.addFragment(guide, getResources().getStringArray(R.array.categories)[8]);
 
         LatestNewFragment bookmarks = new LatestNewFragment();
         Bundle bundleBookmarks = new Bundle();
-        bundleBookmarks.putString(KEY_FRAGMENT_TITLE, "Bookmarks");
-        //Need to change this when getNewsArticles is complete
-        //from bundleNews to bundleBookmarks
+        bundleBookmarks.putString(KEY_FRAGMENT_TITLE, getResources().getString(R.string.bookmarks)); //bookmarks
         bookmarks.setArguments(bundleBookmarks);
-        adapter.addFragment(bookmarks, "Bookmarks");
+        adapter.addFragment(bookmarks, getResources().getString(R.string.bookmarks));
 
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(4);
@@ -220,6 +223,11 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         return newAccount;
     }
 
+    /**
+     * Creates an arrayList of booleans from a string of notification preferences
+     * @param notificationPreferences
+     * @return
+     */
     private ArrayList<Boolean> createBoolArrayList(String notificationPreferences){
         String[] categories = getResources().getStringArray(R.array.categories);
         ArrayList<Boolean> isCheckedArray = new ArrayList<>();
@@ -237,6 +245,10 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         return isCheckedArray;
     }
 
+    /**
+     * navigation drawer is set up and items are added
+     * @param isCheckedArray
+     */
     private void setNavigationDrawer(ArrayList<Boolean> isCheckedArray) {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
@@ -266,12 +278,20 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         Log.d(TAG, "THE initDrawer HAS BEEN CALLED ON MAIN");
     }
 
+    /**
+     * interface method is implemented to receive notification preferences from
+     * Nav Drawer fragment
+     * @param notificationPreferences
+     */
     @Override
     public void setNotificationPreferences(String notificationPreferences) {
         this.notificationPreferences = notificationPreferences;
         Log.i(TAG, "setNotificationPreferences: " + notificationPreferences);
     }
 
+    /**
+     * Notification preferences are added to sharedPreferences
+     */
     @Override
     protected void onDestroy() {
         SharedPreferences sharedPreferences = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
