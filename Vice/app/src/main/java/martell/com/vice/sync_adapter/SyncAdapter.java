@@ -1,17 +1,29 @@
 package martell.com.vice.sync_adapter;
 
 import android.accounts.Account;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SyncResult;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
-
+import java.io.IOException;
+import java.util.ArrayList;
+import martell.com.vice.dbHelper.DatabaseHelper;
+import martell.com.vice.models.Article;
+import martell.com.vice.models.ArticleArray;
+import martell.com.vice.services.NotificationIntentService;
 import martell.com.vice.services.ViceAPIService;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.HEAD;
 
 /**
  * Created by anthony on 4/19/16.
@@ -25,6 +37,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     // Global variables
     // Define a variable to contain a content resolver instance
     ContentResolver mContentResolver;
+    public String articleTitle;
+    public int articleId;
+    public ArrayList<Article> articlesArray;
 
     /**
      * Set up the sync adapter
@@ -71,7 +86,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             Account account,
             Bundle extras,
             String authority,
-            ContentProviderClient provider,
+            ContentProviderClient provider, //Should this reference the StubProvider?
             SyncResult syncResult) {
 
         Log.i(TAG, "onPerformSync: =========");
@@ -79,6 +94,32 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 .addConverterFactory(GsonConverterFactory.create()).build();
         viceService = retrofit.create(ViceAPIService.class);
 
+        //get a response from vice
+        try {
+            Response<ArticleArray> response = viceService.latestArticles(0).execute();
+            Log.i(TAG, "onResponse: " + response.body().getData().getItems()[0].getArticleId());
+            Log.i(TAG, "number of Articles: " + response.body().getData().getItems().length);
+            for (int i = 0; i < response.body().getData().getItems().length; i++) {
+//                articlesArray.add(response.body().getData().getArticle());
+                articleId = Integer.parseInt(response.body().getData().getItems()[i].getArticleId());
+                articleTitle = response.body().getData().getItems()[i].getArticleTitle();
+                Log.i(TAG, "onPerformSync: articleTitle is: " + articleTitle);
+                Log.i(TAG, "onPerformSync: article Id " + articleId);
+                Log.i(TAG, "onPerformSync: articleTitle: " + articleTitle);
+                DatabaseHelper searchHelper = DatabaseHelper.getInstance(getContext());
+                searchHelper.findArticles();
+                String latestArticleTitle = searchHelper.getLatestArticleTitle(0);
+                Log.i(TAG, "onPerformSync: now articleTitle is " + articleTitle);
+                Log.i(TAG, "onPerformSync: now articleTitle is " + latestArticleTitle);
+
+            }
+
+            NotificationIntentService notificationService = new NotificationIntentService();
+            //notificationService.showArticleTitle(author);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 //        //get a response from vice
 //        try {
 //            Response<ArticleArray> response = viceService.latestArticles(1).execute();
