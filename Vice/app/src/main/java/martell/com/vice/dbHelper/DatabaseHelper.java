@@ -72,14 +72,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         this.onCreate(db);
     }
 
-    public void insertArticles(int articleId, String articleTitle, String articleCategory, String articleTimeStamp) {
+    public void insertArticles(int id, int articleId, String articleTitle, String articleCategory, String articleTimeStamp) {
+
+        SQLiteDatabase db = getWritableDatabase();
+
         ContentValues values = new ContentValues();
+        values.put(COL_ID, id);
         values.put(COL_ARTICLE_ID, articleId);
         values.put(COL_ARTICLE_NAME, articleTitle);
         values.put(COL_ARTICLE_CATEGORY, articleCategory);
         values.put(COL_ARTICLE_TIMESTAMP, articleTimeStamp);
 
-        dbWrite.insert(ARTICLES_TABLE_NAME, null, values);
+        db.insert(ARTICLES_TABLE_NAME, null, values);
     }
 
     public void updateArticles() {

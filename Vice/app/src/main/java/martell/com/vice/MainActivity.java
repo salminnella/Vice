@@ -297,7 +297,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 //        searchHelper.findArticles();
 //        Cursor cursor = searchHelper.getLatestArticle();
 //        latestArticleId = cursor.getString(0);
-        latestArticleTitle = searchHelper.getLatestArticleTitle(0);
         Log.i(TAG, "latestArticleId: " + latestArticleId);
         Log.i(TAG, "latestArticleTitle: " + latestArticleTitle);
 
