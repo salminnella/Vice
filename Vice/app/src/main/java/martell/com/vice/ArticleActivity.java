@@ -27,11 +27,17 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ * This activity holds all the data to read a news article.  Receives the article ID
+ * from Main in an intent, and calls vice to get the article details.
+ */
 public class ArticleActivity extends AppCompatActivity {
 
     // region Constants
     public static final String VICE_BASE_URL = "http://www.vice.com/en_us/api/";
     public static final String ARTICLE_ID_KEY = "ID_KEY";
+    public static final String SHARE_TYPE = "text/plain";
+    public static final String INTENT_CHOOSER_TEXT = "Share article with ... ";
     // endregion Constants
     // region Member Variables
     private int idNum;
@@ -62,9 +68,13 @@ public class ArticleActivity extends AppCompatActivity {
         // initialize retrofit builder
         buildRetrofit();
         // calls vice for article data to display
-        insertArticleDetails();
+        insertArticleDetailsFromVice();
     }
 
+    /**
+     * initializes all views in the article activity
+     * returns void
+     */
     private void initViews() {
         articleTitleText = (TextView) findViewById(R.id.article_title_text);
         articleBodyText = (TextView) findViewById(R.id.article_body_text);
@@ -74,28 +84,38 @@ public class ArticleActivity extends AppCompatActivity {
         articleDateText = (TextView) findViewById(R.id.article_date_text);
     }
 
+    /**
+     * OnItemCLick from recycler view sends the article id, this method receives that id
+     * as a string, and puts it into an int idNum variable
+     */
     private void receiveIntent() {
         Intent intent = getIntent();
         articleId = intent.getStringExtra(ARTICLE_ID_KEY);
         idNum = Integer.parseInt(articleId);
     }
 
+    /**
+     * Creates the retrofit builder to use to call the Vice api endpoints
+     */
     private void buildRetrofit() {
         Retrofit retrofit = new Retrofit.Builder().baseUrl(VICE_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create()).build();
         viceService = retrofit.create(ViceAPIService.class);
     }
 
-    private void insertArticleDetails() {
+    /**
+     * Calls Vice using the retrofit and inserts the article details into the layout
+     */
+    private void insertArticleDetailsFromVice() {
         Call<ArticleData> call = viceService.getArticle(idNum);
         call.enqueue(new Callback<ArticleData>() {
             @Override
             public void onResponse(Call<ArticleData> call, Response<ArticleData> response) {
                 if (response.isSuccessful()) {
                     article = response.body().getData().getArticle();
-                    // loads image in collapsing toolbar
+                    // loads image and category title in collapsing toolbar
                     fillToolbarItems();
-                    // sets title in toolbar layout, and sets article body
+                    // adds all the items to the article body
                     fillArticleBody();
                 }
             }
@@ -106,6 +126,10 @@ public class ArticleActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Sets the toolbar title with the selected articles Category, and
+     * loads the article photo into the collapsing toolbar
+     */
     private void fillToolbarItems() {
         collapsingToolbarLayout.setTitle(article.getArticleCategory());
         collapsingToolbarLayout.setCollapsedTitleTextColor(Color.BLACK);
@@ -115,6 +139,9 @@ public class ArticleActivity extends AppCompatActivity {
         Glide.with(ArticleActivity.this).load(article.getArticleImageURL()).centerCrop().into(backDropImage);
     }
 
+    /**
+     * Fills the card holding the article Title, Author, Date, and article html text
+     */
     private void fillArticleBody() {
         articleTitleText.setText(article.getArticleTitle());
         articleAuthorText.setText(article.getArticleAuthor());
@@ -122,11 +149,21 @@ public class ArticleActivity extends AppCompatActivity {
         articleBodyText.setText(Html.fromHtml(article.getArticleBody().replaceAll("<img.+?>", "")));
     }
 
+    /**
+     * Performs a find in the database to see if the bookmark is already saved there
+     * returns false if not, and true if the bookmark exists
+     * @return boolean
+     */
     private boolean isBookmarkAlreadySaved() {
         Cursor bookmarkCursor = databaseHelper.findBookmarkById(articleId);
         return bookmarkCursor.getCount() != 0;
     }
 
+    /**
+     * Fills the toolbar with menu items
+     * @param menu Menu
+     * @return boolean
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -134,6 +171,11 @@ public class ArticleActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Provides actions on each menu item press
+     * @param item MenuItem
+     * @return boolean
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -153,15 +195,22 @@ public class ArticleActivity extends AppCompatActivity {
         if (id == R.id.share_item_menu){
             String message = article.getArticleURL();
             Intent share = new Intent(Intent.ACTION_SEND);
-            share.setType("text/plain");
+            share.setType(SHARE_TYPE);
             share.putExtra(Intent.EXTRA_TEXT, message);
 
-            startActivity(Intent.createChooser(share, "Share article with ... "));
+            startActivity(Intent.createChooser(share, INTENT_CHOOSER_TEXT));
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+
+    /**
+     * If a the article is already a bookmark, change the menuitem
+     * to give the user a visual confirmaiton
+     * @param menu Menu
+     * @return boolean
+     */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (isBookmarkAlreadySaved()) {
@@ -172,6 +221,11 @@ public class ArticleActivity extends AppCompatActivity {
         return super.onPrepareOptionsMenu(menu);
     }
 
+    /**
+     * When user is leaving the activity, checks if they had wanted the article saved to bookmarks
+     * This will insert a record to the database if the user does want it bookmarked,
+     * and it isn't already there
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();

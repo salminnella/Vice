@@ -21,8 +21,9 @@ import martell.com.vice.models.Article;
  * Created by adao1 on 4/18/2016.
  */
 public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHolder> {
-    private List<Article> mArticles;
     private static final String TAG = "ArticleAdapter";
+
+    private List<Article> mArticles;
     private ImageLoaderConfiguration config;
     private final OnRVItemClickListener listener;
     private final OnLastArticleShownListener lastArticleShownListener;
