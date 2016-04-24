@@ -3,15 +3,14 @@ package martell.com.vice.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,52 +38,56 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-/**
+/**This fragment holds all the articles for each category as the user is browsing the news.
  * Created by adao1 on 4/19/2016.
  */
 
 public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVItemClickListener, ArticleAdapter.OnLastArticleShownListener, BookmarksHelper.BookmarksResponse {
 
+    // region Constants
     private static final String TAG = "Latest News Fragment";
-    private ArrayList<String> tabViewsTitle;
+    private static final String VICE_BASE_URL = "http://www.vice.com/en_us/api/";
+    private static final String BOOKMARKS_TITLE = "Bookmarks";
+    private static final String COMMA_SPLIT = ",";
+    private static final String TOAST_NO_NETWORK = "No Network Connection";
+    private static final String ARTICLE_ID_KEY = "ID_KEY";
+    private static final String ARTICLE_TITLE_KEY = "TITLE_KEY";
+    // endregion Constants
+
+    // region Member Variables
+    private TextView tabTitleView;
+    private String fragTitle;
     private ArrayList<Article> articles;
     private RecyclerView articleRV;
     public ViceAPIService viceService;
     private ArticleAdapter articleAdapter;
     private AlphaInAnimationAdapter alphaAdapter;
     private Retrofit retrofit;
-    private String fragTitle;
-    boolean loading = true;
-    int pastVisiblesItems, visibleItemCount, totalItemCount;
     private GridLayoutManager gridLayoutManager;
-    private TextView tabTitleView;
-    private String notificationPreferences;
-
-    SharedPreferences sharedPreferences;
-    String stringSharedPrefs;
-    String[] arrayNotificationPref;
+    private SharedPreferences sharedPreferences;
+    private String stringSharedPrefs;
+    private String[] arrayNotificationPref;
+    // endregion Member Variables
 
     /**
      * OnCreate gets the arguments set in instance of the fragment and
      * sets it to a class variable
      *
-     * @param savedInstanceState
+     * @param savedInstanceState Bundle
      */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         fragTitle = getArguments().getString(MainActivity.KEY_FRAGMENT_TITLE);
-        Log.d(TAG, "onCreate has been called and " + fragTitle);
-
     }
 
     /**
      * RecyclerView and Title view set
      *
-     * @param inflater
-     * @param container
-     * @param savedInstanceState
-     * @return
+     * @param inflater LayoutInflater
+     * @param container ViewGroup
+     * @param savedInstanceState Bundle
+     * @return View
      */
     @Nullable
     @Override
@@ -98,14 +101,14 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
     /**
      * RecyclerView is created
      *
-     * @param view
-     * @param savedInstanceState
+     * @param view View
+     * @param savedInstanceState Bundle
      */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         articles = new ArrayList<>();
-        retrofit = new Retrofit.Builder().baseUrl("http://www.vice.com/en_us/api/")
+        retrofit = new Retrofit.Builder().baseUrl(VICE_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create()).build();
         viceService = retrofit.create(ViceAPIService.class);
         if (isNetworkConnected()) displayLatestArticles(0);
@@ -117,15 +120,13 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
      * Used to determine if the fragment is view is bookmarks and if so
      * reloads the fragment view data
      *
-     * @param isVisibleToUser
+     * @param isVisibleToUser boolean
      */
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        Log.d(TAG, "setUserVisibilityHint has been run " + fragTitle);
         if (fragTitle != null) {
             if (isVisibleToUser && fragTitle.equals(getResources().getString(R.string.bookmarks))) {
-                Log.d(TAG, "!!!!!IS VISIBLE AND IS BOOKMARKS!!!! " + fragTitle);
                 displayLatestArticles(0);
             }
         }
@@ -134,7 +135,7 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
     /**
      * Updates the data in the RecyclerView depending on which fragment instance is running
      *
-     * @param numPages
+     * @param numPages int
      */
     private void displayLatestArticles(int numPages) {
 
@@ -144,19 +145,15 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
         if (tabTitleView != null)
             tabTitleView.setText(fragTitle);
 
-        Log.d(TAG, "THIS IS THE FRAGMENT TITLE " + fragTitle);
-
         if (fragTitle.equals(getResources().getString(R.string.home_page))) {
             call = viceService.latestArticles(numPages);
 
-        } else if (fragTitle.equals("Bookmarks")) {
-            Log.d(TAG, "BOOKSMARKS HAS BEEN SELECTED IN DISPLAYLATEST ARTICLES");
+        } else if (fragTitle.equals(BOOKMARKS_TITLE)) {
             DatabaseHelper bookmarkDatabaseHelper = DatabaseHelper.getInstance(getActivity());
             BookmarksHelper bookmarksHelper = new BookmarksHelper(this, bookmarkDatabaseHelper);
             bookmarksHelper.execute();
 
         } else {
-            Log.d(TAG, "ELSE IS CALLED IN DISPLAYLATEST ARTICLES + CURTITLE " + fragTitle);
             call = viceService.getArticlesByCategory(fragTitle, numPages);
 
         }
@@ -170,19 +167,13 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
                         ArrayList<Article> articlesNew = new ArrayList<>(Arrays.asList(articleArray));
                         articles.addAll(articlesNew);
 
-
                         if (getActivity() != null) {
                             sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
                             stringSharedPrefs = sharedPreferences.getString(MainActivity.KEY_SHARED_PREF_NOTIF, "");
-                            arrayNotificationPref = stringSharedPrefs.split(",");
-                            Log.i(TAG, "onResponse: shared prefs = " + sharedPreferences);
-                            Log.i(TAG, "onResponse: title = " + fragTitle);
-                            Log.i(TAG, "onResponse: prefs as string" + stringSharedPrefs);
-
+                            arrayNotificationPref = stringSharedPrefs.split(COMMA_SPLIT);
                             if (Arrays.asList(arrayNotificationPref).contains(fragTitle)) {
-                                // if a notification pref is on, add those articles to the database here
+                                // if a notification pref is on, add those articles to the database
                                 // will use them as a reference point for notifications on new articles
-                                Log.i(TAG, "onResponse: entered if statement for database entry");
                                 DatabaseHelper searchHelper = DatabaseHelper.getInstance(getActivity());
                                 // checks if the category articles are already in the database, if not, then add them.
                                 Cursor articleCursor = searchHelper.findByCategory(fragTitle.toLowerCase());
@@ -216,14 +207,14 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
      * the bookmarks fragment doesn't not automatically call next page of results
      * as it does for the other fragments.
      *
-     * @param position
+     * @param position int
      */
     @Override
     public void onLastArticleShown(int position) {
 
 
         if (!isNetworkConnected())
-            Toast.makeText(getActivity(), "No Network Connection", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), TOAST_NO_NETWORK, Toast.LENGTH_LONG).show();
 
         if (fragTitle.equals(getResources().getString(R.string.bookmarks))) return;
         displayLatestArticles((position + 1) / 20);
@@ -254,14 +245,14 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
      * implementation of the inteface OnRVItemClickListener to capture
      * RecylcerView clicks
      *
-     * @param article
+     * @param article Article
      */
     @Override
     public void onRVItemClick(Article article) {
 
         Intent intent = new Intent(getActivity(), ArticleActivity.class);
-        intent.putExtra("ID_KEY", article.getArticleId());
-        intent.putExtra("TITLE_KEY", article.getArticleTitle());
+        intent.putExtra(ARTICLE_ID_KEY, article.getArticleId());
+        intent.putExtra(ARTICLE_TITLE_KEY, article.getArticleTitle());
 
         startActivity(intent);
     }
@@ -270,7 +261,7 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
      * implements the inteface bookmarksResponse for the AsyncTask bookmarksHelper
      * can pass article data to LatestNewsFragment
      *
-     * @param articleArrayList
+     * @param articleArrayList ArrayList
      */
     @Override
     public void getResponse(ArrayList<Article> articleArrayList) {
