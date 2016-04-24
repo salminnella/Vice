@@ -7,6 +7,8 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 
 /**
+ * This holds the Get methods for retrofit to receive json responses from Vice
+ *
  * Created by stewartmcmillan on 4/18/16.
  */
 public interface ViceAPIService {
