@@ -37,3 +37,4 @@ https://docs.google.com/presentation/d/1mWkC9Xo9Tp7t5DK1MwwRBTYuFnxWX9_Cdy1-FHF-
 <br><br>
 <b>Feature Prioritization</b><br>
 <img src="https://github.com/salminnella/Vice/blob/master/images/featurePriorities.jpg" /img>
+
