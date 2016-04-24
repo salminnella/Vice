@@ -160,8 +160,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public Cursor findBookmarkById(String articleId) {
         cursor = dbRead.query(ARTICLES_TABLE_NAME, COLUMNS,
-                COL_ARTICLE_ID + " = ?",
-                new String[]{articleId},
+                COL_ARTICLE_ID + " = ? AND " + COL_ARTICLE_CATEGORY + " = ?",
+                new String[]{articleId, BOOKMARK_CATEGORY_LABEL},
                 null,
                 null,
                 null,

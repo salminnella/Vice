@@ -8,7 +8,6 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -30,66 +29,40 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ArticleActivity extends AppCompatActivity {
 
-    private static final String TAG = "ArticleActivity";
-
-    int idNum;
-    TextView articleTitleText;
-    TextView articleBodyText;
-    TextView articleAuthorText;
-    TextView articleDateText;
-    String articleId;
-    String articleTitleExtra;
-    String bookmarkId;
-    ImageView backDropImage;
-    Retrofit retrofit;
-    ImageLoaderConfiguration config;
-    ViceAPIService viceService;
-    Article article;
-    CollapsingToolbarLayout collapsingToolbarLayout;
+    // region Constants
+    public static final String VICE_BASE_URL = "http://www.vice.com/en_us/api/";
+    public static final String ARTICLE_ID_KEY = "ID_KEY";
+    // endregion Constants
+    // region Member Variables
+    private int idNum;
+    private TextView articleTitleText;
+    private TextView articleBodyText;
+    private TextView articleAuthorText;
+    private TextView articleDateText;
+    private String articleId;
+    private String bookmarkId;
+    private ImageView backDropImage;
+    private ViceAPIService viceService;
+    private Article article;
+    private CollapsingToolbarLayout collapsingToolbarLayout;
+    private DatabaseHelper databaseHelper;
+    // endregion Member Variables
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        //receives article id that was clicked from main
-        Log.i(TAG, "onCreate: article id: " + articleId);
+        databaseHelper = DatabaseHelper.getInstance(ArticleActivity.this);
+        // receives article id that was clicked from main
         receiveIntent();
-        Log.i(TAG, "onCreate: article id after receiveIntent: " + articleId);
+        // initialize views
         initViews();
-
-        retrofit = new Retrofit.Builder().baseUrl("http://www.vice.com/en_us/api/")
-                .addConverterFactory(GsonConverterFactory.create()).build();
-        viceService = retrofit.create(ViceAPIService.class);
-        config = new ImageLoaderConfiguration.Builder(this).build();
-
-        idNum = Integer.parseInt(articleId);
-        Log.i(TAG, "onCreate: after parseInt" + idNum);
-
-        Call<ArticleData> call = viceService.getArticle(idNum);
-        call.enqueue(new Callback<ArticleData>() {
-            @Override
-            public void onResponse(Call<ArticleData> call, Response<ArticleData> response) {
-                if (response.isSuccessful()) {
-                    article = response.body().getData().getArticle();
-                    articleTitleText.setText(article.getArticleTitle());
-                    articleAuthorText.setText(article.getArticleAuthor());
-                    articleDateText.setText(article.getArticlePubDate());
-
-                    loadBody();
-                    loadBackdrop();
-
-                    Log.d(TAG, "onResponse: " + article.getArticleTitle());
-                } else Log.i(TAG, "onResponse: failed");
-            }
-
-            @Override
-            public void onFailure(Call<ArticleData> call, Throwable t) {
-            }
-        });
+        // initialize retrofit builder
+        buildRetrofit();
+        // calls vice for article data to display
+        insertArticleDetails();
     }
 
     private void initViews() {
@@ -99,31 +72,60 @@ public class ArticleActivity extends AppCompatActivity {
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         articleAuthorText = (TextView) findViewById(R.id.article_author_text);
         articleDateText = (TextView) findViewById(R.id.article_date_text);
-
     }
 
     private void receiveIntent() {
         Intent intent = getIntent();
-        articleId = intent.getStringExtra("ID_KEY");
-        articleTitleExtra = intent.getStringExtra("TITLE_KEY");
+        articleId = intent.getStringExtra(ARTICLE_ID_KEY);
+        idNum = Integer.parseInt(articleId);
     }
 
-    private void loadBackdrop() {
-        ImageLoader imageLoader = ImageLoader.getInstance(); // Get singleton instance
-        imageLoader.init(config);
-        Glide.with(this).load(article.getArticleImageURL()).centerCrop().into(backDropImage);
+    private void buildRetrofit() {
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(VICE_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        viceService = retrofit.create(ViceAPIService.class);
     }
 
-    private void loadBody() {
+    private void insertArticleDetails() {
+        Call<ArticleData> call = viceService.getArticle(idNum);
+        call.enqueue(new Callback<ArticleData>() {
+            @Override
+            public void onResponse(Call<ArticleData> call, Response<ArticleData> response) {
+                if (response.isSuccessful()) {
+                    article = response.body().getData().getArticle();
+                    // loads image in collapsing toolbar
+                    fillToolbarItems();
+                    // sets title in toolbar layout, and sets article body
+                    fillArticleBody();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArticleData> call, Throwable t) {
+            }
+        });
+    }
+
+    private void fillToolbarItems() {
         collapsingToolbarLayout.setTitle(article.getArticleCategory());
         collapsingToolbarLayout.setCollapsedTitleTextColor(Color.BLACK);
-        articleBodyText.setText(Html.fromHtml(article.getArticleBody().replaceAll("<img.+?>", "")));
-
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
+        ImageLoader imageLoader = ImageLoader.getInstance(); // Get singleton instance
+        imageLoader.init(config);
+        Glide.with(ArticleActivity.this).load(article.getArticleImageURL()).centerCrop().into(backDropImage);
     }
 
+    private void fillArticleBody() {
+        articleTitleText.setText(article.getArticleTitle());
+        articleAuthorText.setText(article.getArticleAuthor());
+        articleDateText.setText(article.getArticlePubDate());
+        articleBodyText.setText(Html.fromHtml(article.getArticleBody().replaceAll("<img.+?>", "")));
+    }
 
-
-
+    private boolean isBookmarkAlreadySaved() {
+        Cursor bookmarkCursor = databaseHelper.findBookmarkById(articleId);
+        return bookmarkCursor.getCount() != 0;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -139,7 +141,6 @@ public class ArticleActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.bookmark_item_menu) {
             if (bookmarkId == null) {
                 bookmarkId = String.valueOf(idNum);
@@ -163,27 +164,23 @@ public class ArticleActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        DatabaseHelper databaseHelper = DatabaseHelper.getInstance(ArticleActivity.this);
-        Cursor cursor = databaseHelper.findBookmarkById(articleId);
-        if (cursor.getCount()>0) {
+        if (isBookmarkAlreadySaved()) {
             menu.getItem(1).setIcon(R.drawable.bookmark_selected);
             bookmarkId = String.valueOf(idNum);
         }
+
         return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        DatabaseHelper databaseHelper = DatabaseHelper.getInstance(ArticleActivity.this);
         if (bookmarkId != null) {
-            Log.d(TAG, "A BOOK MARK ID IS BEING ADDED " + bookmarkId);
-            databaseHelper.insertBookmark(bookmarkId);
+            if (!isBookmarkAlreadySaved()) {
+                databaseHelper.insertBookmark(bookmarkId);
+            }
         } else if (bookmarkId == null) {
-            Cursor cursor = databaseHelper.findBookmarkById(articleId);
-            if (cursor.getCount()>0) {
-                Log.d(TAG, "onDestroy: a book mark is being deleted" + bookmarkId);
+            if (isBookmarkAlreadySaved()) {
                 databaseHelper.deleteBookmarkById(articleId);
             }
         }
