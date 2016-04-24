@@ -3,6 +3,7 @@ package martell.com.vice.models;
 import com.google.gson.annotations.SerializedName;
 
 /**
+ * Model to hold article details from JSON response from VICE
  * Created by adao1 on 4/19/2016.
  */
 public class Article {

@@ -1,6 +1,7 @@
 package martell.com.vice.models;
 
 /**
+ * Model to hold article data from JSON response from VICE
  * Created by stewartmcmillan on 4/19/16.
  */
 public class Data {
