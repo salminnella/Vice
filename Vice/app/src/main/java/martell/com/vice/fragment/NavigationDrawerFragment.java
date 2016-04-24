@@ -21,15 +21,21 @@ import martell.com.vice.R;
 
 
 /**
+ * This fragment holds the navigation drawer items.
+ *
  * Created by mstarace on 4/18/16.
  */
 public class NavigationDrawerFragment extends Fragment {
+    // region Constants
     private static final String TAG_NAV_FRAG = "NavigationFragment";
+    // endregion Constants
+    // region Member Variables
     private View navFragmentView;
     private ActionBarDrawerToggle navDrawerToggle;
     private RecyclerView navDrawerRecyclerView;
     private DrawerLayout navDrawerLayout;
     private NavigationDrawerAdapter navigationDrawerAdapter;
+    // endregion Member Variables
 
     /**
      * inflates NavigatonDrawerView
