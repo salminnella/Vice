@@ -36,7 +36,7 @@ public class NotificationPublisher extends BroadcastReceiver {
         Log.i(TAG, "onReceive: " + articleId + " " + articleTitle);
 
         PendingIntent notificationIntent = PendingIntent.getActivity(context, 0,
-                new Intent(context, MainActivity.class).putExtra("ID_KEY", articleId).putExtra("TITLE_KEY", articleTitle), 0);
+                new Intent(context, ArticleActivity.class).putExtra("ID_KEY", articleId).putExtra("TITLE_KEY", articleTitle), 0);
         Log.i(TAG, "createNotification: " + articleId);
 
         Notification.Builder mBuilder = new Notification.Builder(context)

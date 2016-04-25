@@ -40,7 +40,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     // Define a variable to contain a content resolver instance
     ContentResolver mContentResolver;
     public int rowId;
-    public int articleId;
+    public String articleId;
     public String articleTitle;
     public String articleCategory;
     public String articleTimeStamp;
@@ -106,22 +106,25 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             Article articleList[] = response.body().getData().getItems().clone();
             Log.i(TAG, "onResponse: " + response.body().getData().getItems()[0].getArticleId());
             Log.i(TAG, "number of Articles: " + response.body().getData().getItems().length);
-            articleId = Integer.parseInt(articleList[0].getArticleId());
+            articleId = articleList[0].getArticleId();
             articleTitle = articleList[0].getArticleTitle();
             articleCategory = articleList[0].getArticleCategory();
             articleTimeStamp = articleList[0].getArticleTimeStamp();
 
             notificationHelper = NotificationDBHelper.getInstance(getContext());
 
+            notificationHelper.deleteArticle(0);
+            Log.i(TAG, "onPerformSync: deleted an article");
+
+            notificationHelper.insertArticles(0, articleId, articleTitle, articleCategory, articleTimeStamp);
+
+
+
             if (notificationHelper == null) {
 
                 notificationHelper.insertArticles(0, articleId, articleTitle, articleCategory, articleTimeStamp);
 
             } else {
-                notificationHelper.deleteArticle(0);
-                Log.i(TAG, "onPerformSync: deleted an article");
-
-                notificationHelper.insertArticles(0, articleId, articleTitle, articleCategory, articleTimeStamp);
 
             }
 

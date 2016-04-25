@@ -120,7 +120,17 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
         ContentResolver.addPeriodicSync(mAccount, AUTHORITY, Bundle.EMPTY, 60);
 
-        setNotificationAlarmManager();
+        NotificationDBHelper dbHelper = NotificationDBHelper.getInstance(this);
+
+        if (dbHelper.getPopularArticleId(0) == null) {
+
+            dbHelper.insertArticles(0, "212394", "VICE Long Reads: How the Banks Stole Higher Education",
+                    "stuff", "0055332");
+
+            setNotificationAlarmManager();
+        } else {
+            setNotificationAlarmManager();
+        }
     }
 
     /**
