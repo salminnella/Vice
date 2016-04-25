@@ -3,6 +3,7 @@ package martell.com.vice;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareButton;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
@@ -52,6 +55,7 @@ public class ArticleActivity extends AppCompatActivity {
     private Article article;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private DatabaseHelper databaseHelper;
+    ShareButton shareButton;
     // endregion Member Variables
 
     @Override
@@ -82,6 +86,7 @@ public class ArticleActivity extends AppCompatActivity {
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         articleAuthorText = (TextView) findViewById(R.id.article_author_text);
         articleDateText = (TextView) findViewById(R.id.article_date_text);
+        shareButton = (ShareButton)findViewById(R.id.facebookbutton);
     }
 
     /**
@@ -117,6 +122,9 @@ public class ArticleActivity extends AppCompatActivity {
                     fillToolbarItems();
                     // adds all the items to the article body
                     fillArticleBody();
+
+                    ShareLinkContent content = new ShareLinkContent.Builder().setContentUrl(Uri.parse(article.getArticleURL())).build();
+                    shareButton.setShareContent(content);
                 }
             }
 
@@ -158,6 +166,7 @@ public class ArticleActivity extends AppCompatActivity {
         Cursor bookmarkCursor = databaseHelper.findBookmarkById(articleId);
         return bookmarkCursor.getCount() != 0;
     }
+
 
     /**
      * Fills the toolbar with menu items
