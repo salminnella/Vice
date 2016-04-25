@@ -73,7 +73,7 @@
             android:exported="false"
             android:syncable="true"/>
 
-        <receiver android:name=".nav_drawer.NotificationPublisher" />
+        <receiver android:name=".helpers.NotificationPublisher" />
 
     </application>
 

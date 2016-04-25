@@ -1,4 +1,4 @@
-package martell.com.vice.nav_drawer;
+package martell.com.vice.helpers;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -10,7 +10,6 @@ import android.util.Log;
 
 import martell.com.vice.R;
 import martell.com.vice.activity.MainActivity;
-import martell.com.vice.dbHelper.NotificationDBHelper;
 
 /**
  * Created by stewartmcmillan on 4/20/16.

@@ -21,7 +21,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import martell.com.vice.R;
-import martell.com.vice.dbHelper.DatabaseHelper;
+import martell.com.vice.helpers.DatabaseHelper;
 import martell.com.vice.models.Article;
 import martell.com.vice.models.ArticleData;
 import martell.com.vice.services.ViceAPIService;

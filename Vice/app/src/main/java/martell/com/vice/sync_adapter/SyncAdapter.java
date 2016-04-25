@@ -10,7 +10,7 @@ import android.os.Bundle;
 
 import java.io.IOException;
 
-import martell.com.vice.dbHelper.NotificationDBHelper;
+import martell.com.vice.helpers.NotificationDBHelper;
 import martell.com.vice.models.Article;
 import martell.com.vice.models.ArticleArray;
 import martell.com.vice.services.ViceAPIService;

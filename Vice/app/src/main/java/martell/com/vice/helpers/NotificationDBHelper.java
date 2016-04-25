@@ -1,4 +1,4 @@
-package martell.com.vice.dbHelper;
+package martell.com.vice.helpers;
 
 import android.content.ContentValues;
 import android.content.Context;

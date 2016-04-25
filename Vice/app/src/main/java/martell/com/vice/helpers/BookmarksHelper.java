@@ -1,4 +1,4 @@
-package martell.com.vice;
+package martell.com.vice.helpers;
 
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import martell.com.vice.dbHelper.DatabaseHelper;
 import martell.com.vice.models.Article;
 import martell.com.vice.models.ArticleData;
 import martell.com.vice.services.ViceAPIService;
