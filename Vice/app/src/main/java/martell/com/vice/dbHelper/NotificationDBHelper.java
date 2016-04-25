@@ -13,7 +13,6 @@ public class NotificationDBHelper extends SQLiteOpenHelper{
 
     private static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "ArticleNotices";
-    public static final String TAG = "NotificationDBHelper: ";
 
     // table and columns
     public static final String ARTICLES_TABLE_NAME = "articles";
@@ -35,6 +34,7 @@ public class NotificationDBHelper extends SQLiteOpenHelper{
             COL_ARTICLE_NAME + " TEXT, " +
             COL_ARTICLE_CATEGORY + " TEXT, " +
             COL_ARTICLE_TIMESTAMP + " TEXT );";
+    public static final String NO_TYPE_FOUND = "No type found";
 
     // makes sure there is only one instance of the database
     // if there isn't one, make it, otherwise return the one instance
@@ -78,14 +78,6 @@ public class NotificationDBHelper extends SQLiteOpenHelper{
         db.insert(ARTICLES_TABLE_NAME, null, values);
     }
 
-    public void updateArticles() {
-
-    }
-
-    public void findArticles() {
-
-    }
-
     public String getPopularArticleId(int id) {
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -102,7 +94,7 @@ public class NotificationDBHelper extends SQLiteOpenHelper{
         if (cursor.moveToFirst()) {
             return cursor.getString(cursor.getColumnIndex(COL_ARTICLE_ID));
         } else {
-            return "No type found";
+            return NO_TYPE_FOUND;
         }    }
 
     public String getPopularArticleTitle(int id) {
@@ -121,7 +113,7 @@ public class NotificationDBHelper extends SQLiteOpenHelper{
         if (cursor.moveToFirst()) {
             return cursor.getString(cursor.getColumnIndex(COL_ARTICLE_NAME));
         } else {
-            return "No type found";
+            return NO_TYPE_FOUND;
         }    }
 
     public int deleteArticle(int rowId) {
@@ -133,26 +125,6 @@ public class NotificationDBHelper extends SQLiteOpenHelper{
         db.close();
         return deleteNum;
 
-    }
-
-    public String getArticleIdByTableId(int id) {
-
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor cursor = db.query(ARTICLES_TABLE_NAME, // a. table
-                new String[]{COL_ARTICLE_ID},
-                COL_ID + " = ?", // c. selections
-                new String[]{String.valueOf(id)},
-                null, // e. group by
-                null, // f. having
-                null, // g. order by
-                null); // h. limit
-
-        if (cursor.moveToFirst()) {
-            return cursor.getString(cursor.getColumnIndex(COL_ARTICLE_ID));
-        } else {
-            return "No type found";
-        }
     }
 }
 

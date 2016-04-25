@@ -23,5 +23,6 @@
     <string name="home_page" translatable="false">Home</string>
     <string name="bookmarks" translatable="false">Bookmarks</string>
     <string name="share_to_facebook">Share to Facebook</string>
+    <string name="article_image_toolbar">Article Image For Collapsing Toolbar</string>
 
 </resources>

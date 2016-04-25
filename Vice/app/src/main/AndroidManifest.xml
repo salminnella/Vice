@@ -33,8 +33,6 @@
             android:name="com.facebook.FacebookContentProvider"
             android:exported="true" />
 
-        <activity android:name=".MainFakeDrawer"></activity>
-
         <activity
             android:name=".ArticleActivity"
             android:label="@string/title_activity_article"

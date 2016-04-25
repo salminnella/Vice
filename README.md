@@ -22,6 +22,8 @@ There is a memory issue for the tablet sizes when transitioning to landscape mod
 Progress bar was prioritized, but never implemented for slow network speeds.
 Bookmarks tab needs a refresh on the list set. If the user enters a bookmarked article from the bookmarks tab, the list is not refreshed after a back button press.
 Post Presentation deadline bug fix on duplicate bookmarks being added on notification preferences.
+If a user enters an article, and then presses teh back button before the glide library loads the image, the app will crash -- java.lang.IllegalArgumentException: You cannot start a load for a destroyed activity
+Notification Preferences don't save until...
 <br><br>
 <br><br>
 <b>Other Deliverables</b><br>
