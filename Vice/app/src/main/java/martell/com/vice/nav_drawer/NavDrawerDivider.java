@@ -1,4 +1,4 @@
-package martell.com.vice;
+package martell.com.vice.nav_drawer;
 
 /**
  * Represents a divider in the nav drawer layout

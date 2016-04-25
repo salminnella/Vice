@@ -22,10 +22,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
-import martell.com.vice.ArticleActivity;
-import martell.com.vice.ArticleAdapter;
+import martell.com.vice.activity.ArticleActivity;
+import martell.com.vice.adapters.ArticleAdapter;
 import martell.com.vice.BookmarksHelper;
-import martell.com.vice.MainActivity;
+import martell.com.vice.activity.MainActivity;
 import martell.com.vice.R;
 import martell.com.vice.RV_SpaceDecoration;
 import martell.com.vice.dbHelper.DatabaseHelper;

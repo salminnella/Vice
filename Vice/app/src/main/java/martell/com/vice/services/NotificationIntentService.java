@@ -8,8 +8,8 @@ import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 
-import martell.com.vice.ArticleActivity;
-import martell.com.vice.MainActivity;
+import martell.com.vice.activity.ArticleActivity;
+import martell.com.vice.activity.MainActivity;
 import martell.com.vice.R;
 
 /**

@@ -1,4 +1,4 @@
-package martell.com.vice;
+package martell.com.vice.activity;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -27,6 +27,12 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import martell.com.vice.nav_drawer.NavDrawerDivider;
+import martell.com.vice.nav_drawer.NavDrawerEntry;
+import martell.com.vice.nav_drawer.NavDrawerItem;
+import martell.com.vice.nav_drawer.NavDrawerToggle;
+import martell.com.vice.nav_drawer.NotificationPublisher;
+import martell.com.vice.R;
 import martell.com.vice.adapters.ViewPagerAdapter;
 import martell.com.vice.dbHelper.NotificationDBHelper;
 import martell.com.vice.fragment.LatestNewFragment;

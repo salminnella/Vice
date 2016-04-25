@@ -1,4 +1,4 @@
-package martell.com.vice;
+package martell.com.vice.nav_drawer;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import martell.com.vice.R;
 
 /**
  * Adapter for the Nav Drawer RecyclerView

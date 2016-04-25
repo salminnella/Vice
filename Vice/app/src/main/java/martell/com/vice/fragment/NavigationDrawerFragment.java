@@ -15,8 +15,8 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-import martell.com.vice.NavDrawerEntry;
-import martell.com.vice.NavigationDrawerAdapter;
+import martell.com.vice.nav_drawer.NavDrawerEntry;
+import martell.com.vice.nav_drawer.NavigationDrawerAdapter;
 import martell.com.vice.R;
 
 

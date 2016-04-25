@@ -1,4 +1,4 @@
-package martell.com.vice;
+package martell.com.vice.nav_drawer;
 
 /**
  * Represents an Item in the nav drawer layout
