@@ -25,6 +25,7 @@ There is a memory issue for the tablet sizes when transitioning to landscape mod
     <li>Post Presentation deadline bug fix on duplicate bookmarks being added on notification preferences.</li>
     <li>If a user enters an article, and then presses the back button before the glide library loads the image, the app will crash -- java.lang.IllegalArgumentException: You cannot start a load for a destroyed activity</li>
     <li>Notification Preferences don't always save until on destroy<li>
+</ul>
 <br><br>
 <br><br>
 <b>Other Deliverables</b><br>
