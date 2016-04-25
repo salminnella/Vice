@@ -29,8 +29,8 @@ public class BookmarksHelper extends AsyncTask<Void,Void,ArrayList<Article>> {
     /**
      * Constructor needs and instance of BookmarkResponse (an interface defined in LatestNewFragment)
      * and an instance of the DatabaseHelper
-     * @param bookmarksResponse
-     * @param bookmarkDataBaseHelper
+     * @param bookmarksResponse BookmardsResponse
+     * @param bookmarkDataBaseHelper DatabaseHelper
      */
     public BookmarksHelper(BookmarksResponse bookmarksResponse,DatabaseHelper bookmarkDataBaseHelper){
         this.bookmarksResponse = bookmarksResponse;
@@ -43,8 +43,8 @@ public class BookmarksHelper extends AsyncTask<Void,Void,ArrayList<Article>> {
      * uses the list of ids to make a looping call to the Vice api
      * on postExecute
      * uses an interface to pass article data back to LatestNewFragment
-     * @param params
-     * @return
+     * @param params Void
+     * @return ArrayList
      */
     @Override
     protected ArrayList<Article> doInBackground(Void... params) {
