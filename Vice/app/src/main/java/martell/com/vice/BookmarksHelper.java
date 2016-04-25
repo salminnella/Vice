@@ -2,7 +2,6 @@ package martell.com.vice;
 
 import android.database.Cursor;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by adao1 on 4/20/2016.
  */
 public class BookmarksHelper extends AsyncTask<Void,Void,ArrayList<Article>> {
-    private static final String TAG = "BookmarkHelper";
+    public static final String VICE_BASE_URL = "http://www.vice.com/en_us/api/";
     ArrayList<Article> articleArrayList;
     BookmarksResponse bookmarksResponse;
     DatabaseHelper bookmarkDataBaseHelper;
@@ -60,31 +59,23 @@ public class BookmarksHelper extends AsyncTask<Void,Void,ArrayList<Article>> {
             idList.add(bookmarkCursor.getString(bookmarkCursor.getColumnIndex(DatabaseHelper.COL_ARTICLE_ID)));
         }
 
-        Log.d(TAG, "THIS IS THE IDLIST SIZE AFTER DATABASE CALL " + idList.size());
 
-
-        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://www.vice.com/en_us/api/")
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(VICE_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create()).build();
         ViceAPIService viceService = retrofit.create(ViceAPIService.class);
         articleArrayList = new ArrayList<>();
         ArticleData articleData;
         Article article;
 
-        for (String id: idList) {
-            Log.d(TAG, "THIS IS THE ID FROM IDLIST " + id);
-        }
-
         for (String id : idList) {
-            Log.d(TAG, "THIS IS INSIDE THE LOOP " + id);
             Call<ArticleData> call = viceService.getArticle(Integer.parseInt(id));
-
             try {
                 articleData = call.execute().body();
                 article = articleData.getData().getArticle();
                 articleArrayList.add(article);
             }
             catch (IOException ioE) {
-                Log.d(TAG, "IO EXCEPTION HAS BEEN THROWN");
+                ioE.printStackTrace();
             }
         }
         bookmarkCursor.close();
@@ -96,7 +87,6 @@ public class BookmarksHelper extends AsyncTask<Void,Void,ArrayList<Article>> {
         if (articles != null) {
             if (articles.size() > 0) {
                 super.onPostExecute(articles);
-                Log.d(TAG, "THIS IS THE POST EXECUTE ARRAY LIST " + articles.get(0).getArticleTitle());
                 bookmarksResponse.getResponse(articles);
             }
         }

@@ -26,9 +26,6 @@ import martell.com.vice.R;
  * Created by mstarace on 4/18/16.
  */
 public class NavigationDrawerFragment extends Fragment {
-    // region Constants
-    private static final String TAG_NAV_FRAG = "NavigationFragment";
-    // endregion Constants
     // region Member Variables
     private View navFragmentView;
     private ActionBarDrawerToggle navDrawerToggle;
@@ -106,7 +103,6 @@ public class NavigationDrawerFragment extends Fragment {
         navDrawerRecyclerView.setAdapter(navigationDrawerAdapter);
         navDrawerRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         navDrawerRecyclerView.setHasFixedSize(true);
-
     }
 
     /**
@@ -136,5 +132,4 @@ public class NavigationDrawerFragment extends Fragment {
     public interface NotificationPreferences {
         void setNotificationPreferences(String notificationPreferences);
     }
-
 }
