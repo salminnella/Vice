@@ -18,6 +18,13 @@ There are multiple layouts avaialble differentiating between phone and tablets. 
 There is a memory issue for the tablet sizes when transitioning to landscape mode from portrait. Below is a screen shot of the error log (click for larger view).
 
 <img src="https://raw.githubusercontent.com/salminnella/Vice/master/images/logcat.jpg" />
+
+<ul>
+    <li>Progress bar was prioritized, but never implemented for slow network speeds.</li>
+    <li>Bookmarks tab needs a refresh on the list set. If the user enters a bookmarked article from the bookmarks tab, the list is not refreshed after a back button press.</li>
+    <li>Post Presentation deadline bug fix on duplicate bookmarks being added on notification preferences.</li>
+    <li>If a user enters an article, and then presses the back button before the glide library loads the image, the app will crash -- java.lang.IllegalArgumentException: You cannot start a load for a destroyed activity</li>
+    <li>Notification Preferences don't always save until on destroy<li>
 <br><br>
 <br><br>
 <b>Other Deliverables</b><br>
@@ -37,3 +44,4 @@ https://docs.google.com/presentation/d/1mWkC9Xo9Tp7t5DK1MwwRBTYuFnxWX9_Cdy1-FHF-
 <br><br>
 <b>Feature Prioritization</b><br>
 <img src="https://github.com/salminnella/Vice/blob/master/images/featurePriorities.jpg" /img>
+
