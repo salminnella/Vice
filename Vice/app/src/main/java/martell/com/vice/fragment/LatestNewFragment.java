@@ -111,9 +111,12 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
         retrofit = new Retrofit.Builder().baseUrl(VICE_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create()).build();
         viceService = retrofit.create(ViceAPIService.class);
-        if (isNetworkConnected()) displayLatestArticles(0);
+        if (isNetworkConnected()) {
+            displayLatestArticles(0);
+        } else {
+            Toast.makeText(getActivity(), TOAST_NO_NETWORK, Toast.LENGTH_LONG).show();
+        }
         makeRV();
-
     }
 
     /**
@@ -138,7 +141,6 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
      * @param numPages int
      */
     private void displayLatestArticles(int numPages) {
-
         Call<ArticleArray> call = null;
         fragTitle = getArguments().getString(MainActivity.KEY_FRAGMENT_TITLE);
 
@@ -211,14 +213,11 @@ public class LatestNewFragment extends Fragment implements ArticleAdapter.OnRVIt
      */
     @Override
     public void onLastArticleShown(int position) {
-
-
         if (!isNetworkConnected())
             Toast.makeText(getActivity(), TOAST_NO_NETWORK, Toast.LENGTH_LONG).show();
 
         if (fragTitle.equals(getResources().getString(R.string.bookmarks))) return;
         displayLatestArticles((position + 1) / 20);
-
     }
 
     /**

@@ -141,8 +141,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     }
 
     /**
-     *
      * sets up fragments for the scrolling tab bar are set up
+     * Yes, this should be refactored....
      * @param viewPager ViewPager
      */
     private void setupViewPagerFragments(ViewPager viewPager) {
