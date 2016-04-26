@@ -1,4 +1,4 @@
-package martell.com.vice;
+package martell.com.vice.fragment;
 
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;

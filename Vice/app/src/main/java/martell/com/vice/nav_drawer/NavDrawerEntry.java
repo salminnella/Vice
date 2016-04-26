@@ -1,4 +1,4 @@
-package martell.com.vice;
+package martell.com.vice.nav_drawer;
 
 /**
  * Super class to all the nav drawer items

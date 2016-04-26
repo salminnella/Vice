@@ -1,4 +1,4 @@
-package martell.com.vice.dbHelper;
+package martell.com.vice.helpers;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,10 +7,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 /**
- * Created by anthony on 4/20/16.
+ *  The database Builder, and search helper. Creates The Articles Database,
+ *  its table, and all its columns.
+ *
+ *  Also performs the search queries and returns a cursor
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 2;
+    private static final String BOOKMARK_CATEGORY_LABEL = "bookmark";
     public static final String DATABASE_NAME = "ArticleNotices";
     public static final String TAG = "DatabaseHelper: ";
 
@@ -67,6 +71,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         this.onCreate(db);
     }
 
+    /**
+     * Inserts records to the articles table in database requiring 4 parameters.
+     *
+     * @param articleId  int
+     * @param articleTitle  String
+     * @param articleCategory String
+     * @param articleTimeStamp String
+     */
     public void insertArticles(int articleId, String articleTitle, String articleCategory, String articleTimeStamp) {
 
         SQLiteDatabase db = getWritableDatabase();
@@ -80,14 +92,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insert(ARTICLES_TABLE_NAME, null, values);
     }
 
-    public void updateArticles() {
-
-    }
-
-    public void findArticles() {
-
-    }
-
+    /**
+     * Returns a cursor containing all articles containing category name.
+     *
+     * @param category String
+     * @return Cursor
+     */
     public Cursor findByCategory(String category) {
         cursor = dbRead.query(ARTICLES_TABLE_NAME, COLUMNS,
                 COL_ARTICLE_CATEGORY + " = ?",
@@ -104,59 +114,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
-    //TODO this is a dupe of findbookmark by id
-    public Cursor findArticleById(String articleId) {
-        cursor = dbRead.query(ARTICLES_TABLE_NAME, COLUMNS,
-                COL_ARTICLE_ID + " = ?",
-                new String[]{articleId},
-                null,
-                null,
-                null,
-                null);
-
-        if (cursor.getCount() > 0) {
-            cursor.moveToFirst();
-        }
-
-        return cursor;
-    }
-
-    public String getLatestArticleTitle(int id) {
-
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor cursor = db.query(ARTICLES_TABLE_NAME, // a. table
-                new String[]{COL_ARTICLE_NAME},
-                COL_ID + " = ?", // c. selections
-                new String[]{String.valueOf(id)},
-                null, // e. group by
-                null, // f. having
-                null, // g. order by
-                null); // h. limit
-
-        if (cursor.moveToFirst()) {
-            return cursor.getString(cursor.getColumnIndex(COL_ARTICLE_NAME));
-        } else {
-            return "No type found";
-        }    }
-
-    public void deleteArticles() {
-
-    }
-
+    /**
+     * Inserts record to articles table with bookmark as the category.
+     * Used to keep track of articles that should be displayed in the Bookmarks
+     * tab.
+     *
+     * @param articleId String
+     */
     public void insertBookmark(String articleId) {
         ContentValues values = new ContentValues();
         values.put(COL_ARTICLE_ID, articleId);
-        values.put(COL_ARTICLE_CATEGORY, "bookmark");
+        values.put(COL_ARTICLE_CATEGORY, BOOKMARK_CATEGORY_LABEL);
 
         dbWrite.insert(ARTICLES_TABLE_NAME, null, values);
     }
 
+    /**
+     * Finds all the articles that have the bookmark category.
+     * Used to keep track of articles that should be displayed in the Bookmarks
+     * tab.
+     *
+     * @return Cursor
+     */
     public Cursor findAllBookmarks() {
-//        cursor = dbRead.rawQuery("SELECT * FROM articles WHERE category = \"bookmark\"",null);
         cursor = dbRead.query(ARTICLES_TABLE_NAME, COLUMNS,
                 COL_ARTICLE_CATEGORY + " = ?" ,
-                new String[]{"bookmark"},
+                new String[]{BOOKMARK_CATEGORY_LABEL},
                 null,
                 null,
                 null,
@@ -169,10 +152,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    /**
+     * Performs find in articles table for matching article id
+     *
+     * @param articleId String
+     * @return Cursor
+     */
     public Cursor findBookmarkById(String articleId) {
         cursor = dbRead.query(ARTICLES_TABLE_NAME, COLUMNS,
-                COL_ARTICLE_ID + " = ?",
-                new String[]{articleId},
+                COL_ARTICLE_ID + " = ? AND " + COL_ARTICLE_CATEGORY + " = ?",
+                new String[]{articleId, BOOKMARK_CATEGORY_LABEL},
                 null,
                 null,
                 null,
@@ -185,29 +174,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public String getArticleIdByTableId(int id) {
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor cursor = db.query(ARTICLES_TABLE_NAME, // a. table
-                new String[]{COL_ARTICLE_ID},
-                COL_ID + " = ?", // c. selections
-                new String[]{String.valueOf(id)},
-                null, // e. group by
-                null, // f. having
-                null, // g. order by
-                null); // h. limit
-
-        if (cursor.moveToFirst()) {
-            return cursor.getString(cursor.getColumnIndex(COL_ARTICLE_ID));
-        } else {
-            return "No type found";
-        }
-    }
-
+    /**
+     * Removes record from articles table with bookmark as the category, and matching article ID.
+     * Used to keep track of articles that should be displayed in the Bookmarks
+     * tab.
+     *
+     * @param articleId
+     */
     public void deleteBookmarkById(String articleId) {
 
         dbWrite.delete(ARTICLES_TABLE_NAME,
                 COL_ARTICLE_ID + " = ? AND " + COL_ARTICLE_CATEGORY + " = ?",
-                new String[]{articleId, "bookmark"});
+                new String[]{articleId, BOOKMARK_CATEGORY_LABEL});
     }
 }

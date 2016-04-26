@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
-        <activity android:name=".MainActivity">
+        <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,16 +33,14 @@
             android:name="com.facebook.FacebookContentProvider"
             android:exported="true" />
 
-        <activity android:name=".MainFakeDrawer"></activity>
-
         <activity
-            android:name=".ArticleActivity"
+            android:name=".activity.ArticleActivity"
             android:label="@string/title_activity_article"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".activity.MainActivity"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="martell.com.vice.MainActivity" />
+                android:value=".activity.MainActivity" />
         </activity>
 
         <service
@@ -75,9 +73,7 @@
             android:exported="false"
             android:syncable="true"/>
 
-        <activity android:name=".Main2Activity"></activity>
-
-        <receiver android:name=".NotificationPublisher" />
+        <receiver android:name=".helpers.NotificationPublisher" />
 
     </application>
 

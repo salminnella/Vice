@@ -1,4 +1,4 @@
-package martell.com.vice;
+package martell.com.vice.activity;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -15,7 +15,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -28,72 +27,89 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import martell.com.vice.nav_drawer.NavDrawerDivider;
+import martell.com.vice.nav_drawer.NavDrawerEntry;
+import martell.com.vice.nav_drawer.NavDrawerItem;
+import martell.com.vice.nav_drawer.NavDrawerToggle;
+import martell.com.vice.helpers.NotificationPublisher;
+import martell.com.vice.R;
 import martell.com.vice.adapters.ViewPagerAdapter;
-import martell.com.vice.dbHelper.NotificationDBHelper;
+import martell.com.vice.helpers.NotificationDBHelper;
 import martell.com.vice.fragment.LatestNewFragment;
 import martell.com.vice.fragment.NavigationDrawerFragment;
-import martell.com.vice.models.Article;
 import martell.com.vice.services.ViceAPIService;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ *  Application begins here in the MainActivity.  This holds the view pager, to list news articles
+ *  from Vice, and allows the user to perform left/right scrolling for different categories
+ */
 public class MainActivity extends AppCompatActivity implements NavigationDrawerFragment.NotificationPreferences{
-    private static final String TAG = "Main";
+    // region Constants
     public static final String KEY_FRAGMENT_TITLE = "FragmentTitle";
     public static final String KEY_SHARED_PREF_NOTIF = "sharedPrefNotification";
+    public static final String AUTHORITY = "martell.com.vice.sync_adapter.StubProvider"; // Content provider authority
+    public static final String ACCOUNT_TYPE = "example.com"; // Account type - used with SyncAdapter
+    public static final String ACCOUNT = "default_account";// Account - used with SyncAdapter
+    public static final String TOAST_NO_NETWORK = "No Network Connection";
+    public static final String VICE_BASE_URL = "http://www.vice.com/en_us/api/";
+    public static final String ARTICLE_TITLE_KEY = "TITLE_KEY";
+    public static final String ARTICLE_ID_KEY = "ID_KEY";
+    // endregion Constants
+    // region Member Variables
     private ViewPager viewPager;
-    private ArrayList<Article> articles;
     public ViceAPIService viceService;
-    private Retrofit retrofit;
-    private ViewPagerAdapter adapter;
     private TabLayout tabLayout;
     private String notificationPreferences;
+
     private String popularArticleTitle;
     private String popularArticleId;
-    private NotificationDBHelper notificationHelper;
-
-    // Content provider authority
-    public static final String AUTHORITY = "martell.com.vice.sync_adapter.StubProvider";
-    // Account type
-    public static final String ACCOUNT_TYPE = "example.com";
-    // Account
-    public static final String ACCOUNT = "default_account";
-    Account mAccount;
-    // A content resolver for accessing the provider
-    ContentResolver mResolver;
+    // endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
-        toolbar.setTitle("");
+        if (toolbar != null) {
+            toolbar.setTitle("");
+        }
+        checkNetworkAccess();
+        getPrefsForDrawer();
+        initFaceBookSdk();
+        buildRetroFit();
+        initViewPager();
+        initTabLayout();
+        initContentResolver();
+        setNotificationAlarmManager();
+    }
 
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        AppEventsLogger.activateApp(this);
-
-        if (!isNetworkConnected())Toast.makeText(this,"No Network Connection", Toast.LENGTH_LONG).show();
-
+    /**
+     * Retrieves shared preferences and sets the toggles in the slider drawer
+     */
+    private void getPrefsForDrawer() {
         SharedPreferences sharedPreferences = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
         String notificationFromSharedPref = sharedPreferences.getString(KEY_SHARED_PREF_NOTIF,"");
         setNavigationDrawer(createBoolArrayList(notificationFromSharedPref));
+    }
 
-        mAccount = createSyncAccount(this);
-
-        articles = new ArrayList<>();
-        retrofit = new Retrofit.Builder().baseUrl("http://www.vice.com/en_us/api/")
-                .addConverterFactory(GsonConverterFactory.create()).build();
-        viceService = retrofit.create(ViceAPIService.class);
-
+    /**
+     * initializes the view pager used by the tab layout
+     */
+    private void initViewPager() {
         viewPager = (ViewPager) findViewById(R.id.viewpager);
-        adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
-
-        setupViewPagerOneFragment(viewPager);
+        setupViewPagerFragments(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
+    }
 
+    /**
+     * initializes the tab layout
+     */
+    private void initTabLayout() {
         if (tabLayout != null) {
             tabLayout.setupWithViewPager(viewPager);
 
@@ -114,12 +130,23 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                 }
             });
         }
+    }
 
-        mResolver = getContentResolver();
+    /**
+     * initializes the Facebook sdk
+     */
+    private void initFaceBookSdk() {
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
+    }
 
-        ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
-        ContentResolver.addPeriodicSync(mAccount, AUTHORITY, Bundle.EMPTY, 60);
-
+    /**
+     * creates the retrofit build, and instantiates with the Vice Service
+     */
+    private void buildRetroFit() {
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(VICE_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        viceService = retrofit.create(ViceAPIService.class);
         NotificationDBHelper dbHelper = NotificationDBHelper.getInstance(this);
 
         /**
@@ -135,11 +162,11 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     }
 
     /**
-     * ViewPager set up
-     * fragaments for the scrolling tab bar are set up
-     * @param viewPager
+     * sets up fragments for the scrolling tab bar are set up
+     * Yes, this should be refactored....
+     * @param viewPager ViewPager
      */
-    private void setupViewPagerOneFragment(ViewPager viewPager) {
+    private void setupViewPagerFragments(ViewPager viewPager) {
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
@@ -236,8 +263,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     /**
      * Creates an arrayList of booleans from a string of notification preferences
-     * @param notificationPreferences
-     * @return
+     * @param notificationPreferences String
+     * @return ArrayList
      */
     private ArrayList<Boolean> createBoolArrayList(String notificationPreferences){
         String[] categories = getResources().getStringArray(R.array.categories);
@@ -258,15 +285,13 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     /**
      * navigation drawer is set up and items are added
-     * @param isCheckedArray
+     * @param isCheckedArray ArrayList<Boolean>
      */
     private void setNavigationDrawer(ArrayList<Boolean> isCheckedArray) {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
         if (getSupportActionBar()!= null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        } else {
-            Log.d(TAG, "SUPPORT ACTION BAR IS NULL");
         }
         String[] tabResourceArray = getResources().getStringArray(R.array.categories);
         List<NavDrawerEntry> drawerEntries = new ArrayList<>();
@@ -285,19 +310,17 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                 .findFragmentById(R.id.fragment_navigation_drawer);
 
         drawerFragment.initDrawer((android.support.v4.widget.DrawerLayout) findViewById(R.id.drawer_layout_main),
-                toolbar, drawerEntries,isCheckedArray);
-        Log.d(TAG, "THE initDrawer HAS BEEN CALLED ON MAIN");
+                toolbar, drawerEntries, isCheckedArray);
     }
 
     /**
      * interface method is implemented to receive notification preferences from
      * Nav Drawer fragment
-     * @param notificationPreferences
+     * @param notificationPreferences String
      */
     @Override
     public void setNotificationPreferences(String notificationPreferences) {
         this.notificationPreferences = notificationPreferences;
-        Log.i(TAG, "setNotificationPreferences: " + notificationPreferences);
     }
 
     /**
@@ -322,25 +345,30 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             view.getBackground().setCallback(null);
         }
         if (view instanceof ViewGroup && !(view instanceof AdapterView)){
-            for (int i =0 ; i < ((ViewGroup) view).getChildCount();i++){
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++){
                 unbindDrawables(((ViewGroup)view).getChildAt(i));
             }
             ((ViewGroup)view).removeAllViews();
         }
     }
 
+    private void initContentResolver() {
+        Account mAccount = createSyncAccount(this);
+        // set the periodic sync timing for SyncAdapter
+        ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
+        ContentResolver.addPeriodicSync(mAccount, AUTHORITY, Bundle.EMPTY, 60);
+    }
+
     /** The method below determines the timing of push notifications, as well as what data will be
      *  displayed.
      */
-
     public void setNotificationAlarmManager() {
 
         buildNotification();
 
         Intent alertIntent = new Intent(this, NotificationPublisher.class);
-
-        alertIntent.putExtra("TITLE_KEY", popularArticleTitle);
-        alertIntent.putExtra("ID_KEY", popularArticleId);
+        alertIntent.putExtra(ARTICLE_TITLE_KEY, popularArticleTitle);
+        alertIntent.putExtra(ARTICLE_ID_KEY, popularArticleId);
 
         // The TaskStackBuilder preserves the user's previous position in the app (prior to clicking
         // the notification) so that user will return to previous position (article or screen) in the
@@ -356,14 +384,20 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         Long alertTime = new GregorianCalendar().getTimeInMillis()+60*1000;
         Long intervalTime = 120*1000L;
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alertTime, intervalTime,
                 PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT));
     }
 
+    /**
+     * Checks if there is any kind of network access
+     */
+    private void checkNetworkAccess() {
+        if (!isNetworkConnected())Toast.makeText(this, TOAST_NO_NETWORK, Toast.LENGTH_LONG).show();
+    }
+
     public void buildNotification() {
 
-        notificationHelper = NotificationDBHelper.getInstance(this);
+        NotificationDBHelper notificationHelper = NotificationDBHelper.getInstance(this);
         popularArticleId = notificationHelper.getPopularArticleId(0);
         popularArticleTitle = notificationHelper.getPopularArticleTitle(0);
 
@@ -375,7 +409,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
      */
     private boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
         return cm.getActiveNetworkInfo() != null;
     }
 }

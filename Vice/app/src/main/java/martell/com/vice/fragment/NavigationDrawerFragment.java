@@ -8,7 +8,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,33 +15,35 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-import martell.com.vice.NavDrawerEntry;
-import martell.com.vice.NavigationDrawerAdapter;
+import martell.com.vice.nav_drawer.NavDrawerEntry;
+import martell.com.vice.nav_drawer.NavigationDrawerAdapter;
 import martell.com.vice.R;
 
 
 /**
+ * This fragment holds the navigation drawer items.
+ *
  * Created by mstarace on 4/18/16.
  */
 public class NavigationDrawerFragment extends Fragment {
-    private static final String TAG_NAV_FRAG = "NavigationFragment";
+    // region Member Variables
     private View navFragmentView;
     private ActionBarDrawerToggle navDrawerToggle;
     private RecyclerView navDrawerRecyclerView;
     private DrawerLayout navDrawerLayout;
     private NavigationDrawerAdapter navigationDrawerAdapter;
+    // endregion Member Variables
 
     /**
      * inflates NavigatonDrawerView
-     * @param inflater
-     * @param container
-     * @param savedInstanceState
-     * @return
+     * @param inflater LayoutInflater
+     * @param container ViewGroup
+     * @param savedInstanceState Bundle
+     * @return View
      */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.d(TAG_NAV_FRAG, "THE ON CREATE VIEW HAS BEEN CALLED");
         navFragmentView = inflater.inflate(R.layout.fragment_navigation_drawer_main,container,false);
         return navFragmentView;
     }
@@ -64,14 +65,13 @@ public class NavigationDrawerFragment extends Fragment {
      * onDrawerClosed
      * Converts an array of booleans that represent the toggle switches in the Nav Drawer to
      * a ',' seperated string and passes to the main activity
-     * @param drawerLayout
-     * @param toolbar
-     * @param navDrawerEntryList
-     * @param booleanArrayList
+     * @param drawerLayout DrawerLayout
+     * @param toolbar Toolbar
+     * @param navDrawerEntryList List
+     * @param booleanArrayList ArrayList
      */
     public void initDrawer(DrawerLayout drawerLayout, final Toolbar toolbar, List<NavDrawerEntry> navDrawerEntryList,
                            ArrayList<Boolean> booleanArrayList){
-        Log.d(TAG_NAV_FRAG,"initDrawer HAS BEEN CALLED IN THE NAVIGATION FRAGMENT");
         navDrawerLayout = drawerLayout;
         navDrawerToggle = new ActionBarDrawerToggle(getActivity(),drawerLayout,toolbar, R.string.drawer_open,
                 R.string.drawer_close) {
@@ -79,7 +79,6 @@ public class NavigationDrawerFragment extends Fragment {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                //getActivity().invalidateOptionsMenu();
             }
 
             @Override
@@ -88,7 +87,6 @@ public class NavigationDrawerFragment extends Fragment {
                 NotificationPreferences notificationPreferences = (NotificationPreferences)getActivity();
                 notificationPreferences.setNotificationPreferences(createNotificationString(isCheckedArray));
                 super.onDrawerClosed(drawerView);
-                //getActivity().invalidateOptionsMenu();
             }
         };
 
@@ -96,7 +94,6 @@ public class NavigationDrawerFragment extends Fragment {
         navDrawerLayout.post(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG_NAV_FRAG, "THE NAVDRAWERTOGGLE.SYNCSTATE HAS BEEN CALLED");
                 navDrawerToggle.syncState();
             }
         });
@@ -106,7 +103,6 @@ public class NavigationDrawerFragment extends Fragment {
         navDrawerRecyclerView.setAdapter(navigationDrawerAdapter);
         navDrawerRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         navDrawerRecyclerView.setHasFixedSize(true);
-
     }
 
     /**
@@ -114,7 +110,7 @@ public class NavigationDrawerFragment extends Fragment {
      * with the names of user specified notification preferences. Puts the ArrayList of
      * strings into a comma separated string that is returned. string resource array is used
      * to make the conversion. Comma separated sting is intended to be used in SharedPreferences.
-     * @return
+     * @return String
      */
     private String createNotificationString(ArrayList<Boolean> isCheckedArray){
         String strNotificationPref = "";
@@ -136,5 +132,4 @@ public class NavigationDrawerFragment extends Fragment {
     public interface NotificationPreferences {
         void setNotificationPreferences(String notificationPreferences);
     }
-
 }

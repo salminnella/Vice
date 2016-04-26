@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Allows fragments to be added to the tablayout
  * Created by anthony on 4/19/16.
  */
 public class ViewPagerAdapter extends FragmentPagerAdapter {
