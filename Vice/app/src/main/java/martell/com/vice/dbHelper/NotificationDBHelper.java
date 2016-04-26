@@ -64,7 +64,7 @@ public class NotificationDBHelper extends SQLiteOpenHelper{
         this.onCreate(db);
     }
 
-    public void insertArticles(int id, int articleId, String articleTitle, String articleCategory, String articleTimeStamp) {
+    public void insertArticles(int id, String articleId, String articleTitle, String articleCategory, String articleTimeStamp) {
 
         SQLiteDatabase db = getWritableDatabase();
 
@@ -102,7 +102,7 @@ public class NotificationDBHelper extends SQLiteOpenHelper{
         if (cursor.moveToFirst()) {
             return cursor.getString(cursor.getColumnIndex(COL_ARTICLE_ID));
         } else {
-            return "No type found";
+            return null;
         }    }
 
     public String getPopularArticleTitle(int id) {
@@ -121,7 +121,7 @@ public class NotificationDBHelper extends SQLiteOpenHelper{
         if (cursor.moveToFirst()) {
             return cursor.getString(cursor.getColumnIndex(COL_ARTICLE_NAME));
         } else {
-            return "No type found";
+            return null;
         }    }
 
     public int deleteArticle(int rowId) {

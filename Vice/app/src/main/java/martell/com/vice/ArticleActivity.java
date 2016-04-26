@@ -102,6 +102,11 @@ public class ArticleActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Receives intent and any extra data from LatestNewFragment and NotificationPublisher classes
+     * and assigns extra data to variables that tell ArticleActivity which article to display.
+     */
+
     private void receiveIntent() {
         Intent intent = getIntent();
         articleId = intent.getStringExtra("ID_KEY");
