@@ -113,20 +113,13 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
             notificationHelper = NotificationDBHelper.getInstance(getContext());
 
-            notificationHelper.deleteArticle(0);
-            Log.i(TAG, "onPerformSync: deleted an article");
-
-            notificationHelper.insertArticles(0, articleId, articleTitle, articleCategory, articleTimeStamp);
-
-
-
-            if (notificationHelper == null) {
+            if (notificationHelper.getPopularArticleId(0) != null) {
+                //delete previous most popular article
+                notificationHelper.deleteArticle(0);
 
                 notificationHelper.insertArticles(0, articleId, articleTitle, articleCategory, articleTimeStamp);
-
-            } else {
-
             }
+
 
         } catch (IOException e) {
             e.printStackTrace();

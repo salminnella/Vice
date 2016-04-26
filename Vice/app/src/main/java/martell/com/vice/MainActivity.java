@@ -123,7 +123,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         NotificationDBHelper dbHelper = NotificationDBHelper.getInstance(this);
 
         /**
-         * if/else statement below will trigger the setNotificationAlarmManager if there is a popular article in the database ready to be pushed as a notification.
+         * if/else statement below will trigger the setNotificationAlarmManager if there is
+         * a popular article in the database ready to be pushed as a notification.
          */
 
         if (dbHelper.getPopularArticleId(0) != null) {
@@ -349,7 +350,10 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         tStackBuilder.addParentStack(MainActivity.class);
         tStackBuilder.addNextIntent(alertIntent);
 
-        Long alertTime = new GregorianCalendar().getTimeInMillis()+7*1000;
+        // Notifications set to first be pushed 1 minute after setNotificationManager() is called.
+        // Notifications will repeat every 6 hours with most popular article.
+
+        Long alertTime = new GregorianCalendar().getTimeInMillis()+60*1000;
         Long intervalTime = 120*1000L;
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
