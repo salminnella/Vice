@@ -122,14 +122,14 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
         NotificationDBHelper dbHelper = NotificationDBHelper.getInstance(this);
 
-        if (dbHelper.getPopularArticleId(0) == null) {
+        /**
+         * if/else statement below will trigger the setNotificationAlarmManager if there is a popular article in the database ready to be pushed as a notification.
+         */
 
-            dbHelper.insertArticles(0, "212394", "VICE Long Reads: How the Banks Stole Higher Education",
-                    "stuff", "0055332");
+        if (dbHelper.getPopularArticleId(0) != null) {
 
             setNotificationAlarmManager();
-        } else {
-            setNotificationAlarmManager();
+
         }
     }
 
@@ -328,34 +328,41 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         }
     }
 
-    /** method below generates notifications that, when clicked, take the user to the most popular
-     * article of the day
+    /** The method below determines the timing of push notifications, as well as what data will be
+     *  displayed.
      */
 
     public void setNotificationAlarmManager() {
 
-        notificationHelper = NotificationDBHelper.getInstance(this);
-
-        popularArticleId = notificationHelper.getPopularArticleId(0);
-        popularArticleTitle = notificationHelper.getPopularArticleTitle(0);
-
-        Long alertTime = new GregorianCalendar().getTimeInMillis()+7*1000;
-
-        Long intervalTime = 120*1000L;
+        buildNotification();
 
         Intent alertIntent = new Intent(this, NotificationPublisher.class);
 
         alertIntent.putExtra("TITLE_KEY", popularArticleTitle);
         alertIntent.putExtra("ID_KEY", popularArticleId);
 
+        // The TaskStackBuilder preserves the user's previous position in the app (prior to clicking
+        // the notification) so that user will return to previous position (article or screen) in the
+        // app on back button press.
+
         TaskStackBuilder tStackBuilder = TaskStackBuilder.create(this);
         tStackBuilder.addParentStack(MainActivity.class);
         tStackBuilder.addNextIntent(alertIntent);
 
+        Long alertTime = new GregorianCalendar().getTimeInMillis()+7*1000;
+        Long intervalTime = 120*1000L;
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alertTime, intervalTime,
                 PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+    }
+
+    public void buildNotification() {
+
+        notificationHelper = NotificationDBHelper.getInstance(this);
+        popularArticleId = notificationHelper.getPopularArticleId(0);
+        popularArticleTitle = notificationHelper.getPopularArticleTitle(0);
+
     }
     
     /**

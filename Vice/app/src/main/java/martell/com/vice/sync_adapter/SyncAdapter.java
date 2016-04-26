@@ -100,12 +100,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 .addConverterFactory(GsonConverterFactory.create()).build();
         viceService = retrofit.create(ViceAPIService.class);
 
-        //get a response from vice
+        // Get a response from vice and insert most popular article into the database for notification
+        // purposes.
         try {
             Response<ArticleArray> response = viceService.popularArticles(0).execute();
             Article articleList[] = response.body().getData().getItems().clone();
-            Log.i(TAG, "onResponse: " + response.body().getData().getItems()[0].getArticleId());
-            Log.i(TAG, "number of Articles: " + response.body().getData().getItems().length);
+
             articleId = articleList[0].getArticleId();
             articleTitle = articleList[0].getArticleTitle();
             articleCategory = articleList[0].getArticleCategory();
