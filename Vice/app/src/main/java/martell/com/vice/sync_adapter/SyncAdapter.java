@@ -7,6 +7,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
+import android.util.Log;
 
 import java.io.IOException;
 
@@ -102,9 +103,14 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             articleTimeStamp = articleList[0].getArticleTimeStamp();
             notificationHelper = NotificationDBHelper.getInstance(getContext());
 
-            if (notificationHelper.getPopularArticleId(0) != null) {
-                //delete previous most popular article
+            if (notificationHelper != null) {
+
                 notificationHelper.deleteArticle(0);
+                Log.i(TAG, "onPerformSync: deleted previous most popular article");
+                notificationHelper.insertArticles(0, articleId, articleTitle, articleCategory, articleTimeStamp);
+
+            } else {
+
                 notificationHelper.insertArticles(0, articleId, articleTitle, articleCategory, articleTimeStamp);
             }
 

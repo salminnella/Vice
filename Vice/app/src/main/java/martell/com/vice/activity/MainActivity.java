@@ -83,7 +83,21 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         initViewPager();
         initTabLayout();
         initContentResolver();
-        setNotificationAlarmManager();
+
+        NotificationDBHelper dbHelper = NotificationDBHelper.getInstance(this);
+
+        /**
+         * if/else statement below will trigger the setNotificationAlarmManager if there is
+         * a popular article in the database ready to be pushed as a notification.
+         */
+
+        if (dbHelper.getPopularArticleId(0) != null) {
+
+            setNotificationAlarmManager();
+
+        }
+
+        //setNotificationAlarmManager();
     }
 
     /**
@@ -147,18 +161,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         Retrofit retrofit = new Retrofit.Builder().baseUrl(VICE_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create()).build();
         viceService = retrofit.create(ViceAPIService.class);
-        NotificationDBHelper dbHelper = NotificationDBHelper.getInstance(this);
 
-        /**
-         * if/else statement below will trigger the setNotificationAlarmManager if there is
-         * a popular article in the database ready to be pushed as a notification.
-         */
-
-        if (dbHelper.getPopularArticleId(0) != null) {
-
-            setNotificationAlarmManager();
-
-        }
     }
 
     /**
@@ -367,8 +370,9 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         buildNotification();
 
         Intent alertIntent = new Intent(this, NotificationPublisher.class);
-        alertIntent.putExtra(ARTICLE_TITLE_KEY, popularArticleTitle);
-        alertIntent.putExtra(ARTICLE_ID_KEY, popularArticleId);
+
+        alertIntent.putExtra("TITLE_KEY", popularArticleTitle);
+        alertIntent.putExtra("ID_KEY", popularArticleId);
 
         // The TaskStackBuilder preserves the user's previous position in the app (prior to clicking
         // the notification) so that user will return to previous position (article or screen) in the
@@ -378,12 +382,10 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         tStackBuilder.addParentStack(MainActivity.class);
         tStackBuilder.addNextIntent(alertIntent);
 
-        // Notifications set to first be pushed 1 minute after setNotificationManager() is called.
-        // Notifications will repeat every 6 hours with most popular article.
-
-        Long alertTime = new GregorianCalendar().getTimeInMillis()+60*1000;
+        Long alertTime = new GregorianCalendar().getTimeInMillis()+7*1000;
         Long intervalTime = 120*1000L;
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alertTime, intervalTime,
                 PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT));
     }

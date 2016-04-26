@@ -10,6 +10,7 @@ import android.content.Intent;
 import martell.com.vice.R;
 import martell.com.vice.activity.ArticleActivity;
 
+
 /**
  * Created by stewartmcmillan on 4/20/16.
  * This class receives an intent, along with article id and title data, from setNotificationAlarmManager()
@@ -46,7 +47,6 @@ public class NotificationPublisher extends BroadcastReceiver {
 
         mNotificationManager.notify(1, mBuilder.build());
     }
-
 }
 
 
