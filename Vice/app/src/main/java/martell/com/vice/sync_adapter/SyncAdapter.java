@@ -103,12 +103,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             articleTimeStamp = articleList[0].getArticleTimeStamp();
             notificationHelper = NotificationDBHelper.getInstance(getContext());
 
-//            if (notificationHelper.getPopularArticleId(0) != null) {
-//                //delete previous most popular article
-//                notificationHelper.deleteArticle(0);
-//                notificationHelper.insertArticles(0, articleId, articleTitle, articleCategory, articleTimeStamp);
-//            }
-
             if (notificationHelper != null) {
 
                 notificationHelper.deleteArticle(0);
