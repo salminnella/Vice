@@ -91,8 +91,9 @@ public class ArticleActivity extends AppCompatActivity {
     }
 
     /**
-     * OnItemCLick from recycler view sends the article id, this method receives that id
-     * as a string, and puts it into an int idNum variable
+     * OnItemCLick from recycler view.  Receives intent and any extra data from LatestNewFragment
+     * and NotificationPublisher classes and assigns extra data to variables that tell
+     * ArticleActivity which article to display.
      */
     private void receiveIntent() {
         Intent intent = getIntent();
